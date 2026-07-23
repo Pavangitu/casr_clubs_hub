@@ -1,0 +1,6 @@
+{
+  "name": "CaSR Clubs Hub",
+  "description": "Elite campus club directory, event tracking, and attendance management portal.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
