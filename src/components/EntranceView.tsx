@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import { StudentProfile, ThemeMode } from '../types';
 import { Search, UserCheck, Shield, Sparkles, Sun, Moon, ArrowRight } from 'lucide-react';
-import leftLogoJpeg from '../../images (1).jpeg';
-import logo2Png from '../../Logos - 2_20260227_150721_0000.png';
-
-const FALLBACK_LOGO_URL = 'https://lh3.googleusercontent.com/aida-public/AB6AXuCYWoxaLgUQRGQM_9JBtxJgHEHgpjdREMXzL_js7eoNvyd8XxkwTW3PqaEuV0CQS2AMXjSQ-J8m1JFSZQPe8FuJbzKVd4wJvrwp60973PJKtLSEFCfc50GblC-DzW1lAgVyuMcM_EsVzNekBU-kEMGsNr4O_qim7-1akytGwFPJYT6q_6YwcYtezMyFyh28GsHaMthPdSt8iWnsBNY7JT7Ue4SG9KeBMEIHr_kSsVhkkfaOaYt9jTb8jqNW4ORb5NLusN2QgwaS_xtN';
+import casrOwlLogo from '../../Logos - 2_20260227_150721_0000.png';
+import centurionEmblemLogo from '../../images (1).jpeg';
 
 interface EntranceViewProps {
   students: StudentProfile[];
@@ -19,24 +17,20 @@ export const EntranceView: React.FC<EntranceViewProps> = ({
   toggleTheme,
   onEnter
 }) => {
-  const [logoSrc, setLogoSrc] = useState<string>('/logo_casr.png');
-  const [logo2Src, setLogo2Src] = useState<string>('/logo_centurion.jpeg');
+  const [logoSrc, setLogoSrc] = useState<string>(casrOwlLogo);
+  const [logo2Src, setLogo2Src] = useState<string>(centurionEmblemLogo);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStudent, setSelectedStudent] = useState<StudentProfile | null>(null);
 
   const handleLogoError = () => {
-    if (logoSrc !== logo2Png && logo2Png) {
-      setLogoSrc(logo2Png);
-    } else if (logoSrc !== FALLBACK_LOGO_URL) {
-      setLogoSrc(FALLBACK_LOGO_URL);
+    if (logoSrc !== '/logo_casr.png') {
+      setLogoSrc('/logo_casr.png');
     }
   };
 
   const handleLogo2Error = () => {
-    if (logo2Src !== leftLogoJpeg && leftLogoJpeg) {
-      setLogo2Src(leftLogoJpeg);
-    } else if (logo2Src !== FALLBACK_LOGO_URL) {
-      setLogo2Src(FALLBACK_LOGO_URL);
+    if (logo2Src !== '/logo_centurion.jpeg') {
+      setLogo2Src('/logo_centurion.jpeg');
     }
   };
 
