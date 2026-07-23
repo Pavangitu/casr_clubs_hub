@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { StudentProfile, ThemeMode } from '../types';
 import { Search, UserCheck, Shield, Sparkles, Sun, Moon, ArrowRight } from 'lucide-react';
-import secondLogo from '../../images (1).jpeg';
+import leftLogoJpeg from '../../images (1).jpeg';
+import logo2Png from '../../Logos - 2_20260227_150721_0000.png';
+
+const FALLBACK_LOGO_URL = 'https://lh3.googleusercontent.com/aida-public/AB6AXuCYWoxaLgUQRGQM_9JBtxJgHEHgpjdREMXzL_js7eoNvyd8XxkwTW3PqaEuV0CQS2AMXjSQ-J8m1JFSZQPe8FuJbzKVd4wJvrwp60973PJKtLSEFCfc50GblC-DzW1lAgVyuMcM_EsVzNekBU-kEMGsNr4O_qim7-1akytGwFPJYT6q_6YwcYtezMyFyh28GsHaMthPdSt8iWnsBNY7JT7Ue4SG9KeBMEIHr_kSsVhkkfaOaYt9jTb8jqNW4ORb5NLusN2QgwaS_xtN';
 
 interface EntranceViewProps {
   students: StudentProfile[];
@@ -16,17 +19,21 @@ export const EntranceView: React.FC<EntranceViewProps> = ({
   toggleTheme,
   onEnter
 }) => {
-  const [logoSrc, setLogoSrc] = useState('/src/logo.png');
-  const [logo2Src, setLogo2Src] = useState<string>(secondLogo);
+  const [logoSrc, setLogoSrc] = useState<string>(leftLogoJpeg || '/src/logo.png');
+  const [logo2Src, setLogo2Src] = useState<string>(logo2Png || leftLogoJpeg);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStudent, setSelectedStudent] = useState<StudentProfile | null>(null);
 
   const handleLogoError = () => {
-    setLogoSrc('https://lh3.googleusercontent.com/aida-public/AB6AXuCYWoxaLgUQRGQM_9JBtxJgHEHgpjdREMXzL_js7eoNvyd8XxkwTW3PqaEuV0CQS2AMXjSQ-J8m1JFSZQPe8FuJbzKVd4wJvrwp60973PJKtLSEFCfc50GblC-DzW1lAgVyuMcM_EsVzNekBU-kEMGsNr4O_qim7-1akytGwFPJYT6q_6YwcYtezMyFyh28GsHaMthPdSt8iWnsBNY7JT7Ue4SG9KeBMEIHr_kSsVhkkfaOaYt9jTb8jqNW4ORb5NLusN2QgwaS_xtN');
+    if (logoSrc !== FALLBACK_LOGO_URL) {
+      setLogoSrc(FALLBACK_LOGO_URL);
+    }
   };
 
   const handleLogo2Error = () => {
-    setLogo2Src(secondLogo);
+    if (logo2Src !== leftLogoJpeg) {
+      setLogo2Src(leftLogoJpeg);
+    }
   };
 
   const filteredStudents = searchQuery.trim()
@@ -103,13 +110,8 @@ export const EntranceView: React.FC<EntranceViewProps> = ({
             Centurion University
           </h1>
           <p className="text-blue-600 dark:text-emerald-400 text-sm md:text-base font-bold tracking-widest uppercase">
-            Campus Activity & Social Responsibility (CaSR)
+            Cultural and Social Responsibility (CaSR)
           </p>
-          <div className="py-2 border-y border-gray-200/50 dark:border-white/10 max-w-md mx-auto">
-            <p className="text-xs md:text-sm italic font-semibold text-rose-600 dark:text-emerald-300 tracking-wider">
-              "Shaping Lives... Empowering Communities..."
-            </p>
-          </div>
         </div>
 
         {/* Portal Entry Input Container */}

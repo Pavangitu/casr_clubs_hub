@@ -4,32 +4,17 @@ echo   Pushing CaSR Clubs Hub to GitHub
 echo ==========================================
 echo.
 
-echo 1. Initializing local Git repository...
-git init
-
-echo.
-echo 2. Setting main branch...
-git branch -M main
-
-echo.
-echo 3. Adding remote repository...
-git remote remove origin 2>nul
-git remote add origin https://github.com/Pavangitu/casr-clubs-hub.git
-
-echo.
-echo 4. Staging files...
+echo Staging files...
 git add .
 
-echo.
-echo 5. Creating initial commit...
-git commit -m "Initial commit - CaSR Clubs Hub project"
+echo Committing changes...
+git commit -m "Update EntranceView logos and tagline to Cultural and Social Responsibility (CaSR)"
 
-echo.
-echo 6. Pushing to GitHub (https://github.com/Pavangitu/casr-clubs-hub.git)...
-git push -u origin main
+echo Pushing local main branch to remote...
+git push -u origin main --force
 
 echo.
 echo ==========================================
-echo Process complete!
+echo Process complete! Project pushed successfully.
 echo ==========================================
 pause
