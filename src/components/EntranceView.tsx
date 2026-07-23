@@ -19,8 +19,8 @@ export const EntranceView: React.FC<EntranceViewProps> = ({
   toggleTheme,
   onEnter
 }) => {
-  const [logoSrc, setLogoSrc] = useState<string>(leftLogoJpeg || '/src/logo.png');
-  const [logo2Src, setLogo2Src] = useState<string>(logo2Png || leftLogoJpeg);
+  const [logoSrc, setLogoSrc] = useState<string>(logo2Png || '/src/logo.png');
+  const [logo2Src, setLogo2Src] = useState<string>(leftLogoJpeg || FALLBACK_LOGO_URL);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStudent, setSelectedStudent] = useState<StudentProfile | null>(null);
 
@@ -31,8 +31,8 @@ export const EntranceView: React.FC<EntranceViewProps> = ({
   };
 
   const handleLogo2Error = () => {
-    if (logo2Src !== leftLogoJpeg) {
-      setLogo2Src(leftLogoJpeg);
+    if (logo2Src !== FALLBACK_LOGO_URL) {
+      setLogo2Src(FALLBACK_LOGO_URL);
     }
   };
 
@@ -76,13 +76,13 @@ export const EntranceView: React.FC<EntranceViewProps> = ({
       <main className="flex-1 flex flex-col items-center justify-center max-w-2xl mx-auto w-full my-8 space-y-8 text-center">
         {/* Dual Logo Container */}
         <div className="flex items-center justify-center gap-6 md:gap-10 animate-in fade-in duration-700">
-          {/* Centurion University Logo */}
-          <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-full bg-white dark:bg-slate-900/80 p-3 shadow-2xl border-2 border-white/60 dark:border-white/10 flex items-center justify-center hover:scale-105 transition-transform duration-300" style={{ animation: 'float 4s ease-in-out infinite' }}>
+          {/* CaSR Owl Logo (Left) */}
+          <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-full bg-white dark:bg-slate-900/90 p-2 shadow-2xl border-2 border-white/80 dark:border-white/20 flex items-center justify-center hover:scale-105 transition-transform duration-300 overflow-hidden" style={{ animation: 'float 4s ease-in-out infinite' }}>
             <img
               src={logoSrc}
               onError={handleLogoError}
-              alt="Centurion University Logo"
-              className="w-full h-full object-contain"
+              alt="CaSR Logo"
+              className="w-full h-full object-contain rounded-full"
             />
           </div>
 
@@ -93,13 +93,13 @@ export const EntranceView: React.FC<EntranceViewProps> = ({
             <div className="w-px h-10 bg-gradient-to-b from-transparent via-gray-300 dark:via-gray-600 to-transparent" />
           </div>
 
-          {/* Centurion University Logo (Right - new version) */}
-          <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-full bg-white dark:bg-slate-900/80 p-3 shadow-2xl border-2 border-white/60 dark:border-white/10 flex items-center justify-center hover:scale-105 transition-transform duration-300" style={{ animation: 'float 4s ease-in-out infinite 0.6s' }}>
+          {/* Centurion University Emblem (Right) */}
+          <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-full bg-white dark:bg-slate-900/90 p-2 shadow-2xl border-2 border-white/80 dark:border-white/20 flex items-center justify-center hover:scale-105 transition-transform duration-300 overflow-hidden" style={{ animation: 'float 4s ease-in-out infinite 0.6s' }}>
             <img
               src={logo2Src}
               onError={handleLogo2Error}
               alt="Centurion University Logo"
-              className="w-full h-full object-contain"
+              className="w-full h-full object-contain rounded-full"
             />
           </div>
         </div>
