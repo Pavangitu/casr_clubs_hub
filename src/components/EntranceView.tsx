@@ -19,19 +19,23 @@ export const EntranceView: React.FC<EntranceViewProps> = ({
   toggleTheme,
   onEnter
 }) => {
-  const [logoSrc, setLogoSrc] = useState<string>(logo2Png || '/src/logo.png');
-  const [logo2Src, setLogo2Src] = useState<string>(leftLogoJpeg || FALLBACK_LOGO_URL);
+  const [logoSrc, setLogoSrc] = useState<string>('/logo_casr.png');
+  const [logo2Src, setLogo2Src] = useState<string>('/logo_centurion.jpeg');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStudent, setSelectedStudent] = useState<StudentProfile | null>(null);
 
   const handleLogoError = () => {
-    if (logoSrc !== FALLBACK_LOGO_URL) {
+    if (logoSrc !== logo2Png && logo2Png) {
+      setLogoSrc(logo2Png);
+    } else if (logoSrc !== FALLBACK_LOGO_URL) {
       setLogoSrc(FALLBACK_LOGO_URL);
     }
   };
 
   const handleLogo2Error = () => {
-    if (logo2Src !== FALLBACK_LOGO_URL) {
+    if (logo2Src !== leftLogoJpeg && leftLogoJpeg) {
+      setLogo2Src(leftLogoJpeg);
+    } else if (logo2Src !== FALLBACK_LOGO_URL) {
       setLogo2Src(FALLBACK_LOGO_URL);
     }
   };
