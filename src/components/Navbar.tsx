@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavTab, ThemeMode, StudentProfile, NotificationItem } from '../types';
-import { Moon, Sun, Bell, Search, CheckCircle, Calendar, Users, X, UserCheck } from 'lucide-react';
+import { Moon, Sun, Bell, Search, X } from 'lucide-react';
 
 interface NavbarProps {
   activeTab: NavTab;
@@ -145,8 +145,6 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
           )}
         </div>
-
-
       </div>
     </nav>
   );

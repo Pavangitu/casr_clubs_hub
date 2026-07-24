@@ -9,10 +9,31 @@ interface HistoryModalProps {
 
 export const HistoryModal: React.FC<HistoryModalProps> = ({ student, onClose }) => {
   const [filter, setFilter] = useState<'ALL' | 'PRESENT' | 'ABSENT'>('ALL');
+  const [timeRange, setTimeRange] = useState<'PRESENT_WEEK' | 'PRESENT_MONTH' | 'ALL'>('ALL');
 
-  const filteredHistory = student.recentHistory.filter((item) => {
-    if (filter === 'ALL') return true;
-    return item.status === filter;
+  // Sort history in DESCENDING order (newest/present data at the very top)
+  const sortedHistory = [...(student.recentHistory || [])].sort((a, b) => {
+    const timeA = a.date ? new Date(a.date).getTime() : 0;
+    const timeB = b.date ? new Date(b.date).getTime() : 0;
+    return timeB - timeA;
+  });
+
+  const filteredHistory = sortedHistory.filter((item) => {
+    if (filter !== 'ALL' && item.status !== filter) return false;
+
+    if (timeRange === 'PRESENT_WEEK') {
+      const recTime = item.date ? new Date(item.date).getTime() : 0;
+      const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+      if (recTime < sevenDaysAgo) return false;
+    } else if (timeRange === 'PRESENT_MONTH') {
+      const recDate = item.date ? new Date(item.date) : null;
+      const now = new Date();
+      if (recDate && (recDate.getMonth() !== now.getMonth() || recDate.getFullYear() !== now.getFullYear())) {
+        return false;
+      }
+    }
+
+    return true;
   });
 
   const totalHours = filteredHistory.reduce((acc, curr) => acc + curr.durationHours, 0);
@@ -24,7 +45,7 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({ student, onClose }) 
         <div className="p-6 border-b border-gray-200/50 dark:border-white/10 flex justify-between items-center">
           <div>
             <h2 className="text-xl font-bold flex items-center gap-2">
-              <Award className="w-5 h-5 text-blue-500" /> Complete Attendance History
+              <Award className="w-5 h-5 text-blue-500" /> Attendance History Details
             </h2>
             <p className="text-xs text-gray-500 dark:text-gray-400">
               Student: <span className="font-bold text-blue-600 dark:text-emerald-400">{student.name}</span> ({student.registrationNumber})
@@ -40,25 +61,43 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({ student, onClose }) 
 
         {/* Filter Bar & Quick Metrics */}
         <div className="p-4 bg-gray-100/60 dark:bg-gray-800/50 flex flex-wrap justify-between items-center gap-3 px-6 text-xs">
-          <div className="flex gap-2">
-            {(['ALL', 'PRESENT', 'ABSENT'] as const).map((f) => (
-              <button
-                key={f}
-                onClick={() => setFilter(f)}
-                className={`px-3 py-1 rounded-full font-bold transition-colors ${
-                  filter === f
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-white/60 dark:bg-white/10 text-gray-600 dark:text-gray-300 hover:bg-white'
-                }`}
-              >
-                {f}
-              </button>
-            ))}
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-[11px] font-bold text-gray-400 uppercase mr-1">Range:</span>
+            <button
+              onClick={() => setTimeRange('ALL')}
+              className={`px-3.5 py-1 rounded-full font-bold transition-colors ${
+                timeRange === 'ALL'
+                  ? 'bg-blue-600 text-white shadow-sm'
+                  : 'bg-white/60 dark:bg-white/10 text-gray-600 dark:text-gray-300 hover:bg-white'
+              }`}
+            >
+              All Records ({sortedHistory.length})
+            </button>
+            <button
+              onClick={() => setTimeRange('PRESENT_WEEK')}
+              className={`px-3 py-1 rounded-full font-bold transition-colors ${
+                timeRange === 'PRESENT_WEEK'
+                  ? 'bg-emerald-600 text-white shadow-sm'
+                  : 'bg-white/60 dark:bg-white/10 text-gray-600 dark:text-gray-300 hover:bg-white'
+              }`}
+            >
+              Present Week
+            </button>
+            <button
+              onClick={() => setTimeRange('PRESENT_MONTH')}
+              className={`px-3 py-1 rounded-full font-bold transition-colors ${
+                timeRange === 'PRESENT_MONTH'
+                  ? 'bg-purple-600 text-white shadow-sm'
+                  : 'bg-white/60 dark:bg-white/10 text-gray-600 dark:text-gray-300 hover:bg-white'
+              }`}
+            >
+              Present Month
+            </button>
           </div>
 
           <div className="text-gray-500 dark:text-gray-400 font-medium flex items-center gap-2">
             <Clock className="w-4 h-4 text-emerald-500" />
-            <span>Total Filtered Hours: <strong>{totalHours.toFixed(1)} hrs</strong></span>
+            <span>Filtered Hours: <strong>{totalHours.toFixed(1)} hrs</strong></span>
           </div>
         </div>
 
@@ -93,23 +132,29 @@ export const HistoryModal: React.FC<HistoryModalProps> = ({ student, onClose }) 
                 </div>
               </div>
 
-              <div className="text-right shrink-0">
+              <div className="text-right shrink-0 flex items-center gap-2">
                 <span
-                  className={`inline-block px-3 py-1 rounded-full text-[11px] font-bold tracking-wider ${
+                  className={`inline-block px-3 py-1 rounded-full text-[11px] font-bold tracking-wider border ${
                     rec.status === 'PRESENT'
-                      ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-                      : 'bg-red-500/10 text-red-600 dark:text-red-400'
+                      ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
+                      : 'bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20'
                   }`}
                 >
-                  {rec.durationFormatted || `${rec.durationHours} hrs`}
+                  {rec.status === 'ABSENT' ? `ABSENT (${rec.durationFormatted || '0 hrs'})` : (rec.durationFormatted || `${rec.durationHours} hrs`)}
                 </span>
               </div>
             </div>
           ))}
 
           {filteredHistory.length === 0 && (
-            <div className="text-center py-10 text-gray-400 text-xs">
-              No attendance records matching filter criteria.
+            <div className="text-center py-10 text-gray-400 text-xs space-y-3">
+              <p>No attendance records matching active filter range.</p>
+              <button
+                onClick={() => setTimeRange('ALL')}
+                className="px-4 py-2 bg-blue-600 text-white rounded-xl font-bold shadow hover:bg-blue-500 transition-all text-xs"
+              >
+                View All Attendance Records ({sortedHistory.length})
+              </button>
             </div>
           )}
         </div>

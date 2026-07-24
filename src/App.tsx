@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { NavTab, ThemeMode, StudentProfile, Club, CampusEvent } from './types';
 import { MOCK_CLUBS, MOCK_STUDENTS, MOCK_EVENTS, MOCK_NOTIFICATIONS } from './data/mockData';
-import { fetchLiveAttendanceData } from './services/googleSheetsService';
+import { fetchLiveAttendanceData, getCachedLiveAttendanceData } from './services/googleSheetsService';
 import { AuroraCanvas } from './components/AuroraCanvas';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
@@ -20,8 +20,12 @@ export default function App() {
   const [isEntered, setIsEntered] = useState(false);
   const [activeTab, setActiveTab] = useState<NavTab>('dashboard');
   const [theme, setTheme] = useState<ThemeMode>('light');
-  const [allStudents, setAllStudents] = useState<StudentProfile[]>(MOCK_STUDENTS);
-  const [currentStudent, setCurrentStudent] = useState<StudentProfile>(MOCK_STUDENTS[0]);
+  const [allStudents, setAllStudents] = useState<StudentProfile[]>(() => getCachedLiveAttendanceData() || MOCK_STUDENTS);
+  const [currentStudent, setCurrentStudent] = useState<StudentProfile>(() => {
+    const initialList = getCachedLiveAttendanceData() || MOCK_STUDENTS;
+    return initialList[0];
+  });
+
   const [clubs, setClubs] = useState<Club[]>(MOCK_CLUBS);
   const [events, setEvents] = useState<CampusEvent[]>(MOCK_EVENTS);
   const [notifications, setNotifications] = useState(MOCK_NOTIFICATIONS);
@@ -35,9 +39,12 @@ export default function App() {
   // Live Google Sheets sync states
   const [isSyncingSheets, setIsSyncingSheets] = useState(false);
   const [lastSyncedTime, setLastSyncedTime] = useState<string>('Just now');
+  const isFetchingRef = React.useRef(false);
 
-  const loadLiveAttendance = async () => {
-    setIsSyncingSheets(true);
+  const loadLiveAttendance = async (silent = false) => {
+    if (isFetchingRef.current) return;
+    isFetchingRef.current = true;
+    if (!silent) setIsSyncingSheets(true);
     try {
       const liveStudents = await fetchLiveAttendanceData();
       if (liveStudents && liveStudents.length > 0) {
@@ -48,30 +55,58 @@ export default function App() {
           );
           return matched || liveStudents[0];
         });
+        setViewingHistoryStudent((prev) => {
+          if (!prev) return null;
+          const matched = liveStudents.find(
+            (s) => s.registrationNumber.toLowerCase() === prev.registrationNumber.toLowerCase()
+          );
+          return matched || prev;
+        });
         setLastSyncedTime(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
       }
     } catch (err) {
       console.warn('Live Google Sheets fetch failed, keeping fallback students:', err);
     } finally {
-      setIsSyncingSheets(false);
+      if (!silent) setIsSyncingSheets(false);
+      isFetchingRef.current = false;
     }
   };
 
-  // Fetch live Google Sheets attendance data on mount and set auto-polling every 3s
+  // Fetch live Google Sheets attendance data on mount and set auto-polling every 1s
   useEffect(() => {
     let isMounted = true;
-    loadLiveAttendance();
+    loadLiveAttendance(false);
 
-    // Live auto-sync interval (every 3 seconds for instant real-time responsiveness)
+    // Ultra-responsive live auto-sync interval (every 1 second)
     const intervalId = setInterval(() => {
-      if (isMounted) loadLiveAttendance();
-    }, 3000);
+      if (isMounted) loadLiveAttendance(true);
+    }, 1000);
 
     return () => {
       isMounted = false;
       clearInterval(intervalId);
     };
   }, []);
+
+  // Dynamically update member counts for each club based on active registered students dataset
+  useEffect(() => {
+    if (!allStudents || allStudents.length === 0) return;
+    setClubs((prevClubs) =>
+      prevClubs.map((club) => {
+        const rawName = club.name.replace(/^[^\w\s]+\s*/, '').toLowerCase().trim();
+        const memberCount = allStudents.filter((s) => {
+          const pClub = (s.clubName || '').toLowerCase();
+          const allClubs = (s.allClubs || []).map((c) => c.toLowerCase());
+          return pClub.includes(rawName) || allClubs.some((c) => c.includes(rawName));
+        }).length;
+
+        return {
+          ...club,
+          activeMembers: Math.max(club.activeMembers, memberCount)
+        };
+      })
+    );
+  }, [allStudents]);
 
   // Sync theme class to document root
   useEffect(() => {
@@ -87,6 +122,98 @@ export default function App() {
 
   const toggleTheme = () => {
     setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
+  };
+
+  const handleVerifyStudentAttendance = (regNo: string) => {
+    const todayStr = new Date().toLocaleDateString('en-US');
+    const nowTimeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const cleanReg = regNo.trim().toLowerCase();
+
+    setAllStudents((prevList) =>
+      prevList.map((st) => {
+        if (st.registrationNumber.toLowerCase() === cleanReg) {
+          const newRec = {
+            id: `rec-live-${Date.now()}`,
+            date: todayStr,
+            eventName: `${st.clubName || 'Campus Club'} Active Check-In (Live Session & Location Capture)`,
+            eventCategory: 'Active Check-In',
+            clubName: st.clubName || 'Campus Club',
+            inTime: nowTimeStr,
+            durationHours: 2.0,
+            durationFormatted: '2 hrs (Active)',
+            status: 'PRESENT' as const,
+            rawScanType: 'IN' as const
+          };
+
+          const updatedHistory = [newRec, ...(st.recentHistory || [])];
+          const newInsCount = (st.insCount || st.eventsAttendedCount || 0) + 1;
+          const newHours = Number(((st.completedHours || 0) + 2.0).toFixed(1));
+
+          return {
+            ...st,
+            eventsAttendedCount: newInsCount,
+            insCount: newInsCount,
+            completedHours: newHours,
+            creditsEarned: (st.creditsEarned || 0) + 10,
+            recentHistory: updatedHistory
+          };
+        }
+        return st;
+      })
+    );
+
+    setCurrentStudent((prev) => {
+      if (prev.registrationNumber.toLowerCase() === cleanReg) {
+        const newRec = {
+          id: `rec-live-${Date.now()}`,
+          date: todayStr,
+          eventName: `${prev.clubName || 'Campus Club'} Active Check-In (Live Session & Location Capture)`,
+          eventCategory: 'Active Check-In',
+          clubName: prev.clubName || 'Campus Club',
+          inTime: nowTimeStr,
+          durationHours: 2.0,
+          durationFormatted: '2 hrs (Active)',
+          status: 'PRESENT' as const,
+          rawScanType: 'IN' as const
+        };
+        const updatedHistory = [newRec, ...(prev.recentHistory || [])];
+        const newInsCount = (prev.insCount || prev.eventsAttendedCount || 0) + 1;
+        const newHours = Number(((prev.completedHours || 0) + 2.0).toFixed(1));
+
+        return {
+          ...prev,
+          eventsAttendedCount: newInsCount,
+          insCount: newInsCount,
+          completedHours: newHours,
+          creditsEarned: (prev.creditsEarned || 0) + 10,
+          recentHistory: updatedHistory
+        };
+      }
+      return prev;
+    });
+
+    setViewingHistoryStudent((prev) => {
+      if (prev && prev.registrationNumber.toLowerCase() === cleanReg) {
+        const newRec = {
+          id: `rec-live-${Date.now()}`,
+          date: todayStr,
+          eventName: `${prev.clubName || 'Campus Club'} Active Check-In (Live Session & Location Capture)`,
+          eventCategory: 'Active Check-In',
+          clubName: prev.clubName || 'Campus Club',
+          inTime: nowTimeStr,
+          durationHours: 2.0,
+          durationFormatted: '2 hrs (Active)',
+          status: 'PRESENT' as const,
+          rawScanType: 'IN' as const
+        };
+        const updatedHistory = [newRec, ...(prev.recentHistory || [])];
+        return {
+          ...prev,
+          recentHistory: updatedHistory
+        };
+      }
+      return prev;
+    });
   };
 
   return (
@@ -135,6 +262,7 @@ export default function App() {
             {activeTab === 'clubs' && (
               <ClubDirectoryView
                 clubs={clubs}
+                totalStudentsCount={allStudents.length}
                 onSelectClubView={(club) => setViewingClub(club)}
                 onSelectClubJoin={(club) => setJoiningClub(club)}
               />
@@ -148,6 +276,7 @@ export default function App() {
                 setActiveTab={setActiveTab}
                 onOpenHistoryModal={(st) => setViewingHistoryStudent(st)}
                 onOpenJoinModal={(club) => setJoiningClub(club)}
+                onVerifyStudentAttendance={handleVerifyStudentAttendance}
               />
             )}
 

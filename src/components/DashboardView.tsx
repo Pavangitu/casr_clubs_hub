@@ -9,6 +9,7 @@ interface DashboardViewProps {
   setActiveTab: (tab: NavTab) => void;
   onOpenHistoryModal: (student: StudentProfile) => void;
   onOpenJoinModal: (club: Club) => void;
+  onVerifyStudentAttendance?: (regNo: string) => void;
 }
 
 export const DashboardView: React.FC<DashboardViewProps> = ({
@@ -17,7 +18,8 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   events,
   setActiveTab,
   onOpenHistoryModal,
-  onOpenJoinModal
+  onOpenJoinModal,
+  onVerifyStudentAttendance
 }) => {
   const [quickRegInput, setQuickRegInput] = useState('');
   const [verifiedSuccess, setVerifiedSuccess] = useState(false);
@@ -25,6 +27,9 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   const handleVerifyAttendance = (e: React.FormEvent) => {
     e.preventDefault();
     if (!quickRegInput.trim()) return;
+    if (onVerifyStudentAttendance) {
+      onVerifyStudentAttendance(quickRegInput);
+    }
     setVerifiedSuccess(true);
     setTimeout(() => {
       setVerifiedSuccess(false);
@@ -45,7 +50,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               Campus Clubs Portal & Analytics
             </h1>
             <p className="text-xs md:text-sm text-gray-600 dark:text-gray-300">
-              Track your attendance credits, upcoming workshops, and elite club standing.
+              Track your attendance, upcoming workshops, and elite club standing.
             </p>
           </div>
 
@@ -66,7 +71,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
         </div>
 
         {/* Quick Stats Banner */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-8 pt-8 border-t border-gray-200/50 dark:border-white/10">
+        <div className="grid grid-cols-2 gap-4 mt-8 pt-8 border-t border-gray-200/50 dark:border-white/10">
           <div className="space-y-1">
             <p className="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
               Attendance Rate
@@ -78,28 +83,10 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
 
           <div className="space-y-1">
             <p className="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-              Earned Credits
-            </p>
-            <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
-              {currentStudent.creditsEarned} pts
-            </p>
-          </div>
-
-          <div className="space-y-1">
-            <p className="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
               Member Tier
             </p>
             <p className="text-2xl font-bold text-purple-600 dark:text-purple-300">
               {currentStudent.statusTier}
-            </p>
-          </div>
-
-          <div className="space-y-1">
-            <p className="text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-              Total Events
-            </p>
-            <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">
-              {currentStudent.eventsAttendedCount}
             </p>
           </div>
         </div>

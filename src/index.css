@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:where(.dark, .dark *));
+@variant dark (&:where(.dark, .dark *));
 
 @layer base {
   :root {
@@ -55,15 +55,29 @@ body.dark .glass-card {
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(65, 105, 225, 0.1);
 }
 
+/* Neumorphic Card Style */
+.neumorphic-card {
+  background: #f1f5f9;
+  box-shadow: 8px 8px 20px #cbd5e1, -8px -8px 20px #ffffff;
+  border-radius: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.dark .neumorphic-card {
+  background: #0f172a;
+  box-shadow: 8px 8px 20px #060911, -8px -8px 20px #182543;
+  border-radius: 1.5rem;
+}
+
 /* Neumorphic Inset */
 .neumorphic-inset {
-  background: #faf8ff;
-  box-shadow: inset 2px 2px 5px #d1d1d1, inset -2px -2px 5px #ffffff;
+  background: #f1f5f9;
+  box-shadow: inset 4px 4px 8px #cbd5e1, inset -4px -4px 8px #ffffff;
 }
 
 .dark .neumorphic-inset {
-  background: #11131a;
-  box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.5), inset -4px -4px 8px rgba(255, 255, 255, 0.02);
+  background: #0b0f19;
+  box-shadow: inset 4px 4px 8px #04060b, inset -4px -4px 8px #121827;
 }
 
 /* Liquid Gradient Buttons */

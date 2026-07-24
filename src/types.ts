@@ -98,3 +98,19 @@ export interface NotificationItem {
   unread: boolean;
   type: 'event' | 'attendance' | 'club' | 'system';
 }
+
+export interface SyncLogEntry {
+  id: string;
+  timestamp: string;
+  triggerType: 'AUTO' | 'MANUAL' | 'INITIAL' | string;
+  status: 'SUCCESS' | 'WARNING' | 'ERROR';
+  recordsAdded: number;
+  recordsUpdated: number;
+  recordsDeleted: number;
+  duplicatesSkipped: number;
+  failedRecords: number;
+  executionTimeMs: number;
+  totalRecordsProcessed: number;
+  errorMessage?: string;
+}
+

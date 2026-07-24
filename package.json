@@ -8,7 +8,9 @@
     "build": "vite build",
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "sync": "node sync-sheet-data.js",
+    "deploy": "node sync-sheet-data.js && git add src/data/realStudentsData.ts && git commit -m \"Auto-sync: Update student data from Google Sheet\" && git push -u origin main"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",

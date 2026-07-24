@@ -4,12 +4,14 @@ import { Search, Users, Award, Calendar, School, UserCheck, Sparkles, ArrowRight
 
 interface ClubDirectoryViewProps {
   clubs: Club[];
+  totalStudentsCount?: number;
   onSelectClubView: (club: Club) => void;
   onSelectClubJoin: (club: Club) => void;
 }
 
 export const ClubDirectoryView: React.FC<ClubDirectoryViewProps> = ({
   clubs,
+  totalStudentsCount,
   onSelectClubView,
   onSelectClubJoin
 }) => {
@@ -78,7 +80,7 @@ export const ClubDirectoryView: React.FC<ClubDirectoryViewProps> = ({
             style={{ animationDelay: '0.4s' }}
           >
             <span className="text-4xl md:text-5xl font-extrabold text-blue-600 dark:text-blue-400">
-              5000+
+              {totalStudentsCount ? `${totalStudentsCount}+` : '2000+'}
             </span>
             <span className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mt-1">
               Global Members

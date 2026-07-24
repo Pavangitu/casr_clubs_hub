@@ -42,7 +42,7 @@ export const MOCK_CLUBS: Club[] = [
     description: 'Celebrating world cinema, screenwriting, filmmaking, and film analysis.',
     fullDescription: 'Movie Club organizes weekly film screenings, director Q&As, short film competitions, screenwriting retreats, and cinematography workshops for cinephiles.',
     image: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&q=80&w=600',
-    facultyLead: 'Dr. Susanta Kumar Patnaik & Dr. Nihal R.',
+    facultyLead: 'Dr. Nihal R.',
     studentLead: 'G. Pavan Datta & Krutisundar Behera',
     activeMembers: 120,
     meetingSchedule: 'Friday, 6:00 PM - 9:00 PM',

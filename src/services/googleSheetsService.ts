@@ -1,11 +1,40 @@
 import { StudentProfile, AttendanceRecord } from '../types';
 import { REAL_STUDENTS_DATA } from '../data/realStudentsData';
 
+export const MASTER_GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc/edit?usp=sharing';
+
+// All club tab URLs, each with a specific GID so we fetch every club's data
 export const GOOGLE_SHEETS_URLS = [
-  'https://docs.google.com/spreadsheets/d/19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc/gviz/tq?tqx=out:csv',
-  'https://docs.google.com/spreadsheets/d/1qxQ4m_VXukgkT23SwK3B7uhR2sOp5XH5WqFpcwTu59g/gviz/tq?tqx=out:csv',
-  'https://docs.google.com/spreadsheets/d/1MQFgiFZ_l7baUkmZstVYEhUhVxK6i-7QjcqdDb_IcT8/gviz/tq?tqx=out:csv'
+  // Primary sheet — all club tabs by GID (discovered from the actual sheet)
+  'https://docs.google.com/spreadsheets/d/19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc/gviz/tq?tqx=out:csv&gid=1997413871', // Agrifora Club
+  'https://docs.google.com/spreadsheets/d/19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc/gviz/tq?tqx=out:csv&gid=1747670817', // DANCE CLUB
+  'https://docs.google.com/spreadsheets/d/19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc/gviz/tq?tqx=out:csv&gid=1824463464', // Drama Club
+  'https://docs.google.com/spreadsheets/d/19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc/gviz/tq?tqx=out:csv&gid=1336789504', // Fashion Club
+  'https://docs.google.com/spreadsheets/d/19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc/gviz/tq?tqx=out:csv&gid=2060228171', // Language Club
+  'https://docs.google.com/spreadsheets/d/19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc/gviz/tq?tqx=out:csv&gid=578752662',  // Literature Club
+  'https://docs.google.com/spreadsheets/d/19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc/gviz/tq?tqx=out:csv&gid=1476951718', // MOVIE CLUB
+  'https://docs.google.com/spreadsheets/d/19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc/gviz/tq?tqx=out:csv&gid=1771686445', // Photography Club
+  'https://docs.google.com/spreadsheets/d/19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc/gviz/tq?tqx=out:csv&gid=700032659',  // Painting Club
+  'https://docs.google.com/spreadsheets/d/19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc/gviz/tq?tqx=out:csv&gid=1198898863', // Music Club
+  // Secondary sheet (default tab)
+  'https://docs.google.com/spreadsheets/d/1qxQ4m_VXukgkT23SwK3B7uhR2sOp5XH5WqFpcwTu59g/gviz/tq?tqx=out:csv'
 ];
+
+export let APPS_SCRIPT_WEBAPP_URL = '';
+
+export function getCustomSheetUrl(): string {
+  if (typeof localStorage !== 'undefined') {
+    const saved = localStorage.getItem('CASR_CUSTOM_GOOGLE_SHEET_URL');
+    if (saved && saved.trim()) return saved.trim();
+  }
+  return MASTER_GOOGLE_SHEET_URL;
+}
+
+export function setCustomSheetUrl(url: string): void {
+  if (typeof localStorage !== 'undefined') {
+    localStorage.setItem('CASR_CUSTOM_GOOGLE_SHEET_URL', url.trim());
+  }
+}
 
 export interface RealStudentDataRecord extends StudentProfile {
   allClubs: string[];
@@ -38,19 +67,13 @@ const AVATARS = [
   'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=300'
 ];
 
-/**
- * Robust Timestamp Parser
- * Parses strings like "9/9/2025 17:54:05", "09/09/2025 5:54:05 PM", "2025-09-09T17:54:05", etc.
- */
 export function parseTimestamp(tsStr: string): Date | null {
   if (!tsStr || !tsStr.trim()) return null;
   const clean = tsStr.trim().replace(/^"|"$/g, '');
 
-  // Direct Date attempt
   const direct = new Date(clean);
   if (!isNaN(direct.getTime())) return direct;
 
-  // Custom regex parsing for M/D/YYYY H:M:S or M/D/YYYY H:M:S AM/PM
   const match = clean.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})(?:\s+(\d{1,2}):(\d{2})(?::(\d{2}))?(?:\s*(AM|PM))?)?$/i);
   if (match) {
     const month = parseInt(match[1], 10) - 1;
@@ -60,10 +83,8 @@ export function parseTimestamp(tsStr: string): Date | null {
     const minute = match[5] ? parseInt(match[5], 10) : 0;
     const second = match[6] ? parseInt(match[6], 10) : 0;
     const ampm = match[7] ? match[7].toUpperCase() : null;
-
     if (ampm === 'PM' && hour < 12) hour += 12;
     if (ampm === 'AM' && hour === 12) hour = 0;
-
     return new Date(year, month, day, hour, minute, second);
   }
 
@@ -80,23 +101,19 @@ export function formatDuration(hoursNum: number): string {
   const totalMins = Math.round(hoursNum * 60);
   const hrs = Math.floor(totalMins / 60);
   const mins = totalMins % 60;
-
   if (hrs === 0) return `${mins} mins`;
   if (mins === 0) return `${hrs} hr${hrs > 1 ? 's' : ''}`;
   return `${hrs} hr${hrs > 1 ? 's' : ''} ${mins} min${mins > 1 ? 's' : ''}`;
 }
 
-// Helper to parse CSV lines safely considering quotes
 function parseCsvRows(csvText: string): string[][] {
   const lines = csvText.split('\n');
   const result: string[][] = [];
-
   for (const line of lines) {
     if (!line.trim()) continue;
     const row: string[] = [];
     let insideQuote = false;
     let current = '';
-
     for (let i = 0; i < line.length; i++) {
       const char = line[i];
       if (char === '"') {
@@ -114,59 +131,61 @@ function parseCsvRows(csvText: string): string[][] {
   return result;
 }
 
+function capitalizeWords(str: string): string {
+  if (!str) return '';
+  return str.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+}
+
 function parseRowsToMap(rows: string[][], studentsMap: Record<string, any> = {}): Record<string, any> {
   if (rows.length === 0) return studentsMap;
 
-  // Find header row
+  // Find header row within first 5 rows
   let headerIdx = 0;
   for (let i = 0; i < Math.min(5, rows.length); i++) {
     const row = rows[i];
-    if (row.some(col => col.toLowerCase().includes('reg') || col.toLowerCase().includes('timestamp'))) {
+    if (row.some(col => {
+      const c = col.toLowerCase().trim();
+      return c.includes('reg') || c === 'timestamp' || c.includes('email') || c === 'name' || c === 'timeing';
+    })) {
       headerIdx = i;
       break;
     }
   }
-  const headerRow = rows[headerIdx];
 
+  const headerRow = rows[headerIdx];
   const indexMap: Record<string, number> = {
-    timestamp: -1,
-    email: -1,
-    name: -1,
-    regNo: -1,
-    degree: -1,
-    semester: -1,
-    club: -1,
-    reason: -1,
-    timing: -1
+    timestamp: -1, email: -1, name: -1, regNo: -1,
+    degree: -1, semester: -1, club: -1, reason: -1, timing: -1
   };
 
   headerRow.forEach((col, idx) => {
     const header = col.trim().toLowerCase();
-    if (header.includes('timestamp')) {
+    if ((header === 'timestamp' || header === 'timeing' || header.startsWith('time') || header.includes('date')) && indexMap.timestamp === -1) {
       indexMap.timestamp = idx;
-    } else if (header.includes('email')) {
+    } else if (header.includes('email') && indexMap.email === -1) {
       indexMap.email = idx;
-    } else if (header.includes('reg') && (header.includes('no') || header.includes('number') || header.includes('n.o'))) {
+    } else if ((header === 'reg.no' || header === 'reg. no' || header.includes('reg') || header.includes('roll') || header.includes('registration')) && indexMap.regNo === -1) {
       indexMap.regNo = idx;
-    } else if (header.includes('degree') || header.includes('program')) {
+    } else if ((header.includes('degree') || header.includes('program') || header.includes('branch') || header.includes('course')) && indexMap.degree === -1) {
       indexMap.degree = idx;
-    } else if (header.includes('semester') || header.includes('sem') || header.includes('year')) {
+    } else if ((header.includes('semester') || header.includes('sem') || header === 'year') && indexMap.semester === -1) {
       indexMap.semester = idx;
-    } else if (header.includes('club')) {
+    } else if ((header === 'club' || header.includes('club name') || header.includes('activity')) && indexMap.club === -1) {
       indexMap.club = idx;
-    } else if (header.includes('reason')) {
+    } else if ((header === 'reason' || header.includes('purpose') || header.includes('event')) && indexMap.reason === -1) {
       indexMap.reason = idx;
-    } else if (header.includes('timing') || header.includes('attendance') || header.includes('in/out') || header.includes('in / out')) {
+    } else if ((header.includes('mark attendance') || header.includes('in/out') || header.includes('in / out') || header === 'timing' || header === 'attendance') && indexMap.timing === -1) {
       indexMap.timing = idx;
-    } else if (header.includes('name') && indexMap.name === -1) {
+    } else if ((header === 'name' || header === 'student name') && indexMap.name === -1) {
       indexMap.name = idx;
     }
   });
 
-  if (indexMap.regNo === -1) indexMap.regNo = 3;
-  if (indexMap.name === -1) indexMap.name = 2;
+  // Fallbacks for common column order
   if (indexMap.timestamp === -1) indexMap.timestamp = 0;
   if (indexMap.email === -1) indexMap.email = 1;
+  if (indexMap.name === -1) indexMap.name = 2;
+  if (indexMap.regNo === -1) indexMap.regNo = 3;
   if (indexMap.degree === -1) indexMap.degree = 4;
   if (indexMap.semester === -1) indexMap.semester = 5;
   if (indexMap.club === -1) indexMap.club = 6;
@@ -175,12 +194,11 @@ function parseRowsToMap(rows: string[][], studentsMap: Record<string, any> = {})
 
   for (let i = headerIdx + 1; i < rows.length; i++) {
     const row = rows[i];
-    if (row.length < 4) continue;
+    if (row.length < 3) continue;
     const regNo = (row[indexMap.regNo] || '').trim().toUpperCase();
-
-    if (!regNo || regNo === 'REG.NO' || regNo === 'REG. NO' || regNo.includes('TIMESTAMP') || regNo.toLowerCase().includes('reg')) {
-      continue;
-    }
+    if (!regNo) continue;
+    const regLower = regNo.toLowerCase();
+    if (regLower.includes('reg') || regLower.includes('timestamp') || regLower === 'name') continue;
 
     const timestampStr = row[indexMap.timestamp] || '';
     const dateObj = parseTimestamp(timestampStr);
@@ -211,20 +229,12 @@ function parseRowsToMap(rows: string[][], studentsMap: Record<string, any> = {})
     if (email && email.includes('@') && email.length > st.email.length) st.email = email.trim();
     if (club) st.clubsSet.add(club);
 
-    const isIn = timing.toLowerCase().includes('in');
+    const timLower = timing.toLowerCase();
+    const isIn = timLower.includes('in') && !timLower.includes('out');
 
     st.rawScans.push({
-      timestampStr,
-      dateObj,
-      email,
-      name,
-      regNo,
-      degree,
-      semester: sem,
-      club,
-      reason,
-      timing,
-      isIn
+      timestampStr, dateObj, email, name, regNo, degree,
+      semester: sem, club, reason, timing, isIn
     });
   }
 
@@ -244,7 +254,6 @@ function mapEntriesToProfiles(studentsMap: Record<string, any>): RealStudentData
     const clubsList = Array.from(st.clubsSet) as string[];
     const primaryClub = (clubsList[0] as string) || 'Campus Club';
 
-    // Sort student's raw scans chronologically
     const rawScans: RawScan[] = st.rawScans || [];
     rawScans.sort((a, b) => {
       const timeA = a.dateObj ? a.dateObj.getTime() : 0;
@@ -256,19 +265,16 @@ function mapEntriesToProfiles(studentsMap: Record<string, any>): RealStudentData
     let outsCount = 0;
     const historyRecords: AttendanceRecord[] = [];
     let totalHoursCalculated = 0;
-
     let activeCheckInScan: RawScan | null = null;
 
     for (const scan of rawScans) {
       if (scan.isIn) {
         insCount += 1;
-        // If there was an unclosed IN scan from a previous date, close it with standard 2.0 hrs
         if (activeCheckInScan) {
           const club = activeCheckInScan.club || primaryClub;
           const dateStr = activeCheckInScan.timestampStr.split(' ')[0] || 'Logged Date';
           const defaultDuration = 2.0;
           totalHoursCalculated += defaultDuration;
-
           historyRecords.push({
             id: `rec-${historyRecords.length + 1}`,
             eventName: `${club} Session (${activeCheckInScan.reason || 'Check-In'})`,
@@ -284,27 +290,20 @@ function mapEntriesToProfiles(studentsMap: Record<string, any>): RealStudentData
         }
         activeCheckInScan = scan;
       } else {
-        // OUT Scan
         outsCount += 1;
         const club = scan.club || (activeCheckInScan ? activeCheckInScan.club : primaryClub);
-
         if (activeCheckInScan) {
-          // Paired IN and OUT scans! Calculate exact duration
-          let durationHours = 1.5; // fallback
+          let durationHours = 1.5;
           if (scan.dateObj && activeCheckInScan.dateObj) {
             const diffMs = scan.dateObj.getTime() - activeCheckInScan.dateObj.getTime();
             if (diffMs > 0) {
               durationHours = diffMs / (1000 * 60 * 60);
-              // Cap individual single session at max 6.0 hours in case of overnight/missing scan
               if (durationHours > 6.0) durationHours = 2.5;
             }
           }
-
           durationHours = Number(durationHours.toFixed(2));
           totalHoursCalculated += durationHours;
-
           const dateStr = activeCheckInScan.timestampStr.split(' ')[0] || scan.timestampStr.split(' ')[0] || 'Session Date';
-
           historyRecords.push({
             id: `rec-${historyRecords.length + 1}`,
             eventName: `${club} Session${scan.reason ? ' (' + scan.reason + ')' : ''}`,
@@ -318,14 +317,11 @@ function mapEntriesToProfiles(studentsMap: Record<string, any>): RealStudentData
             clubName: club,
             rawScanType: 'PAIRED'
           });
-
           activeCheckInScan = null;
         } else {
-          // Orphan OUT scan without previous IN scan
           const defaultDuration = 1.0;
           totalHoursCalculated += defaultDuration;
           const dateStr = scan.timestampStr.split(' ')[0] || 'Logged Date';
-
           historyRecords.push({
             id: `rec-${historyRecords.length + 1}`,
             eventName: `${club} Session (Check-Out)`,
@@ -342,26 +338,33 @@ function mapEntriesToProfiles(studentsMap: Record<string, any>): RealStudentData
       }
     }
 
-    // If there is still an active unclosed IN scan at the end
     if (activeCheckInScan) {
       const club = activeCheckInScan.club || primaryClub;
       const dateStr = activeCheckInScan.timestampStr.split(' ')[0] || 'Logged Date';
       const defaultDuration = 2.0;
       totalHoursCalculated += defaultDuration;
-
       historyRecords.push({
         id: `rec-${historyRecords.length + 1}`,
-        eventName: `${club} Active Check-In (${activeCheckInScan.reason || 'Ongoing'})`,
+        eventName: `${club} Session (${activeCheckInScan.reason || 'Check-In'})`,
         eventCategory: 'Active Check-In',
         date: dateStr,
         inTime: formatTime(activeCheckInScan.dateObj) || activeCheckInScan.timestampStr,
         durationHours: defaultDuration,
-        durationFormatted: formatDuration(defaultDuration) + ' (Active)',
+        durationFormatted: formatDuration(defaultDuration),
         status: 'PRESENT',
         clubName: club,
         rawScanType: 'IN'
       });
+      activeCheckInScan = null;
     }
+
+    // Deduplicate history
+    const uniqueHistoryMap = new Map<string, AttendanceRecord>();
+    for (const rec of historyRecords) {
+      const uKey = `${rec.date}_${rec.eventName}_${rec.inTime || ''}_${rec.outTime || ''}`;
+      if (!uniqueHistoryMap.has(uKey)) uniqueHistoryMap.set(uKey, rec);
+    }
+    const cleanHistoryRecords = Array.from(uniqueHistoryMap.values());
 
     const totalScans = rawScans.length;
     totalHoursCalculated = Number(totalHoursCalculated.toFixed(1));
@@ -399,16 +402,20 @@ function mapEntriesToProfiles(studentsMap: Record<string, any>): RealStudentData
       monthlyTrends: [
         { month: 'MAY', percentage: Math.max(40, attendancePct - 15), hours: Math.max(2, Number((totalHoursCalculated * 0.15).toFixed(1))) },
         { month: 'JUN', percentage: Math.max(50, attendancePct - 10), hours: Math.max(3, Number((totalHoursCalculated * 0.20).toFixed(1))) },
-        { month: 'JUL', percentage: Math.max(60, attendancePct - 5), hours: Math.max(4, Number((totalHoursCalculated * 0.25).toFixed(1))) },
+        { month: 'JUL', percentage: Math.max(60, attendancePct - 5),  hours: Math.max(4, Number((totalHoursCalculated * 0.25).toFixed(1))) },
         { month: 'AUG', percentage: Math.max(45, attendancePct - 12), hours: Math.max(3, Number((totalHoursCalculated * 0.18).toFixed(1))) },
-        { month: 'SEP', percentage: Math.max(70, attendancePct - 2), hours: Math.max(5, Number((totalHoursCalculated * 0.35).toFixed(1))) },
-        { month: 'OCT', percentage: attendancePct, hours: totalHoursCalculated }
+        { month: 'SEP', percentage: Math.max(70, attendancePct - 2),  hours: Math.max(5, Number((totalHoursCalculated * 0.35).toFixed(1))) },
+        { month: 'OCT', percentage: attendancePct,                    hours: totalHoursCalculated }
       ],
-      recentHistory: historyRecords.reverse(), // latest first
+      recentHistory: cleanHistoryRecords.sort((a, b) => {
+        const timeA = a.date ? new Date(a.date).getTime() : 0;
+        const timeB = b.date ? new Date(b.date).getTime() : 0;
+        return timeB - timeA;
+      }),
       allClubs: clubsList,
-      insCount: insCount,
-      outsCount: outsCount,
-      totalScans: totalScans,
+      insCount,
+      outsCount,
+      totalScans,
       degreeProgram: st.degreeProgram,
       semesterYear: st.semesterYear
     });
@@ -420,38 +427,32 @@ function mapEntriesToProfiles(studentsMap: Record<string, any>): RealStudentData
 export function buildProfilesFromCsv(csvDataArray: string[][]): RealStudentDataRecord[] {
   let studentsMap: Record<string, any> = {};
   if (csvDataArray.length > 0) {
-    studentsMap = parseRowsToMap(csvDataArray, studentsMap);
+    for (const csvData of csvDataArray) {
+      if (csvData && csvData.length > 0) {
+        studentsMap = parseSheetToMap(csvData.join('\n'), studentsMap);
+      }
+    }
   }
   return mapEntriesToProfiles(studentsMap);
 }
 
-function capitalizeWords(str: string): string {
-  if (!str) return '';
-  return str.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
-}
-
+// Parse GViz JSON JSONP response
 function parseGvizJsonResponse(responseText: string): string[][] {
   try {
-    const rawJson = responseText
-      .replace(/^[\s\S]*google\.visualization\.Query\.setResponse\(/, '')
-      .replace(/\);?\s*$/, '');
-    const data = JSON.parse(rawJson);
+    const jsonStart = responseText.indexOf('{');
+    const jsonEnd = responseText.lastIndexOf('}');
+    if (jsonStart === -1 || jsonEnd === -1) return [];
+
+    const jsonStr = responseText.substring(jsonStart, jsonEnd + 1);
+    const data = JSON.parse(jsonStr);
     if (!data || !data.table) return [];
 
     const extractedRows: string[][] = [];
-
-    // Extract cols labels if available
-    let headerFromCols: string[] = [];
     if (data.table.cols && Array.isArray(data.table.cols)) {
-      headerFromCols = data.table.cols.map((col: any) => (col && col.label ? String(col.label).trim() : ''));
-    }
-
-    const hasValidColHeader = headerFromCols.some(h => 
-      h.toLowerCase().includes('reg') || h.toLowerCase().includes('time') || h.toLowerCase().includes('name') || h.toLowerCase().includes('club')
-    );
-
-    if (hasValidColHeader) {
-      extractedRows.push(headerFromCols);
+      const headers = data.table.cols.map((col: any) => col && col.label ? String(col.label).trim() : '');
+      if (headers.some((h: string) => h.toLowerCase().includes('reg') || h.toLowerCase().includes('time') || h.toLowerCase().includes('name') || h.toLowerCase().includes('club'))) {
+        extractedRows.push(headers);
+      }
     }
 
     if (data.table.rows && Array.isArray(data.table.rows)) {
@@ -469,65 +470,156 @@ function parseGvizJsonResponse(responseText: string): string[][] {
 
     return extractedRows;
   } catch (err) {
-    console.warn('GViz JSON response parsing warning:', err);
     return [];
   }
 }
 
-export async function fetchLiveAttendanceData(): Promise<RealStudentDataRecord[]> {
-  try {
-    const fetchPromises = GOOGLE_SHEETS_URLS.map(async (baseUrl) => {
+// JSONP-based GViz fetch (works in browser without CORS)
+function fetchGvizJsonp(sheetId: string, tabParam = ''): Promise<string[][]> {
+  return new Promise((resolve) => {
+    if (typeof window === 'undefined' || typeof document === 'undefined') {
+      resolve([]);
+      return;
+    }
+
+    const script = document.createElement('script');
+    const timestamp = Date.now();
+    let timer: ReturnType<typeof setTimeout>;
+
+    if (!(window as any).google) (window as any).google = {};
+    if (!(window as any).google.visualization) (window as any).google.visualization = {};
+    if (!(window as any).google.visualization.Query) (window as any).google.visualization.Query = {};
+
+    const prevHandler = (window as any).google.visualization.Query.setResponse;
+
+    const cleanup = () => {
+      clearTimeout(timer);
       try {
-        const timestamp = Date.now();
-        const sheetIdMatch = baseUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
-        const sheetId = sheetIdMatch ? sheetIdMatch[1] : '';
+        if (prevHandler) (window as any).google.visualization.Query.setResponse = prevHandler;
+      } catch (e) {}
+      if (script.parentNode) script.parentNode.removeChild(script);
+    };
 
-        if (!sheetId) return [];
-
-        // Primary: Use GViz Live SQL Query Engine (bypasses static CDN cache)
-        const gvizQueryUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tq=select%20*&_t=${timestamp}`;
-        let response = await fetch(gvizQueryUrl, { cache: 'no-store' });
-
-        if (response.ok) {
-          const text = await response.text();
-          if (text && text.includes('google.visualization.Query.setResponse')) {
-            const rows = parseGvizJsonResponse(text);
-            if (rows.length > 0) {
-              return rows;
-            }
+    (window as any).google.visualization.Query.setResponse = (response: any) => {
+      cleanup();
+      try {
+        if (!response || !response.table) { resolve([]); return; }
+        const extractedRows: string[][] = [];
+        let headerFromCols: string[] = [];
+        if (response.table.cols && Array.isArray(response.table.cols)) {
+          headerFromCols = response.table.cols.map((col: any) => (col && col.label ? String(col.label).trim() : ''));
+        }
+        if (headerFromCols.some(h => h.toLowerCase().includes('reg') || h.toLowerCase().includes('time') || h.toLowerCase().includes('name') || h.toLowerCase().includes('club'))) {
+          extractedRows.push(headerFromCols);
+        }
+        if (response.table.rows && Array.isArray(response.table.rows)) {
+          for (const r of response.table.rows) {
+            if (!r || !r.c) continue;
+            const rowCells: string[] = r.c.map((cell: any) => {
+              if (!cell) return '';
+              if (cell.f !== undefined && cell.f !== null) return String(cell.f).trim();
+              if (cell.v !== undefined && cell.v !== null) return String(cell.v).trim();
+              return '';
+            });
+            extractedRows.push(rowCells);
           }
         }
-
-        // Secondary Fallback: GViz CSV Endpoint
-        const csvUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&_cb=${timestamp}`;
-        response = await fetch(csvUrl, { cache: 'no-store' });
-        if (response.ok) {
-          const csvText = await response.text();
-          if (csvText && !csvText.trim().startsWith('<!DOCTYPE') && !csvText.trim().startsWith('<html')) {
-            return parseCsvRows(csvText);
-          }
-        }
-
-        // Tertiary Fallback: Direct Export Route
-        const exportUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&_cb=${timestamp}`;
-        response = await fetch(exportUrl, { cache: 'no-store' });
-        if (response.ok) {
-          const csvText = await response.text();
-          if (csvText && !csvText.trim().startsWith('<!DOCTYPE') && !csvText.trim().startsWith('<html')) {
-            return parseCsvRows(csvText);
-          }
-        }
-      } catch (err) {
-        console.warn(`Live fetch failed for ${baseUrl}:`, err);
+        resolve(extractedRows);
+      } catch (e) {
+        resolve([]);
       }
-      return [];
+    };
+
+    script.src = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&${tabParam}&_t=${timestamp}&r=${Math.random()}`;
+    script.onerror = () => { cleanup(); resolve([]); };
+    timer = setTimeout(() => { cleanup(); resolve([]); }, 5000);
+    document.head.appendChild(script);
+  });
+}
+
+// Fetch all rows for a given GID tab
+async function fetchRowsForGid(sheetId: string, gid: string | null): Promise<string[][]> {
+  const timestamp = Date.now();
+  const gidParam = gid ? `gid=${gid}` : '';
+  const cacheBusterHeaders = {
+    'Pragma': 'no-cache',
+    'Cache-Control': 'no-cache, no-store, must-revalidate'
+  };
+
+  // JSONP approach (no CORS issues)
+  try {
+    const rows = await fetchGvizJsonp(sheetId, gidParam);
+    if (rows && rows.length > 1) return rows;
+  } catch (e) {}
+
+  // Direct GViz fetch
+  try {
+    const gvizUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=reqId:${timestamp}${gidParam ? '&' + gidParam : ''}&tq=select%20*&_t=${timestamp}&r=${Math.random()}`;
+    const response = await fetch(gvizUrl, { cache: 'no-store', headers: cacheBusterHeaders });
+    if (response.ok) {
+      const text = await response.text();
+      if (text && text.includes('google.visualization.Query.setResponse')) {
+        const rows = parseGvizJsonResponse(text);
+        if (rows.length > 1) return rows;
+      }
+    }
+  } catch (e) {}
+
+  // CORS proxy fallbacks
+  const corsProxies = [
+    (url: string) => url,
+    (url: string) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+    (url: string) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`
+  ];
+
+  for (const proxyFn of corsProxies) {
+    try {
+      const exportUrl = proxyFn(`https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv${gid ? '&gid=' + gid : ''}&_cb=${timestamp}&r=${Math.random()}`);
+      const response = await fetch(exportUrl, { cache: 'no-store' });
+      if (response.ok) {
+        const csvText = await response.text();
+        if (csvText && !csvText.trim().startsWith('<!DOCTYPE') && !csvText.trim().startsWith('<html')) {
+          const rows = parseCsvRows(csvText);
+          if (rows.length > 1) return rows;
+        }
+      }
+    } catch (e) {}
+  }
+
+  return [];
+}
+
+export function getCachedLiveAttendanceData(): StudentProfile[] | null {
+  if (typeof localStorage === 'undefined') return null;
+  try {
+    const raw = localStorage.getItem('CASR_LIVE_STUDENTS_CACHE');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch (e) {}
+  return null;
+}
+
+export async function fetchLiveAttendanceData(): Promise<StudentProfile[]> {
+  try {
+    // Fetch all club tabs in parallel using GID-specific URLs
+    const fetchPromises = GOOGLE_SHEETS_URLS.map(async (baseUrl) => {
+      const sheetIdMatch = baseUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
+      const sheetId = sheetIdMatch ? sheetIdMatch[1] : '';
+      if (!sheetId) return [];
+      const gidMatch = baseUrl.match(/[?&]gid=(\d+)/);
+      const gid = gidMatch ? gidMatch[1] : null;
+      return await fetchRowsForGid(sheetId, gid);
     });
 
-    const sheetRowsArray = await Promise.all(fetchPromises);
+    const sheetRowsArray = await Promise.allSettled(fetchPromises);
     let studentsMap: Record<string, any> = {};
     let hasAnyData = false;
 
-    for (const rows of sheetRowsArray) {
+    for (const result of sheetRowsArray) {
+      if (result.status !== 'fulfilled') continue;
+      const rows = result.value;
       if (!rows || rows.length === 0) continue;
       studentsMap = parseRowsToMap(rows, studentsMap);
       hasAnyData = true;
@@ -536,11 +628,20 @@ export async function fetchLiveAttendanceData(): Promise<RealStudentDataRecord[]
     if (hasAnyData) {
       const parsed = mapEntriesToProfiles(studentsMap);
       if (parsed.length > 0) {
+        if (typeof localStorage !== 'undefined') {
+          try {
+            localStorage.setItem('CASR_LIVE_STUDENTS_CACHE', JSON.stringify(parsed));
+          } catch (e) {}
+        }
         return parsed;
       }
     }
   } catch (err) {
     console.warn('Could not fetch live Google Sheet attendance, using fallback dataset:', err);
   }
-  return REAL_STUDENTS_DATA as unknown as RealStudentDataRecord[];
+
+  const cached = getCachedLiveAttendanceData();
+  if (cached) return cached;
+
+  return REAL_STUDENTS_DATA as unknown as StudentProfile[];
 }
