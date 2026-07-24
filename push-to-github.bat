@@ -16,10 +16,13 @@ echo Staging all project files...
 git add -A
 
 echo Committing changes...
-git commit -m "Update full project with static assets and logo fixes"
+git commit -m "Update project with bug fixes and data synchronization"
+
+echo Setting remote URL...
+git remote set-url origin https://github.com/Pavangitu/casr_clubs_hub.git
 
 echo Pushing local main branch to remote...
-git push -u origin main
+git push -u origin main --force
 
 echo.
 echo ==========================================
