@@ -6,6 +6,7 @@ export const MASTER_GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1
 // All club tab URLs, each with a specific GID so we fetch every club's data
 export const GOOGLE_SHEETS_URLS = [
   // Primary sheet — all club tabs by GID (discovered from the actual sheet)
+  'https://docs.google.com/spreadsheets/d/19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc/gviz/tq?tqx=out:csv&gid=0',          // Default tab
   'https://docs.google.com/spreadsheets/d/19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc/gviz/tq?tqx=out:csv&gid=1997413871', // Agrifora Club
   'https://docs.google.com/spreadsheets/d/19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc/gviz/tq?tqx=out:csv&gid=1747670817', // DANCE CLUB
   'https://docs.google.com/spreadsheets/d/19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc/gviz/tq?tqx=out:csv&gid=1824463464', // Drama Club
@@ -16,7 +17,8 @@ export const GOOGLE_SHEETS_URLS = [
   'https://docs.google.com/spreadsheets/d/19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc/gviz/tq?tqx=out:csv&gid=1771686445', // Photography Club
   'https://docs.google.com/spreadsheets/d/19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc/gviz/tq?tqx=out:csv&gid=700032659',  // Painting Club
   'https://docs.google.com/spreadsheets/d/19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc/gviz/tq?tqx=out:csv&gid=1198898863', // Music Club
-  // Secondary sheet (default tab)
+  'https://docs.google.com/spreadsheets/d/19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc/gviz/tq?tqx=out:csv&gid=620675621',  // Responses tab
+  // Secondary sheet
   'https://docs.google.com/spreadsheets/d/1qxQ4m_VXukgkT23SwK3B7uhR2sOp5XH5WqFpcwTu59g/gviz/tq?tqx=out:csv'
 ];
 
@@ -43,6 +45,7 @@ export interface RealStudentDataRecord extends StudentProfile {
   totalScans: number;
   degreeProgram: string;
   semesterYear: string;
+  sectionCode?: string;
 }
 
 interface RawScan {
@@ -155,7 +158,8 @@ function parseRowsToMap(rows: string[][], studentsMap: Record<string, any> = {})
   const headerRow = rows[headerIdx];
   const indexMap: Record<string, number> = {
     timestamp: -1, email: -1, name: -1, regNo: -1,
-    degree: -1, semester: -1, club: -1, reason: -1, timing: -1
+    degree: -1, semester: -1, club: -1, reason: -1, timing: -1,
+    section: -1
   };
 
   headerRow.forEach((col, idx) => {
@@ -170,6 +174,8 @@ function parseRowsToMap(rows: string[][], studentsMap: Record<string, any> = {})
       indexMap.degree = idx;
     } else if ((header.includes('semester') || header.includes('sem') || header === 'year') && indexMap.semester === -1) {
       indexMap.semester = idx;
+    } else if ((header.includes('section') || header === 'sec') && indexMap.section === -1) {
+      indexMap.section = idx;
     } else if ((header === 'club' || header.includes('club name') || header.includes('activity')) && indexMap.club === -1) {
       indexMap.club = idx;
     } else if ((header === 'reason' || header.includes('purpose') || header.includes('event')) && indexMap.reason === -1) {
@@ -206,6 +212,7 @@ function parseRowsToMap(rows: string[][], studentsMap: Record<string, any> = {})
     const name = row[indexMap.name] || '';
     const degree = indexMap.degree !== -1 && row[indexMap.degree] ? row[indexMap.degree].trim() : '';
     const sem = indexMap.semester !== -1 && row[indexMap.semester] ? row[indexMap.semester].trim() : '';
+    const section = indexMap.section !== -1 && row[indexMap.section] ? row[indexMap.section].trim() : '';
     const club = indexMap.club !== -1 && row[indexMap.club] ? row[indexMap.club].trim() : '';
     const reason = indexMap.reason !== -1 && row[indexMap.reason] ? row[indexMap.reason].trim() : '';
     const timing = indexMap.timing !== -1 && row[indexMap.timing] ? row[indexMap.timing].trim() : '';
@@ -217,6 +224,7 @@ function parseRowsToMap(rows: string[][], studentsMap: Record<string, any> = {})
         email: email ? email.trim() : `${regNo.toLowerCase()}@centurionuniv.edu.in`,
         degreeProgram: degree || 'Undergraduate',
         semesterYear: sem || 'Current Academic Year',
+        sectionCode: section || 'Sec A',
         clubsSet: new Set<string>(),
         rawScans: []
       };
@@ -226,6 +234,7 @@ function parseRowsToMap(rows: string[][], studentsMap: Record<string, any> = {})
     if (name && name.trim().length > st.name.length) st.name = name.trim();
     if (degree && degree.length > st.degreeProgram.length) st.degreeProgram = degree.trim();
     if (sem && sem.length > st.semesterYear.length) st.semesterYear = sem.trim();
+    if (section && section.length > (st.sectionCode || '').length) st.sectionCode = section.trim();
     if (email && email.includes('@') && email.length > st.email.length) st.email = email.trim();
     if (club) st.clubsSet.add(club);
 
@@ -417,7 +426,8 @@ function mapEntriesToProfiles(studentsMap: Record<string, any>): RealStudentData
       outsCount,
       totalScans,
       degreeProgram: st.degreeProgram,
-      semesterYear: st.semesterYear
+      semesterYear: st.semesterYear,
+      sectionCode: st.sectionCode
     });
   });
 

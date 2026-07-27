@@ -56,6 +56,7 @@ export interface StudentProfile {
   completedHours: number;
   degreeProgram?: string;
   semesterYear?: string;
+  sectionCode?: string;
   insCount?: number;
   outsCount?: number;
   totalScans?: number;
@@ -112,5 +113,66 @@ export interface SyncLogEntry {
   executionTimeMs: number;
   totalRecordsProcessed: number;
   errorMessage?: string;
+}
+
+export type UserRole = 'student' | 'admin';
+
+export interface AuthSession {
+  token: string;
+  userRole: UserRole;
+  registrationNumber?: string;
+  adminId?: string;
+}
+
+export interface ToastMessage {
+  id: string;
+  title: string;
+  message: string;
+  type: 'success' | 'error' | 'warning' | 'info';
+}
+
+export interface SubjectAttendance {
+  subjectCode: string;
+  subjectName: string;
+  attendedClasses: number;
+  totalClasses: number;
+  percentage: number;
+  facultyName: string;
+}
+
+export interface MonthlyAttendance {
+  month: string;
+  percentage: number;
+  attended: number;
+  total: number;
+}
+
+export interface RecentAttendanceLog {
+  id: string;
+  date: string;
+  subject: string;
+  status: string;
+  time: string;
+}
+
+export interface AcademicStudentProfile {
+  registrationNumber: string;
+  name: string;
+  rollNumber: string;
+  branch: string;
+  department: string;
+  semester: number;
+  section: string;
+  academicYear: string;
+  email: string;
+  avatar: string;
+  overallAttendancePercentage: number;
+  todayAttendanceStatus: string;
+  totalClasses: number;
+  classesAttended: number;
+  classesMissed: number;
+  subjectWiseAttendance: SubjectAttendance[];
+  monthlyAttendance: MonthlyAttendance[];
+  recentLogs: RecentAttendanceLog[];
 }
 

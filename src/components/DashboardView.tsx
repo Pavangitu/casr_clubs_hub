@@ -6,9 +6,13 @@ interface DashboardViewProps {
   currentStudent: StudentProfile;
   clubs: Club[];
   events: CampusEvent[];
-  setActiveTab: (tab: NavTab) => void;
-  onOpenHistoryModal: (student: StudentProfile) => void;
-  onOpenJoinModal: (club: Club) => void;
+  onSelectTab?: (tab: NavTab) => void;
+  setActiveTab?: (tab: NavTab) => void;
+  onViewClub?: (club: Club) => void;
+  onJoinClub?: (club: Club) => void;
+  onViewHistory?: (student: StudentProfile) => void;
+  onOpenHistoryModal?: (student: StudentProfile) => void;
+  onOpenJoinModal?: (club: Club) => void;
   onVerifyStudentAttendance?: (regNo: string) => void;
 }
 
@@ -16,12 +20,20 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   currentStudent,
   clubs,
   events,
-  setActiveTab,
+  onSelectTab,
+  setActiveTab: propSetActiveTab,
+  onViewClub,
+  onJoinClub,
+  onViewHistory,
   onOpenHistoryModal,
   onOpenJoinModal,
   onVerifyStudentAttendance
 }) => {
+  const setActiveTab = onSelectTab || propSetActiveTab || (() => {});
+  const handleOpenJoinModal = onJoinClub || onOpenJoinModal || (() => {});
+  const handleOpenHistoryModal = onViewHistory || onOpenHistoryModal || (() => {});
   const [quickRegInput, setQuickRegInput] = useState('');
+
   const [verifiedSuccess, setVerifiedSuccess] = useState(false);
 
   const handleVerifyAttendance = (e: React.FormEvent) => {
@@ -211,7 +223,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
             <div
               key={club.id}
               className="glass-card rounded-2xl p-4 flex items-center gap-4 border border-white/20 dark:border-white/10 hover:border-blue-500/30 transition-all cursor-pointer"
-              onClick={() => onOpenJoinModal(club)}
+              onClick={() => (onViewClub ? onViewClub(club) : handleOpenJoinModal(club))}
             >
               <img
                 src={club.image}

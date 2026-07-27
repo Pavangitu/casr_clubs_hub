@@ -54,15 +54,15 @@ export const AuroraCanvas: React.FC<AuroraCanvasProps> = ({ theme }) => {
         float dist = distance(uv, vec2(0.5));
 
         if (u_isDark > 0.5) {
-          // Dark Mode Shader
+          // Dark Mode Shader — subtle aurora glow
           float sparkle = pow(noise(uv + t), 20.0);
-          finalColor += sparkle * 0.08;
-          finalColor *= (0.2 + 0.8 * (1.0 - dist * 0.7));
-          gl_FragColor = vec4(finalColor * 0.4 + 0.03, 1.0);
+          finalColor += sparkle * 0.06;
+          finalColor *= (0.15 + 0.7 * (1.0 - dist * 0.7));
+          gl_FragColor = vec4(finalColor * 0.3 + 0.02, 1.0);
         } else {
-          // Light Mode Shader
+          // Light Mode Shader — very faint aurora tint so text stays crisp
           finalColor *= (1.0 - dist * 0.5);
-          gl_FragColor = vec4(finalColor * 0.12 + 0.95, 1.0);
+          gl_FragColor = vec4(finalColor * 0.05 + 0.975, 1.0);
         }
       }
     `;
@@ -141,7 +141,19 @@ export const AuroraCanvas: React.FC<AuroraCanvasProps> = ({ theme }) => {
 
   return (
     <div className="fixed inset-0 w-full h-full -z-10 pointer-events-none transition-opacity duration-700">
-      <canvas ref={canvasRef} className="w-full h-full block" />
+      {/* WebGL Canvas for high-performance fluid shader motion */}
+      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full block" />
+      
+      {/* CSS Liquid Blobs for fallback & multi-layered depth */}
+      <div className="liquid-glass-bg">
+        <div className="liquid-glass-blob blob-blue" />
+        <div className="liquid-glass-blob blob-indigo" />
+        <div className="liquid-glass-blob blob-emerald" />
+        <div className="liquid-glass-blob blob-purple" />
+      </div>
+
+      {/* Frosted Glass overlay sheet blending WebGL and CSS animations */}
+      <div className="liquid-glass-overlay" />
     </div>
   );
 };

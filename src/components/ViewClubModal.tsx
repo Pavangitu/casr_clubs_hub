@@ -5,10 +5,19 @@ import { X, School, UserCheck, Users, Calendar, MapPin, Sparkles, Tag, ArrowRigh
 interface ViewClubModalProps {
   club: Club;
   onClose: () => void;
-  onJoin: () => void;
+  onJoin?: () => void;
+  onJoinClub?: (club: Club) => void;
 }
 
-export const ViewClubModal: React.FC<ViewClubModalProps> = ({ club, onClose, onJoin }) => {
+export const ViewClubModal: React.FC<ViewClubModalProps> = ({ club, onClose, onJoin, onJoinClub }) => {
+  const handleJoin = () => {
+    if (onJoinClub) {
+      onJoinClub(club);
+    } else if (onJoin) {
+      onJoin();
+    }
+  };
+
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
       <div className="glass-card rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative text-gray-900 dark:text-white border border-white/20 dark:border-white/10 shadow-2xl">
@@ -55,8 +64,12 @@ export const ViewClubModal: React.FC<ViewClubModalProps> = ({ club, onClose, onJ
             </div>
 
             <div className="p-4 rounded-2xl bg-gray-100/80 dark:bg-gray-800/60 flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-                <School className="w-5 h-5" />
+              <div className="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center overflow-hidden shrink-0 border border-emerald-500/30 shadow-sm">
+                {club.facultyLead?.includes('Dr. Ritesh Kumar') ? (
+                  <img src="/dr_ritesh_kumar.jpg" alt="Dr. Ritesh Kumar" className="w-full h-full object-cover object-center" />
+                ) : (
+                  <School className="w-5 h-5" />
+                )}
               </div>
               <div>
                 <p className="text-[10px] text-gray-500 font-semibold uppercase">Faculty Lead</p>
@@ -123,7 +136,7 @@ export const ViewClubModal: React.FC<ViewClubModalProps> = ({ club, onClose, onJ
             <button
               onClick={() => {
                 onClose();
-                onJoin();
+                handleJoin();
               }}
               className="flex-1 py-3 rounded-2xl liquid-gradient text-white text-xs font-bold hover:opacity-90 transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
             >

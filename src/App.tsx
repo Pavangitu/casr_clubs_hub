@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { NavTab, ThemeMode, StudentProfile, Club, CampusEvent } from './types';
+import { NavTab, ThemeMode, StudentProfile, Club, CampusEvent, ToastMessage, UserRole, AcademicStudentProfile } from './types';
 import { MOCK_CLUBS, MOCK_STUDENTS, MOCK_EVENTS, MOCK_NOTIFICATIONS } from './data/mockData';
+import { INITIAL_ACADEMIC_STUDENTS } from './data/attendanceData';
 import { fetchLiveAttendanceData, getCachedLiveAttendanceData } from './services/googleSheetsService';
+import { attendanceApiService } from './services/attendanceApiService';
 import { AuroraCanvas } from './components/AuroraCanvas';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
@@ -15,9 +17,15 @@ import { HistoryModal } from './components/HistoryModal';
 import { GlobalSearchModal } from './components/GlobalSearchModal';
 import { CommitteeView } from './components/CommitteeView';
 import { EntranceView } from './components/EntranceView';
+import { LoginPortal } from './components/LoginPortal';
+import { ToastContainer } from './components/Toast';
+import { StudentDashboardView } from './components/StudentDashboardView';
 
 export default function App() {
   const [isEntered, setIsEntered] = useState(false);
+  const [viewMode, setViewMode] = useState<'entrance' | 'login' | 'app'>('entrance');
+  const [userRole, setUserRole] = useState<UserRole | null>(null);
+  const [loggedInAcademicStudent, setLoggedInAcademicStudent] = useState<AcademicStudentProfile | null>(null);
   const [activeTab, setActiveTab] = useState<NavTab>('dashboard');
   const [theme, setTheme] = useState<ThemeMode>('light');
   const [allStudents, setAllStudents] = useState<StudentProfile[]>(() => getCachedLiveAttendanceData() || MOCK_STUDENTS);
@@ -29,6 +37,7 @@ export default function App() {
   const [clubs, setClubs] = useState<Club[]>(MOCK_CLUBS);
   const [events, setEvents] = useState<CampusEvent[]>(MOCK_EVENTS);
   const [notifications, setNotifications] = useState(MOCK_NOTIFICATIONS);
+  const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
   // Modals
   const [viewingClub, setViewingClub] = useState<Club | null>(null);
@@ -41,6 +50,173 @@ export default function App() {
   const [lastSyncedTime, setLastSyncedTime] = useState<string>('Just now');
   const isFetchingRef = React.useRef(false);
 
+  const addToast = (title: string, message: string, type: 'success' | 'error' | 'warning' | 'info') => {
+    const id = `toast-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
+    setToasts((prev) => [...prev, { id, title, message, type }]);
+    setTimeout(() => {
+      setToasts((prev) => prev.filter((t) => t.id !== id));
+    }, 4000);
+  };
+
+  const removeToast = (id: string) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
+  };
+
+  const handleStudentLogin = async (regNo: string) => {
+    const cleanReg = regNo.trim().toLowerCase();
+
+    // Check academic profile database first
+    let academicProfile = INITIAL_ACADEMIC_STUDENTS.find(
+      (s) => s.registrationNumber.trim().toLowerCase() === cleanReg
+    );
+
+    // Fetch the latest live data from Google Sheet to ensure we have the absolute latest records
+    let liveStudentsList = allStudents;
+    try {
+      const liveData = await fetchLiveAttendanceData();
+      if (liveData && liveData.length > 0) {
+        liveStudentsList = liveData;
+        setAllStudents(liveData);
+      }
+    } catch (e) {
+      console.warn('Login live sheet fetch failed, using cached list:', e);
+    }
+
+    const foundBase = liveStudentsList.find(
+      (s) => s.registrationNumber.trim().toLowerCase() === cleanReg
+    );
+
+    let semNum = academicProfile?.semester || 5;
+    let branch = academicProfile?.branch || "Computer Science & Engineering";
+    let department = academicProfile?.department || "Dept. of Computer Science & Engineering";
+    let sectionCode = academicProfile?.section || "Sec A";
+
+    if (foundBase) {
+      if (foundBase.semesterYear) {
+        const match = foundBase.semesterYear.match(/\d+/);
+        if (match) {
+          semNum = parseInt(match[0], 10);
+        }
+      }
+      if (foundBase.degreeProgram) {
+        branch = foundBase.degreeProgram;
+        department = foundBase.degreeProgram;
+      }
+      if (foundBase.sectionCode) {
+        sectionCode = foundBase.sectionCode;
+      }
+    }
+
+    if (!academicProfile) {
+      if (!foundBase) {
+        addToast('Authentication Error', 'Invalid Registration Number.', 'error');
+        throw new Error('Invalid Registration Number.');
+      }
+
+      const classesAttended = foundBase.eventsAttendedCount || Math.round(250 * ((foundBase.currentAttendancePercent || 88) / 100));
+      const classesMissed = Math.max(0, 250 - classesAttended);
+
+      const liveMonthly = (foundBase.monthlyTrends || []).map((trend) => ({
+        month: trend.month,
+        percentage: trend.percentage,
+        attended: Math.round(trend.hours / 1.5),
+        total: Math.round((trend.hours / (trend.percentage / 100)) / 1.5) || 50
+      }));
+
+      const liveLogs = (foundBase.recentHistory || []).map((hist) => ({
+        id: hist.id,
+        date: hist.date,
+        subject: hist.clubName,
+        status: hist.status,
+        time: hist.inTime || hist.outTime || ''
+      }));
+
+      academicProfile = {
+        registrationNumber: foundBase.registrationNumber,
+        name: foundBase.name,
+        rollNumber: foundBase.registrationNumber,
+        branch: branch,
+        department: department,
+        semester: semNum,
+        section: sectionCode,
+        academicYear: "2024 - 2025",
+        email: foundBase.email,
+        avatar: foundBase.avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=300",
+        overallAttendancePercentage: foundBase.currentAttendancePercent || 88,
+        todayAttendanceStatus: "Present",
+        totalClasses: 250,
+        classesAttended: classesAttended,
+        classesMissed: classesMissed,
+        subjectWiseAttendance: [
+          { subjectCode: "CS501", subjectName: "Computer Networks", attendedClasses: Math.round(classesAttended * 0.2), totalClasses: 50, percentage: foundBase.currentAttendancePercent || 88, facultyName: "Dr. A. K. Sharma" },
+          { subjectCode: "CS502", subjectName: "DBMS", attendedClasses: Math.round(classesAttended * 0.2), totalClasses: 50, percentage: foundBase.currentAttendancePercent || 88, facultyName: "Prof. S. R. Rao" },
+          { subjectCode: "CS503", subjectName: "Operating Systems", attendedClasses: Math.round(classesAttended * 0.2), totalClasses: 50, percentage: foundBase.currentAttendancePercent || 88, facultyName: "Dr. Nihal R." },
+          { subjectCode: "CS504", subjectName: "Artificial Intelligence", attendedClasses: Math.round(classesAttended * 0.2), totalClasses: 50, percentage: foundBase.currentAttendancePercent || 88, facultyName: "Dr. Pratyush Kumar Das" },
+          { subjectCode: "CS505", subjectName: "Java Programming", attendedClasses: Math.round(classesAttended * 0.2), totalClasses: 50, percentage: foundBase.currentAttendancePercent || 88, facultyName: "Mrs. Upasana Sahoo" }
+        ],
+        monthlyAttendance: liveMonthly.length > 0 ? liveMonthly : [
+          { month: "May", percentage: 90, attended: 45, total: 50 },
+          { month: "Jun", percentage: 92, attended: 46, total: 50 },
+          { month: "Jul", percentage: 94, attended: 47, total: 50 },
+          { month: "Aug", percentage: 91, attended: 45, total: 50 },
+          { month: "Sep", percentage: 95, attended: 47, total: 50 }
+        ],
+        recentLogs: liveLogs.length > 0 ? liveLogs : [
+          { id: "log-1", date: "Today", subject: "Computer Networks", status: "Present", time: "09:30 AM" },
+          { id: "log-2", date: "Today", subject: "DBMS", status: "Present", time: "11:00 AM" },
+          { id: "log-3", date: "Yesterday", subject: "Operating Systems", status: "Present", time: "10:15 AM" }
+        ]
+      };
+    } else {
+      // Update found academic profile with live values
+      academicProfile.semester = semNum;
+      academicProfile.branch = branch;
+      academicProfile.department = department;
+      academicProfile.section = sectionCode;
+    }
+
+    try {
+      await attendanceApiService.studentLogin(regNo);
+    } catch (e) {
+      attendanceApiService.saveSession(`token_student_${Date.now()}`, 'student', academicProfile.registrationNumber);
+    }
+
+    setLoggedInAcademicStudent(academicProfile);
+    setUserRole('student');
+    setIsEntered(true);
+    setViewMode('app');
+    addToast('Student Portal Access', `Logged in as ${academicProfile.name} (${academicProfile.registrationNumber})`, 'success');
+  };
+
+  const handleAdminLogin = async (adminId: string, pass: string) => {
+    if (adminId.trim() === 'CaSR Admin' && pass === 'CaSR123') {
+      try {
+        await attendanceApiService.adminLogin(adminId, pass);
+      } catch (e) {
+        attendanceApiService.saveSession(`token_admin_${Date.now()}`, 'admin');
+      }
+      setUserRole('admin');
+      setLoggedInAcademicStudent(null);
+      setIsEntered(true);
+      setViewMode('app');
+      setActiveTab('directory');
+      addToast('Admin Portal Access', 'Faculty / Admin authenticated successfully.', 'success');
+      return;
+    }
+
+    addToast('Authentication Error', 'Invalid Admin ID or Password.', 'error');
+    throw new Error('Invalid Admin ID or Password.');
+  };
+
+  const handleLogout = () => {
+    attendanceApiService.clearSession();
+    setUserRole(null);
+    setLoggedInAcademicStudent(null);
+    setIsEntered(false);
+    setViewMode('login');
+    addToast('Logged Out', 'Session terminated successfully.', 'info');
+  };
+
   const loadLiveAttendance = async (silent = false) => {
     if (isFetchingRef.current) return;
     isFetchingRef.current = true;
@@ -49,6 +225,58 @@ export default function App() {
       const liveStudents = await fetchLiveAttendanceData();
       if (liveStudents && liveStudents.length > 0) {
         setAllStudents(liveStudents);
+
+        // Keep logged-in academic student profile in real-time sync with Google Sheet updates
+        setLoggedInAcademicStudent((prev) => {
+          if (!prev) return null;
+          const liveMatch = liveStudents.find(
+            (s) => s.registrationNumber.trim().toLowerCase() === prev.registrationNumber.trim().toLowerCase()
+          );
+          if (liveMatch) {
+            let semNum = prev.semester;
+            if (liveMatch.semesterYear) {
+              const match = liveMatch.semesterYear.match(/\d+/);
+              if (match) {
+                semNum = parseInt(match[0], 10);
+              }
+            }
+            const classesAttended = liveMatch.eventsAttendedCount || Math.round(250 * ((liveMatch.currentAttendancePercent || 88) / 100));
+            const classesMissed = Math.max(0, 250 - classesAttended);
+
+            const liveMonthly = (liveMatch.monthlyTrends || []).map((trend) => ({
+              month: trend.month,
+              percentage: trend.percentage,
+              attended: Math.round(trend.hours / 1.5),
+              total: Math.round((trend.hours / (trend.percentage / 100)) / 1.5) || 50
+            }));
+
+            const liveLogs = (liveMatch.recentHistory || []).map((hist) => ({
+              id: hist.id,
+              date: hist.date,
+              subject: hist.clubName,
+              status: hist.status,
+              time: hist.inTime || hist.outTime || ''
+            }));
+
+            return {
+              ...prev,
+              name: liveMatch.name || prev.name,
+              overallAttendancePercentage: liveMatch.currentAttendancePercent || prev.overallAttendancePercentage,
+              email: liveMatch.email || prev.email,
+              avatar: liveMatch.avatar || prev.avatar,
+              branch: liveMatch.degreeProgram || prev.branch,
+              department: liveMatch.degreeProgram || prev.department,
+              semester: semNum,
+              section: liveMatch.sectionCode || prev.section,
+              classesAttended: classesAttended,
+              classesMissed: classesMissed,
+              monthlyAttendance: liveMonthly.length > 0 ? liveMonthly : prev.monthlyAttendance,
+              recentLogs: liveLogs.length > 0 ? liveLogs : prev.recentLogs
+            };
+          }
+          return prev;
+        });
+
         setCurrentStudent((prev) => {
           const matched = liveStudents.find(
             (s) => s.registrationNumber.toLowerCase() === prev.registrationNumber.toLowerCase()
@@ -72,12 +300,10 @@ export default function App() {
     }
   };
 
-  // Fetch live Google Sheets attendance data on mount and set auto-polling every 1s
   useEffect(() => {
     let isMounted = true;
     loadLiveAttendance(false);
 
-    // Ultra-responsive live auto-sync interval (every 1 second)
     const intervalId = setInterval(() => {
       if (isMounted) loadLiveAttendance(true);
     }, 1000);
@@ -88,7 +314,6 @@ export default function App() {
     };
   }, []);
 
-  // Dynamically update member counts for each club based on active registered students dataset
   useEffect(() => {
     if (!allStudents || allStudents.length === 0) return;
     setClubs((prevClubs) =>
@@ -99,141 +324,113 @@ export default function App() {
           const allClubs = (s.allClubs || []).map((c) => c.toLowerCase());
           return pClub.includes(rawName) || allClubs.some((c) => c.includes(rawName));
         }).length;
-
-        return {
-          ...club,
-          activeMembers: Math.max(club.activeMembers, memberCount)
-        };
+        return { ...club, activeMembers: Math.max(club.activeMembers, memberCount) };
       })
     );
   }, [allStudents]);
 
-  // Sync theme class to document root
+  const toggleTheme = () => {
+    setTheme((prev) => {
+      const next = prev === 'light' ? 'dark' : 'light';
+      if (next === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+      return next;
+    });
+  };
+
   useEffect(() => {
-    const root = document.documentElement;
     if (theme === 'dark') {
-      root.classList.add('dark');
-      root.classList.remove('light');
+      document.documentElement.classList.add('dark');
     } else {
-      root.classList.add('light');
-      root.classList.remove('dark');
+      document.documentElement.classList.remove('dark');
     }
   }, [theme]);
 
-  const toggleTheme = () => {
-    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
+  const handleEnterFromEntrance = (student: StudentProfile) => {
+    setCurrentStudent(student);
+    setIsEntered(true);
+    setViewMode('app');
   };
 
-  const handleVerifyStudentAttendance = (regNo: string) => {
-    const todayStr = new Date().toLocaleDateString('en-US');
-    const nowTimeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    const cleanReg = regNo.trim().toLowerCase();
-
-    setAllStudents((prevList) =>
-      prevList.map((st) => {
-        if (st.registrationNumber.toLowerCase() === cleanReg) {
-          const newRec = {
-            id: `rec-live-${Date.now()}`,
-            date: todayStr,
-            eventName: `${st.clubName || 'Campus Club'} Active Check-In (Live Session & Location Capture)`,
-            eventCategory: 'Active Check-In',
-            clubName: st.clubName || 'Campus Club',
-            inTime: nowTimeStr,
-            durationHours: 2.0,
-            durationFormatted: '2 hrs (Active)',
-            status: 'PRESENT' as const,
-            rawScanType: 'IN' as const
-          };
-
-          const updatedHistory = [newRec, ...(st.recentHistory || [])];
-          const newInsCount = (st.insCount || st.eventsAttendedCount || 0) + 1;
-          const newHours = Number(((st.completedHours || 0) + 2.0).toFixed(1));
-
-          return {
-            ...st,
-            eventsAttendedCount: newInsCount,
-            insCount: newInsCount,
-            completedHours: newHours,
-            creditsEarned: (st.creditsEarned || 0) + 10,
-            recentHistory: updatedHistory
-          };
-        }
-        return st;
-      })
-    );
-
-    setCurrentStudent((prev) => {
-      if (prev.registrationNumber.toLowerCase() === cleanReg) {
-        const newRec = {
-          id: `rec-live-${Date.now()}`,
-          date: todayStr,
-          eventName: `${prev.clubName || 'Campus Club'} Active Check-In (Live Session & Location Capture)`,
-          eventCategory: 'Active Check-In',
-          clubName: prev.clubName || 'Campus Club',
-          inTime: nowTimeStr,
-          durationHours: 2.0,
-          durationFormatted: '2 hrs (Active)',
-          status: 'PRESENT' as const,
-          rawScanType: 'IN' as const
-        };
-        const updatedHistory = [newRec, ...(prev.recentHistory || [])];
-        const newInsCount = (prev.insCount || prev.eventsAttendedCount || 0) + 1;
-        const newHours = Number(((prev.completedHours || 0) + 2.0).toFixed(1));
-
-        return {
-          ...prev,
-          eventsAttendedCount: newInsCount,
-          insCount: newInsCount,
-          completedHours: newHours,
-          creditsEarned: (prev.creditsEarned || 0) + 10,
-          recentHistory: updatedHistory
-        };
-      }
-      return prev;
-    });
-
-    setViewingHistoryStudent((prev) => {
-      if (prev && prev.registrationNumber.toLowerCase() === cleanReg) {
-        const newRec = {
-          id: `rec-live-${Date.now()}`,
-          date: todayStr,
-          eventName: `${prev.clubName || 'Campus Club'} Active Check-In (Live Session & Location Capture)`,
-          eventCategory: 'Active Check-In',
-          clubName: prev.clubName || 'Campus Club',
-          inTime: nowTimeStr,
-          durationHours: 2.0,
-          durationFormatted: '2 hrs (Active)',
-          status: 'PRESENT' as const,
-          rawScanType: 'IN' as const
-        };
-        const updatedHistory = [newRec, ...(prev.recentHistory || [])];
-        return {
-          ...prev,
-          recentHistory: updatedHistory
-        };
-      }
-      return prev;
-    });
+  const renderActiveTab = () => {
+    switch (activeTab) {
+      case 'dashboard':
+        return (
+          <DashboardView
+            currentStudent={currentStudent}
+            clubs={clubs}
+            events={events}
+            onSelectTab={setActiveTab}
+            onViewClub={setViewingClub}
+            onJoinClub={setJoiningClub}
+            onViewHistory={setViewingHistoryStudent}
+          />
+        );
+      case 'clubs':
+        return (
+          <ClubDirectoryView
+            clubs={clubs}
+            onViewClub={setViewingClub}
+            onJoinClub={setJoiningClub}
+          />
+        );
+      case 'events':
+        return <EventsView events={events} currentStudent={currentStudent} />;
+      case 'directory':
+        return (
+          <CheckAttendanceView
+            students={allStudents}
+            onSelectStudent={setCurrentStudent}
+            onViewHistory={setViewingHistoryStudent}
+            isSyncing={isSyncingSheets}
+            lastSyncedTime={lastSyncedTime}
+            onManualSync={() => loadLiveAttendance(false)}
+          />
+        );
+      case 'committee':
+        return <CommitteeView />;
+      default:
+        return null;
+    }
   };
 
   return (
-    <div className="min-h-screen bg-[#faf9ff] dark:bg-[#0b0d13] relative text-gray-900 dark:text-gray-100 selection:bg-blue-500 selection:text-white overflow-x-hidden font-sans transition-colors duration-300">
-      {/* Aurora WebGL Background */}
+    <div className={`min-h-screen transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-950 text-slate-50' : 'bg-slate-50 text-slate-900'}`}>
       <AuroraCanvas theme={theme} />
+      <ToastContainer toasts={toasts} onDismiss={removeToast} />
 
-      {!isEntered ? (
+      {viewMode === 'login' ? (
+        <LoginPortal
+          onStudentLogin={handleStudentLogin}
+          onAdminLogin={handleAdminLogin}
+        />
+      ) : !isEntered ? (
         <EntranceView
           students={allStudents}
           theme={theme}
           toggleTheme={toggleTheme}
-          onEnter={(student) => {
-            setCurrentStudent(student);
-            setIsEntered(true);
-          }}
+          onEnter={handleEnterFromEntrance}
+          onOpenLoginPortal={() => setViewMode('login')}
+        />
+      ) : userRole === 'student' && loggedInAcademicStudent ? (
+        /* STRICT DATA ISOLATION: Student View renders ONLY that student's record. NO list of students is ever exposed. */
+        <StudentDashboardView
+          student={loggedInAcademicStudent}
+          allStudents={allStudents}
+          clubs={clubs}
+          events={events}
+          theme={theme}
+          toggleTheme={toggleTheme}
+          onLogout={handleLogout}
+          onViewClub={setViewingClub}
+          onJoinClub={setJoiningClub}
         />
       ) : (
-        <>
-          {/* Floating Navigation Header */}
+        /* FACULTY / ADMIN PORTAL VIEW */
+        <div className="relative z-10 pt-24 pb-12 px-4 md:px-8 max-w-7xl mx-auto min-h-screen flex flex-col justify-between">
           <Navbar
             activeTab={activeTab}
             setActiveTab={setActiveTab}
@@ -244,68 +441,33 @@ export default function App() {
             onSelectStudent={setCurrentStudent}
             notifications={notifications}
             onOpenSearchModal={() => setShowSearchModal(true)}
+            onLogout={handleLogout}
           />
 
-          {/* Main View Area */}
-          <main className="min-h-[80vh]">
-            {activeTab === 'directory' && (
-              <CheckAttendanceView
-                currentStudent={currentStudent}
-                allStudents={allStudents}
-                onOpenHistoryModal={(st) => setViewingHistoryStudent(st)}
-                isSyncingSheets={isSyncingSheets}
-                lastSyncedTime={lastSyncedTime}
-                onManualSync={loadLiveAttendance}
-              />
-            )}
+          <main className="flex-1 my-6">{renderActiveTab()}</main>
 
-            {activeTab === 'clubs' && (
-              <ClubDirectoryView
-                clubs={clubs}
-                totalStudentsCount={allStudents.length}
-                onSelectClubView={(club) => setViewingClub(club)}
-                onSelectClubJoin={(club) => setJoiningClub(club)}
-              />
-            )}
+          <Footer onSelectTab={setActiveTab} />
 
-            {activeTab === 'dashboard' && (
-              <DashboardView
-                currentStudent={currentStudent}
-                clubs={clubs}
-                events={events}
-                setActiveTab={setActiveTab}
-                onOpenHistoryModal={(st) => setViewingHistoryStudent(st)}
-                onOpenJoinModal={(club) => setJoiningClub(club)}
-                onVerifyStudentAttendance={handleVerifyStudentAttendance}
-              />
-            )}
-
-            {activeTab === 'events' && (
-              <EventsView events={events} />
-            )}
-
-            {activeTab === 'committee' && (
-              <CommitteeView />
-            )}
-          </main>
-
-          {/* Footer */}
-          <Footer setActiveTab={setActiveTab} />
-
-          {/* Modals */}
           {viewingClub && (
             <ViewClubModal
               club={viewingClub}
               onClose={() => setViewingClub(null)}
-              onJoin={() => setJoiningClub(viewingClub)}
+              onJoinClub={(c) => {
+                setViewingClub(null);
+                setJoiningClub(c);
+              }}
             />
           )}
 
           {joiningClub && (
             <JoinClubModal
               club={joiningClub}
-              student={currentStudent}
+              currentStudent={currentStudent}
               onClose={() => setJoiningClub(null)}
+              onSuccess={(clubName) => {
+                setJoiningClub(null);
+                alert(`Successfully registered for ${clubName}!`);
+              }}
             />
           )}
 
@@ -321,16 +483,20 @@ export default function App() {
               students={allStudents}
               clubs={clubs}
               events={events}
-              onClose={() => setShowSearchModal(false)}
-              onSelectStudent={setCurrentStudent}
-              onSelectClub={(club) => {
-                setViewingClub(club);
-                setActiveTab('clubs');
-              }}
               setActiveTab={setActiveTab}
+              onClose={() => setShowSearchModal(false)}
+              onSelectStudent={(s) => {
+                setCurrentStudent(s);
+                setShowSearchModal(false);
+                setActiveTab('dashboard');
+              }}
+              onSelectClub={(c) => {
+                setViewingClub(c);
+                setShowSearchModal(false);
+              }}
             />
           )}
-        </>
+        </div>
       )}
     </div>
   );

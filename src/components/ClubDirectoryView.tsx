@@ -5,17 +5,24 @@ import { Search, Users, Award, Calendar, School, UserCheck, Sparkles, ArrowRight
 interface ClubDirectoryViewProps {
   clubs: Club[];
   totalStudentsCount?: number;
-  onSelectClubView: (club: Club) => void;
-  onSelectClubJoin: (club: Club) => void;
+  onSelectClubView?: (club: Club) => void;
+  onSelectClubJoin?: (club: Club) => void;
+  onViewClub?: (club: Club) => void;
+  onJoinClub?: (club: Club) => void;
 }
 
 export const ClubDirectoryView: React.FC<ClubDirectoryViewProps> = ({
   clubs,
   totalStudentsCount,
   onSelectClubView,
-  onSelectClubJoin
+  onSelectClubJoin,
+  onViewClub,
+  onJoinClub
 }) => {
+  const handleView = onViewClub || onSelectClubView || (() => {});
+  const handleJoin = onJoinClub || onSelectClubJoin || (() => {});
   const [selectedCategory, setSelectedCategory] = useState<ClubCategory>('All Clubs');
+
   const [searchQuery, setSearchQuery] = useState('');
 
   const categories: ClubCategory[] = ['All Clubs', 'Technical', 'Cultural', 'Sports', 'Social', 'Innovation'];
@@ -185,7 +192,11 @@ export const ClubDirectoryView: React.FC<ClubDirectoryViewProps> = ({
 
                 <div className="pt-3 space-y-1.5 border-t border-gray-200/50 dark:border-white/10 text-xs text-gray-500 dark:text-gray-400">
                   <div className="flex items-center gap-2">
-                    <School className="w-4 h-4 text-blue-500" />
+                    {club.facultyLead?.includes('Dr. Ritesh Kumar') ? (
+                      <img src="/dr_ritesh_kumar.jpg" alt="Dr. Ritesh Kumar" className="w-5 h-5 rounded-full object-cover shrink-0 border border-blue-500/50" />
+                    ) : (
+                      <School className="w-4 h-4 text-blue-500" />
+                    )}
                     <span>Faculty: {club.facultyLead}</span>
                   </div>
                   <div className="flex items-center gap-2">
@@ -198,13 +209,13 @@ export const ClubDirectoryView: React.FC<ClubDirectoryViewProps> = ({
               {/* Action Buttons */}
               <div className="mt-4 flex gap-3 px-2 pb-1">
                 <button
-                  onClick={() => onSelectClubView(club)}
+                  onClick={() => handleView(club)}
                   className="flex-1 py-2.5 border border-gray-300 dark:border-white/20 rounded-xl text-xs font-bold text-gray-700 dark:text-gray-200 hover:bg-black/5 dark:hover:bg-white/10 transition-all"
                 >
                   View Club
                 </button>
                 <button
-                  onClick={() => onSelectClubJoin(club)}
+                  onClick={() => handleJoin(club)}
                   className="flex-1 py-2.5 liquid-gradient text-white rounded-xl text-xs font-bold hover:opacity-90 shadow-md shadow-blue-500/20 transition-all flex items-center justify-center gap-1"
                 >
                   Join Club <ArrowRight className="w-3.5 h-3.5" />

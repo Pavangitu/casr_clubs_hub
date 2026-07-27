@@ -9,7 +9,7 @@ interface GlobalSearchModalProps {
   onClose: () => void;
   onSelectStudent: (student: StudentProfile) => void;
   onSelectClub: (club: Club) => void;
-  setActiveTab: (tab: NavTab) => void;
+  setActiveTab?: (tab: NavTab) => void;
 }
 
 export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
@@ -139,7 +139,7 @@ export const GlobalSearchModal: React.FC<GlobalSearchModalProps> = ({
                 <div
                   key={e.id}
                   onClick={() => {
-                    setActiveTab('events');
+                    setActiveTab?.('events');
                     onClose();
                   }}
                   className="p-3 rounded-xl bg-gray-100/70 dark:bg-gray-800/60 hover:bg-purple-50 dark:hover:bg-gray-700/60 transition-colors cursor-pointer flex justify-between items-center text-xs"

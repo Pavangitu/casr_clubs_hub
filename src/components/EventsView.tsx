@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { CampusEvent, ClubCategory } from '../types';
+import { CampusEvent, ClubCategory, StudentProfile } from '../types';
 import { Calendar, MapPin, Clock, Award, Users, Check, Sparkles, QrCode, X } from 'lucide-react';
 
 interface EventsViewProps {
   events: CampusEvent[];
+  currentStudent?: StudentProfile;
 }
 
-export const EventsView: React.FC<EventsViewProps> = ({ events }) => {
+export const EventsView: React.FC<EventsViewProps> = ({ events, currentStudent }) => {
   const [selectedCategory, setSelectedCategory] = useState<ClubCategory>('All Clubs');
   const [rsvpSuccessId, setRsvpSuccessId] = useState<string | null>(null);
   const [activePassEvent, setActivePassEvent] = useState<CampusEvent | null>(null);

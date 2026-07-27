@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavTab, ThemeMode, StudentProfile, NotificationItem } from '../types';
-import { Moon, Sun, Bell, Search, X } from 'lucide-react';
+import { Moon, Sun, Bell, Search, X, LogOut } from 'lucide-react';
 
 interface NavbarProps {
   activeTab: NavTab;
@@ -12,6 +12,7 @@ interface NavbarProps {
   onSelectStudent: (student: StudentProfile) => void;
   notifications: NotificationItem[];
   onOpenSearchModal: () => void;
+  onLogout?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -23,7 +24,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   allStudents,
   onSelectStudent,
   notifications,
-  onOpenSearchModal
+  onOpenSearchModal,
+  onLogout
 }) => {
   const [showNotifPopover, setShowNotifPopover] = useState(false);
 
@@ -81,20 +83,31 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Quick Search */}
         <button
           onClick={onOpenSearchModal}
-          className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+          className="w-9 h-9 rounded-full glass-neo-icon text-gray-600 dark:text-gray-355 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
           title="Search Student or Club"
         >
-          <Search className="w-5 h-5" />
+          <Search className="w-4 h-4" />
         </button>
 
         {/* Theme Toggle */}
         <button
           onClick={toggleTheme}
-          className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+          className="w-9 h-9 rounded-full glass-neo-icon text-gray-600 dark:text-gray-356 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
           title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
         >
-          {theme === 'dark' ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5" />}
+          {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-500" /> : <Moon className="w-4 h-4" />}
         </button>
+
+        {/* Logout Button */}
+        {onLogout && (
+          <button
+            onClick={onLogout}
+            className="w-9 h-9 rounded-full glass-neo-icon text-gray-600 dark:text-gray-357 hover:text-rose-600 dark:hover:text-rose-400 transition-colors"
+            title="Logout"
+          >
+            <LogOut className="w-4 h-4" />
+          </button>
+        )}
 
         {/* Notifications Popover Toggle */}
         <div className="relative">
@@ -102,14 +115,14 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => {
               setShowNotifPopover(!showNotifPopover);
             }}
-            className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-black/5 dark:hover:bg-white/10 transition-colors relative"
+            className="w-9 h-9 rounded-full glass-neo-icon text-gray-600 dark:text-gray-358 hover:text-blue-600 dark:hover:text-blue-400 transition-colors relative"
           >
-            <Bell className="w-5 h-5" />
+            <Bell className="w-4 h-4" />
             {unreadCount > 0 && (
-              <span className="absolute top-1 right-1 h-2.5 w-2.5 bg-red-500 rounded-full animate-ping" />
+              <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-red-500 rounded-full animate-ping" />
             )}
             {unreadCount > 0 && (
-              <span className="absolute top-1 right-1 h-2.5 w-2.5 bg-red-500 rounded-full" />
+              <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-red-500 rounded-full" />
             )}
           </button>
 

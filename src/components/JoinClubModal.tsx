@@ -4,11 +4,14 @@ import { X, Send, Sparkles, User, Mail, ShieldCheck } from 'lucide-react';
 
 interface JoinClubModalProps {
   club: Club;
-  student: StudentProfile;
+  student?: StudentProfile;
+  currentStudent?: StudentProfile;
   onClose: () => void;
+  onSuccess?: (clubName: string) => void;
 }
 
-export const JoinClubModal: React.FC<JoinClubModalProps> = ({ club, student, onClose }) => {
+export const JoinClubModal: React.FC<JoinClubModalProps> = ({ club, student, currentStudent, onClose, onSuccess }) => {
+  const activeStudent = currentStudent || student;
 
   return (
     <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
@@ -34,12 +37,18 @@ export const JoinClubModal: React.FC<JoinClubModalProps> = ({ club, student, onC
           {/* Pre-filled Student Info */}
           <div className="p-4 rounded-2xl bg-gray-100/80 dark:bg-gray-800/60 space-y-2 text-xs">
             <p className="font-bold text-gray-700 dark:text-gray-200">Applying Student Details:</p>
-            <div className="flex items-center gap-2 font-bold text-blue-600 dark:text-emerald-400">
-              <User className="w-4 h-4" /> {student.name} ({student.registrationNumber})
-            </div>
-            <div className="text-gray-500 flex items-center gap-2">
-              <Mail className="w-3.5 h-3.5" /> {student.email}
-            </div>
+            {activeStudent ? (
+              <>
+                <div className="flex items-center gap-2 font-bold text-blue-600 dark:text-emerald-400">
+                  <User className="w-4 h-4" /> {activeStudent.name} ({activeStudent.registrationNumber})
+                </div>
+                <div className="text-gray-500 flex items-center gap-2">
+                  <Mail className="w-3.5 h-3.5" /> {activeStudent.email}
+                </div>
+              </>
+            ) : (
+              <p className="text-gray-500">No student profile selected.</p>
+            )}
           </div>
 
           {/* Google Form Link Button */}

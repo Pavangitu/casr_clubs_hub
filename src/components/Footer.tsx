@@ -3,12 +3,14 @@ import { NavTab } from '../types';
 import { MapPin, Globe, Shield, ExternalLink, Instagram, Facebook } from 'lucide-react';
 
 interface FooterProps {
-  setActiveTab: (tab: NavTab) => void;
+  onSelectTab?: (tab: NavTab) => void;
+  setActiveTab?: (tab: NavTab) => void;
 }
 
-export const Footer: React.FC<FooterProps> = ({ setActiveTab }) => {
+export const Footer: React.FC<FooterProps> = ({ onSelectTab, setActiveTab: propSetActiveTab }) => {
+  const setActiveTab = onSelectTab || propSetActiveTab || (() => {});
   return (
-    <footer className="bg-gray-100/80 dark:bg-[#0c0e15] border-t border-gray-200/50 dark:border-white/10 w-full transition-colors duration-300">
+    <footer className="bg-gray-100/80 dark:bg-slate-950 border-t border-gray-200/50 dark:border-white/10 w-full transition-colors duration-300">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-8 px-6 md:px-16 py-12 max-w-7xl mx-auto">
         {/* Brand Info */}
         <div className="space-y-4">

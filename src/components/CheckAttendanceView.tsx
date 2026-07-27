@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { StudentProfile } from '../types';
+import { HistoryModal } from './HistoryModal';
 import {
   Search,
   BadgeCheck,
@@ -82,24 +83,43 @@ const StandardAvatar: React.FC = () => (
 );
 
 interface CheckAttendanceViewProps {
-  currentStudent: StudentProfile;
-  allStudents: StudentProfile[];
-  onOpenHistoryModal: (student: StudentProfile) => void;
+  currentStudent?: StudentProfile;
+  allStudents?: StudentProfile[];
+  students?: StudentProfile[];
+  onOpenHistoryModal?: (student: StudentProfile) => void;
+  onViewHistory?: (student: StudentProfile) => void;
+  onSelectStudent?: (student: StudentProfile) => void;
   isSyncingSheets?: boolean;
+  isSyncing?: boolean;
   lastSyncedTime?: string;
   onManualSync?: () => void;
 }
 
 export const CheckAttendanceView: React.FC<CheckAttendanceViewProps> = ({
   currentStudent,
-  allStudents: initialAllStudents,
+  allStudents: propAllStudents,
+  students,
   onOpenHistoryModal,
+  onViewHistory,
+  onSelectStudent,
   isSyncingSheets: propIsSyncingSheets = false,
+  isSyncing,
   lastSyncedTime: propLastSyncedTime = 'Live',
   onManualSync
 }) => {
+  const initialAllStudents = students || propAllStudents || [];
+  const activeCurrentStudent = currentStudent || initialAllStudents[0];
+  const handleOpenHistoryModal = onViewHistory || onOpenHistoryModal || (() => {});
+  const actualIsSyncing = isSyncing ?? propIsSyncingSheets;
+
   const [allStudentsList, setAllStudentsList] = useState<StudentProfile[]>(initialAllStudents);
-  const [activeStudent, setActiveStudent] = useState<StudentProfile>(currentStudent);
+  const [activeStudent, setActiveStudent] = useState<StudentProfile>(activeCurrentStudent);
+  const [internalHistoryStudent, setInternalHistoryStudent] = useState<StudentProfile | null>(null);
+
+  const handleOpenLogDetails = (st: StudentProfile) => {
+    if (handleOpenHistoryModal) handleOpenHistoryModal(st);
+    setInternalHistoryStudent(st);
+  };
 
   // Search and Filter States
   const [searchQuery, setSearchQuery] = useState('');
@@ -446,39 +466,59 @@ export const CheckAttendanceView: React.FC<CheckAttendanceViewProps> = ({
 
             <div className="flex gap-2">
               <button
-                onClick={() => onOpenHistoryModal(activeStudent)}
-                className="px-5 py-2.5 rounded-xl liquid-gradient text-white text-xs font-bold shadow-md hover:scale-105 transition-all flex items-center gap-1.5"
+                onClick={() => handleOpenLogDetails(activeStudent)}
+                className="px-5 py-2.5 rounded-xl liquid-gradient text-white text-xs font-bold shadow-md hover:scale-105 transition-all flex items-center gap-1.5 cursor-pointer"
               >
                 <Clock className="w-4 h-4" /> Log Details
               </button>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="p-4 rounded-2xl bg-blue-500/10 border border-blue-500/20 space-y-1">
-              <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase">Attendance Rate</span>
-              <p className="text-2xl font-extrabold text-blue-700 dark:text-blue-300">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="p-4 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex flex-col justify-between space-y-1">
+              <span className="text-[10px] font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">Attendance Rate</span>
+              <p className="text-2xl md:text-3xl font-extrabold text-blue-700 dark:text-blue-300">
                 {activeStudent.currentAttendancePercent}%
               </p>
             </div>
 
-            <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 space-y-1">
-              <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 uppercase">1 Year (30 hrs Target)</span>
-              <p className="text-2xl font-extrabold text-emerald-700 dark:text-emerald-300">
-                30 hrs
-              </p>
+            <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-emerald-500/5 to-purple-500/10 border border-emerald-500/20 space-y-1.5 flex flex-col justify-between">
+              <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-300 uppercase tracking-wider block">
+                Credit Targets (1 & 4 Years)
+              </span>
+              <div className="grid grid-cols-2 gap-2 pt-0.5">
+                <div className="border-r border-emerald-500/20 pr-2 space-y-0.5">
+                  <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 block uppercase">
+                    1 Year Target
+                  </span>
+                  <div className="flex items-baseline gap-1.5">
+                    <p className="text-xl md:text-2xl font-extrabold text-emerald-700 dark:text-emerald-300">
+                      30 Credits
+                    </p>
+                    <span className="text-xs font-semibold text-emerald-600/80 dark:text-emerald-400/80">
+                      (30 hrs)
+                    </span>
+                  </div>
+                </div>
+                <div className="pl-1 space-y-0.5">
+                  <span className="text-[10px] font-bold text-purple-600 dark:text-purple-400 block uppercase">
+                    4 Years Target
+                  </span>
+                  <div className="flex items-baseline gap-1.5">
+                    <p className="text-xl md:text-2xl font-extrabold text-purple-700 dark:text-purple-300">
+                      120 Credits
+                    </p>
+                    <span className="text-xs font-semibold text-purple-600/80 dark:text-purple-400/80">
+                      (120 hrs)
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div className="p-4 rounded-2xl bg-purple-500/10 border border-purple-500/20 space-y-1">
-              <span className="text-[10px] font-bold text-purple-600 dark:text-purple-400 uppercase">4 Years (120 hrs Target)</span>
-              <p className="text-2xl font-extrabold text-purple-700 dark:text-purple-300">
-                120 hrs
-              </p>
-            </div>
-
-            <div className="p-4 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 space-y-1">
-              <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase">Member Tier</span>
-              <p className="text-2xl font-extrabold text-indigo-700 dark:text-indigo-300">
+            <div className="p-4 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex flex-col justify-between space-y-1">
+              <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider">Member Tier</span>
+              <p className="text-2xl md:text-3xl font-extrabold text-indigo-700 dark:text-indigo-300">
                 {activeStudent.statusTier}
               </p>
             </div>
@@ -533,8 +573,7 @@ export const CheckAttendanceView: React.FC<CheckAttendanceViewProps> = ({
                 <th className="p-4">Student Name</th>
                 <th className="p-4">Degree & Year</th>
                 <th className="p-4">Club</th>
-                <th className="p-4 text-center">1 Year Target (30h)</th>
-                <th className="p-4 text-center">4 Years Target (120h)</th>
+                <th className="p-4 text-center">Credit Targets (1Yr / 4Yr)</th>
                 <th className="p-4 text-center">Attendance %</th>
                 <th className="p-4 text-center">Status Tier</th>
                 <th className="p-4 text-right">Actions</th>
@@ -543,7 +582,7 @@ export const CheckAttendanceView: React.FC<CheckAttendanceViewProps> = ({
             <tbody className="divide-y divide-gray-200/40 dark:divide-white/5 font-medium">
               {paginatedStudents.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="p-12 text-center text-gray-500 dark:text-gray-400">
+                  <td colSpan={8} className="p-12 text-center text-gray-500 dark:text-gray-400">
                     <div className="flex flex-col items-center gap-2">
                       <AlertTriangle className="w-8 h-8 text-amber-500" />
                       <p className="font-bold text-sm">No student records found matching your query.</p>
@@ -600,14 +639,10 @@ export const CheckAttendanceView: React.FC<CheckAttendanceViewProps> = ({
                       </td>
 
                       <td className="p-4 text-center whitespace-nowrap">
-                        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-xs font-extrabold text-emerald-600 dark:text-emerald-400">
-                          30 hrs
-                        </div>
-                      </td>
-
-                      <td className="p-4 text-center whitespace-nowrap">
-                        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-purple-500/10 border border-purple-500/20 text-xs font-extrabold text-purple-600 dark:text-purple-400">
-                          120 hrs
+                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-gradient-to-r from-emerald-500/10 to-purple-500/10 border border-purple-500/20 text-xs font-bold">
+                          <span className="text-emerald-600 dark:text-emerald-400 font-extrabold">30 Cr (30h)</span>
+                          <span className="text-gray-400 dark:text-gray-500">•</span>
+                          <span className="text-purple-600 dark:text-purple-400 font-extrabold">120 Cr (120h)</span>
                         </div>
                       </td>
 
@@ -635,7 +670,7 @@ export const CheckAttendanceView: React.FC<CheckAttendanceViewProps> = ({
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            onOpenHistoryModal(st);
+                            handleOpenHistoryModal(st);
                           }}
                           className="px-3 py-1.5 rounded-xl bg-blue-600/10 hover:bg-blue-600 text-blue-600 hover:text-white dark:text-blue-400 text-xs font-bold transition-all flex items-center gap-1 ml-auto"
                         >
@@ -650,6 +685,14 @@ export const CheckAttendanceView: React.FC<CheckAttendanceViewProps> = ({
           </table>
         </div>
       </section>
+
+      {/* Attendance History Modal Popup */}
+      {internalHistoryStudent && (
+        <HistoryModal
+          student={internalHistoryStudent}
+          onClose={() => setInternalHistoryStudent(null)}
+        />
+      )}
     </div>
   );
 };
