@@ -78,12 +78,12 @@ export const EntranceView: React.FC<EntranceViewProps> = ({
       <main className="flex-1 flex flex-col items-center justify-center max-w-2xl mx-auto w-full my-8 space-y-8 text-center">
         {/* Dual Logo Container */}
         <div className="flex items-center justify-center gap-6 md:gap-10 animate-in fade-in duration-700">
-          {/* CaSR Owl Logo (Left) */}
+          {/* Centurion University Emblem (Left) */}
           <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-full bg-white dark:bg-slate-900/90 p-2 shadow-2xl border-2 border-slate-200 dark:border-white/20 flex items-center justify-center hover:scale-105 transition-transform duration-300 overflow-hidden" style={{ animation: 'float 4s ease-in-out infinite' }}>
             <img
-              src={logoSrc}
-              onError={handleLogoError}
-              alt="CaSR Logo"
+              src={logo2Src}
+              onError={handleLogo2Error}
+              alt="Centurion University Logo"
               className="w-full h-full object-contain rounded-full"
             />
           </div>
@@ -95,12 +95,12 @@ export const EntranceView: React.FC<EntranceViewProps> = ({
             <div className="w-px h-10 bg-gradient-to-b from-transparent via-slate-400 dark:via-gray-600 to-transparent" />
           </div>
 
-          {/* Centurion University Emblem (Right) */}
+          {/* CaSR Owl Logo (Right) */}
           <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-full bg-white dark:bg-slate-900/90 p-2 shadow-2xl border-2 border-slate-200 dark:border-white/20 flex items-center justify-center hover:scale-105 transition-transform duration-300 overflow-hidden" style={{ animation: 'float 4s ease-in-out infinite 0.6s' }}>
             <img
-              src={logo2Src}
-              onError={handleLogo2Error}
-              alt="Centurion University Logo"
+              src={logoSrc}
+              onError={handleLogoError}
+              alt="CaSR Logo"
               className="w-full h-full object-contain rounded-full"
             />
           </div>

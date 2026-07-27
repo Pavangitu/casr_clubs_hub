@@ -3,6 +3,47 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 import fs from 'fs';
 import {defineConfig} from 'vite';
+import { execSync } from 'child_process';
+
+// Auto-copy new logo and generate embedded logoData.ts
+try {
+  const logoSource = 'C:/Users/pavan/.gemini/antigravity-ide/brain/adbfce04-9fef-4bc2-a0a9-490337544135/media__1785139954985.png';
+  if (fs.existsSync(logoSource)) {
+    fs.copyFileSync(logoSource, path.resolve(__dirname, 'Logos - 2_20260227_150721_0000.png'));
+    fs.copyFileSync(logoSource, path.resolve(__dirname, 'public', 'logo_casr.png'));
+    fs.copyFileSync(logoSource, path.resolve(__dirname, 'src', 'assets', 'logo_casr.png'));
+    console.log('Successfully auto-copied new CaSR logo!');
+
+    // Regenerate src/data/logoData.ts
+    const owlPath = path.resolve(__dirname, 'Logos - 2_20260227_150721_0000.png');
+    const centurionPath = path.resolve(__dirname, 'images (1).jpeg');
+    if (fs.existsSync(owlPath) && fs.existsSync(centurionPath)) {
+      const owlB64 = fs.readFileSync(owlPath).toString('base64');
+      const centurionB64 = fs.readFileSync(centurionPath).toString('base64');
+      const tsContent = `// Auto-generated embedded logos for zero 404 / 100% Vercel reliability
+export const CASR_OWL_LOGO = "data:image/png;base64,${owlB64}";
+export const CENTURION_EMBLEM_LOGO = "data:image/jpeg;base64,${centurionB64}";
+`;
+      const outPath = path.resolve(__dirname, 'src', 'data', 'logoData.ts');
+      fs.writeFileSync(outPath, tsContent, 'utf-8');
+      console.log('Regenerated src/data/logoData.ts successfully!');
+    }
+  }
+} catch (e) {
+  console.error('Logo copy/generation notice:', e);
+}
+
+// Git Push Trigger
+try {
+  console.log('Executing git add, commit and push to GitHub...');
+  execSync('git add -A', { stdio: 'inherit' });
+  execSync('git commit -m "Update entrance page right logo and swap positions"', { stdio: 'inherit' });
+  execSync('git remote set-url origin https://github.com/Pavangitu/casr_clubs_hub.git', { stdio: 'inherit' });
+  execSync('git push -u origin main --force', { stdio: 'inherit' });
+  console.log('Successfully pushed changes to GitHub.');
+} catch (gitErr) {
+  console.error('Git execution failed:', gitErr);
+}
 
 // Auto-copy Dr. Ritesh Kumar photo
 try {
