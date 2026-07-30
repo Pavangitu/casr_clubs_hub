@@ -98,7 +98,9 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({ onStudentLogin, onAdmi
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
+          whileHover={{ rotateX: 1.5, rotateY: -1.5, translateZ: 10 }}
           transition={{ duration: 0.3 }}
+          style={{ transformStyle: 'preserve-3d', perspective: 1200 }}
           className="backdrop-blur-2xl bg-slate-900/70 border border-slate-800/80 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-slate-950/80"
         >
           {/* Tab Selector */}
@@ -194,15 +196,23 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({ onStudentLogin, onAdmi
                   </div>
                 </div>
 
-                <button
+                <motion.button
                   type="submit"
                   disabled={isStudentLoading}
-                  className="w-full py-3.5 px-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold rounded-2xl shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 transition-all duration-200 active:scale-[0.98] disabled:opacity-50"
+                  whileHover={{ scale: 1.02, rotateX: 6, rotateY: -6, translateZ: 15 }}
+                  whileTap={{ scale: 0.98, rotateX: -4, rotateY: 4, translateZ: -10 }}
+                  style={{ transformStyle: 'preserve-3d', perspective: 1000 }}
+                  className="w-full py-3.5 px-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold rounded-2xl shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 transition-all duration-200 disabled:opacity-50 cursor-pointer"
                 >
                   {isStudentLoading ? (
                     <>
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                      Authenticating...
+                      <motion.div
+                        animate={{ rotate: 360, rotateY: 360 }}
+                        transition={{ repeat: Infinity, duration: 1.2, ease: "linear" }}
+                      >
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                      </motion.div>
+                      <span>Authenticating...</span>
                     </>
                   ) : (
                     <>
@@ -210,7 +220,7 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({ onStudentLogin, onAdmi
                       <ArrowRight className="w-4 h-4" />
                     </>
                   )}
-                </button>
+                </motion.button>
 
                 <p className="text-center text-xs text-slate-500">
                   Protected by University Secure Session Authentication
@@ -287,15 +297,23 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({ onStudentLogin, onAdmi
                   </p>
                 )}
 
-                <button
+                <motion.button
                   type="submit"
                   disabled={isAdminLoading}
-                  className="w-full py-3.5 px-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold rounded-2xl shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 transition-all duration-200 active:scale-[0.98] disabled:opacity-50"
+                  whileHover={{ scale: 1.02, rotateX: 6, rotateY: -6, translateZ: 15 }}
+                  whileTap={{ scale: 0.98, rotateX: -4, rotateY: 4, translateZ: -10 }}
+                  style={{ transformStyle: 'preserve-3d', perspective: 1000 }}
+                  className="w-full py-3.5 px-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold rounded-2xl shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 transition-all duration-200 disabled:opacity-50 cursor-pointer"
                 >
                   {isAdminLoading ? (
                     <>
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                      Authenticating Admin...
+                      <motion.div
+                        animate={{ rotate: 360, rotateY: 360 }}
+                        transition={{ repeat: Infinity, duration: 1.2, ease: "linear" }}
+                      >
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                      </motion.div>
+                      <span>Authenticating Admin...</span>
                     </>
                   ) : (
                     <>
@@ -303,7 +321,7 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({ onStudentLogin, onAdmi
                       <ArrowRight className="w-4 h-4" />
                     </>
                   )}
-                </button>
+                </motion.button>
               </motion.form>
             )}
           </AnimatePresence>

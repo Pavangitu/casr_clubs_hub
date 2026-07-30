@@ -18,6 +18,7 @@ if (!fs.existsSync(assetsDir)) {
 const logo1 = path.join(__dirname, 'Logos - 2_20260227_150721_0000.png');
 const logo2 = path.join(__dirname, 'images (1).jpeg');
 const candidates = [
+  path.join(__dirname, 'IMG-20260727-WA0060.jpg'),
   'C:/Users/pavan/.gemini/antigravity-ide/brain/3902d3e3-cf69-45bc-852c-f6b01f66008e/media__1784890934445.png',
   'C:/Users/pavan/Downloads/WhatsApp Image 2026-07-20 at 10.47.07 AM.jpeg',
   'C:/Users/pavan/Downloads/WhatsApp Image 2026-07-12 at 8.33.51 PM.jpeg',
@@ -48,6 +49,18 @@ for (const jcand of joelPhotoCandidates) {
     fs.copyFileSync(jcand, path.join(publicDir, 'paladugu_deep_joel.jpg'));
     fs.copyFileSync(jcand, path.join(assetsDir, 'paladugu_deep_joel.jpg'));
     console.log(`Successfully updated Mr. Paladugu Deep Joel photo from: ${jcand}`);
+    break;
+  }
+}
+
+const anitaPhotoCandidates = [
+  path.join(__dirname, 'WhatsApp Image 2026-07-27 at 3.38.35 PM.jpeg')
+];
+for (const cand of anitaPhotoCandidates) {
+  if (fs.existsSync(cand)) {
+    fs.copyFileSync(cand, path.join(publicDir, 'dr_anita_patra.jpg'));
+    fs.copyFileSync(cand, path.join(assetsDir, 'dr_anita_patra.jpg'));
+    console.log(`Successfully updated Dr. Anita Patra photo from: ${cand}`);
     break;
   }
 }

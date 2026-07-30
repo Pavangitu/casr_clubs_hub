@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { NavTab, ThemeMode, StudentProfile, Club, CampusEvent, ToastMessage, UserRole, AcademicStudentProfile } from './types';
+import { NavTab, ThemeMode, StudentProfile, Club, CampusEvent, ToastMessage, UserRole, AcademicStudentProfile, SyncLogEntry } from './types';
 import { MOCK_CLUBS, MOCK_STUDENTS, MOCK_EVENTS, MOCK_NOTIFICATIONS } from './data/mockData';
 import { INITIAL_ACADEMIC_STUDENTS } from './data/attendanceData';
 import { fetchLiveAttendanceData, getCachedLiveAttendanceData } from './services/googleSheetsService';
@@ -20,6 +20,7 @@ import { EntranceView } from './components/EntranceView';
 import { LoginPortal } from './components/LoginPortal';
 import { ToastContainer } from './components/Toast';
 import { StudentDashboardView } from './components/StudentDashboardView';
+import { SyncLogsModal } from './components/SyncLogsModal';
 
 export default function App() {
   const [isEntered, setIsEntered] = useState(false);
@@ -49,6 +50,9 @@ export default function App() {
   const [isSyncingSheets, setIsSyncingSheets] = useState(false);
   const [lastSyncedTime, setLastSyncedTime] = useState<string>('Just now');
   const isFetchingRef = React.useRef(false);
+  const [autoSyncInterval, setAutoSyncInterval] = useState<number>(5); // Default to 5 seconds
+  const [syncLogs, setSyncLogs] = useState<SyncLogEntry[]>([]);
+  const [showSyncLogsModal, setShowSyncLogsModal] = useState(false);
 
   const addToast = (title: string, message: string, type: 'success' | 'error' | 'warning' | 'info') => {
     const id = `toast-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`;
@@ -70,17 +74,66 @@ export default function App() {
       (s) => s.registrationNumber.trim().toLowerCase() === cleanReg
     );
 
-    // Fetch the latest live data from Google Sheet to ensure we have the absolute latest records
+    // Use cached/pre-loaded live students to make login instant
     let liveStudentsList = allStudents;
-    try {
-      const liveData = await fetchLiveAttendanceData();
+
+    // Trigger an asynchronous refresh of live data in the background (non-blocking)
+    fetchLiveAttendanceData().then((liveData) => {
       if (liveData && liveData.length > 0) {
-        liveStudentsList = liveData;
         setAllStudents(liveData);
+        
+        // Keep logged-in academic student profile in real-time sync with Google Sheet updates
+        setLoggedInAcademicStudent((prev) => {
+          if (!prev) return null;
+          const liveMatch = liveData.find(
+            (s) => s.registrationNumber.trim().toLowerCase() === prev.registrationNumber.trim().toLowerCase()
+          );
+          if (liveMatch) {
+            let semNum = prev.semester;
+            if (liveMatch.semesterYear) {
+              const match = liveMatch.semesterYear.match(/\d+/);
+              if (match) {
+                semNum = parseInt(match[0], 10);
+              }
+            }
+            const classesAttended = liveMatch.eventsAttendedCount || Math.round(250 * ((liveMatch.currentAttendancePercent || 88) / 100));
+            const classesMissed = Math.max(0, 250 - classesAttended);
+
+            const liveMonthly = (liveMatch.monthlyTrends || []).map((trend) => ({
+              month: trend.month,
+              percentage: trend.percentage,
+              attended: Math.round(trend.hours / 1.5),
+              total: Math.round((trend.hours / (trend.percentage / 100)) / 1.5) || 50
+            }));
+
+            const liveLogs = (liveMatch.recentHistory || []).map((hist) => ({
+              id: hist.id,
+              date: hist.date,
+              subject: hist.clubName,
+              status: hist.status,
+              time: hist.inTime || hist.outTime || ''
+            }));
+
+            return {
+              ...prev,
+              name: liveMatch.name || prev.name,
+              overallAttendancePercentage: liveMatch.currentAttendancePercent || prev.overallAttendancePercentage,
+              email: liveMatch.email || prev.email,
+              avatar: liveMatch.avatar || prev.avatar,
+              branch: liveMatch.degreeProgram || prev.branch,
+              department: liveMatch.degreeProgram || prev.department,
+              semester: semNum,
+              section: liveMatch.sectionCode || prev.section,
+              classesAttended: classesAttended,
+              classesMissed: classesMissed,
+              monthlyAttendance: liveMonthly.length > 0 ? liveMonthly : prev.monthlyAttendance,
+              recentLogs: liveLogs.length > 0 ? liveLogs : prev.recentLogs
+            };
+          }
+          return prev;
+        });
       }
-    } catch (e) {
-      console.warn('Login live sheet fetch failed, using cached list:', e);
-    }
+    }).catch(e => console.warn('Background login sheet fetch failed:', e));
 
     const foundBase = liveStudentsList.find(
       (s) => s.registrationNumber.trim().toLowerCase() === cleanReg
@@ -173,6 +226,35 @@ export default function App() {
       academicProfile.branch = branch;
       academicProfile.department = department;
       academicProfile.section = sectionCode;
+
+      if (foundBase) {
+        const classesAttended = foundBase.eventsAttendedCount || Math.round(250 * ((foundBase.currentAttendancePercent || 88) / 100));
+        const classesMissed = Math.max(0, 250 - classesAttended);
+
+        const liveMonthly = (foundBase.monthlyTrends || []).map((trend) => ({
+          month: trend.month,
+          percentage: trend.percentage,
+          attended: Math.round(trend.hours / 1.5),
+          total: Math.round((trend.hours / (trend.percentage / 100)) / 1.5) || 50
+        }));
+
+        const liveLogs = (foundBase.recentHistory || []).map((hist) => ({
+          id: hist.id,
+          date: hist.date,
+          subject: hist.clubName,
+          status: hist.status,
+          time: hist.inTime || hist.outTime || ''
+        }));
+
+        academicProfile.name = foundBase.name || academicProfile.name;
+        academicProfile.email = foundBase.email || academicProfile.email;
+        academicProfile.avatar = foundBase.avatar || academicProfile.avatar;
+        academicProfile.overallAttendancePercentage = foundBase.currentAttendancePercent || academicProfile.overallAttendancePercentage;
+        academicProfile.classesAttended = classesAttended;
+        academicProfile.classesMissed = classesMissed;
+        academicProfile.monthlyAttendance = liveMonthly.length > 0 ? liveMonthly : academicProfile.monthlyAttendance;
+        academicProfile.recentLogs = liveLogs.length > 0 ? liveLogs : academicProfile.recentLogs;
+      }
     }
 
     try {
@@ -221,6 +303,7 @@ export default function App() {
     if (isFetchingRef.current) return;
     isFetchingRef.current = true;
     if (!silent) setIsSyncingSheets(true);
+    const startTime = Date.now();
     try {
       const liveStudents = await fetchLiveAttendanceData();
       if (liveStudents && liveStudents.length > 0) {
@@ -290,10 +373,45 @@ export default function App() {
           );
           return matched || prev;
         });
-        setLastSyncedTime(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
+        const syncTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        setLastSyncedTime(syncTime);
+
+        // Add success log
+        const duration = Date.now() - startTime;
+        const successLog: SyncLogEntry = {
+          id: `log-${Date.now()}`,
+          timestamp: new Date().toLocaleDateString() + ' ' + syncTime,
+          triggerType: silent ? 'AUTO' : 'MANUAL',
+          status: 'SUCCESS',
+          recordsAdded: 0,
+          recordsUpdated: liveStudents.length,
+          recordsDeleted: 0,
+          duplicatesSkipped: 0,
+          failedRecords: 0,
+          executionTimeMs: duration,
+          totalRecordsProcessed: liveStudents.length
+        };
+        setSyncLogs((prev) => [successLog, ...prev.slice(0, 49)]);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.warn('Live Google Sheets fetch failed, keeping fallback students:', err);
+      // Add error log
+      const duration = Date.now() - startTime;
+      const errorLog: SyncLogEntry = {
+        id: `log-${Date.now()}`,
+        timestamp: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+        triggerType: silent ? 'AUTO' : 'MANUAL',
+        status: 'ERROR',
+        recordsAdded: 0,
+        recordsUpdated: 0,
+        recordsDeleted: 0,
+        duplicatesSkipped: 0,
+        failedRecords: 0,
+        executionTimeMs: duration,
+        totalRecordsProcessed: 0,
+        errorMessage: err.message || String(err)
+      };
+      setSyncLogs((prev) => [errorLog, ...prev.slice(0, 49)]);
     } finally {
       if (!silent) setIsSyncingSheets(false);
       isFetchingRef.current = false;
@@ -304,15 +422,17 @@ export default function App() {
     let isMounted = true;
     loadLiveAttendance(false);
 
+    if (autoSyncInterval <= 0) return;
+
     const intervalId = setInterval(() => {
       if (isMounted) loadLiveAttendance(true);
-    }, 1000);
+    }, autoSyncInterval * 1000);
 
     return () => {
       isMounted = false;
       clearInterval(intervalId);
     };
-  }, []);
+  }, [autoSyncInterval]);
 
   useEffect(() => {
     if (!allStudents || allStudents.length === 0) return;
@@ -388,6 +508,7 @@ export default function App() {
             isSyncing={isSyncingSheets}
             lastSyncedTime={lastSyncedTime}
             onManualSync={() => loadLiveAttendance(false)}
+            onOpenSyncLogs={() => setShowSyncLogsModal(true)}
           />
         );
       case 'committee':
@@ -475,6 +596,19 @@ export default function App() {
             <HistoryModal
               student={viewingHistoryStudent}
               onClose={() => setViewingHistoryStudent(null)}
+            />
+          )}
+
+          {showSyncLogsModal && (
+            <SyncLogsModal
+              isOpen={showSyncLogsModal}
+              onClose={() => setShowSyncLogsModal(false)}
+              syncLogs={syncLogs}
+              isSyncing={isSyncingSheets}
+              onManualSync={() => loadLiveAttendance(false)}
+              autoSyncInterval={autoSyncInterval}
+              onSelectInterval={setAutoSyncInterval}
+              onClearLogs={() => setSyncLogs([])}
             />
           )}
 

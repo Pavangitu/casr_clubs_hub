@@ -3,7 +3,6 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 import fs from 'fs';
 import {defineConfig} from 'vite';
-import { execSync } from 'child_process';
 
 // Auto-copy new logo and generate embedded logoData.ts
 try {
@@ -33,30 +32,23 @@ export const CENTURION_EMBLEM_LOGO = "data:image/jpeg;base64,${centurionB64}";
   console.error('Logo copy/generation notice:', e);
 }
 
-// Git Push Trigger
-try {
-  console.log('Executing git add, commit and push to GitHub...');
-  execSync('git add -A', { stdio: 'inherit' });
-  execSync('git commit -m "Update entrance page right logo and swap positions"', { stdio: 'inherit' });
-  execSync('git remote set-url origin https://github.com/Pavangitu/casr_clubs_hub.git', { stdio: 'inherit' });
-  execSync('git push -u origin main --force', { stdio: 'inherit' });
-  console.log('Successfully pushed changes to GitHub.');
-} catch (gitErr) {
-  console.error('Git execution failed:', gitErr);
-}
+
 
 // Auto-copy Dr. Ritesh Kumar photo
 try {
   const candidatePhotos = [
+    path.resolve(__dirname, 'IMG-20260727-WA0060.jpg'),
     'C:/Users/pavan/.gemini/antigravity-ide/brain/3902d3e3-cf69-45bc-852c-f6b01f66008e/media__1784890934445.png',
     path.resolve(__dirname, 'Picsart_25-05-01_15-35-34-079.jpg'),
     'C:/Users/pavan/.gemini/antigravity-ide/brain/a01c71ff-b8b6-4b78-bf81-200f76ea257c/media__1784889985119.jpg',
     path.resolve(__dirname, 'IMG-20250329-WA0009.jpg')
   ];
   const destPublic = path.resolve(__dirname, 'public', 'dr_ritesh_kumar.jpg');
+  const destAssets = path.resolve(__dirname, 'src', 'assets', 'dr_ritesh_kumar.jpg');
   for (const src of candidatePhotos) {
     if (fs.existsSync(src)) {
       fs.copyFileSync(src, destPublic);
+      fs.copyFileSync(src, destAssets);
       break;
     }
   }
@@ -68,6 +60,20 @@ try {
   for (const jcand of joelPhotoCandidates) {
     if (fs.existsSync(jcand)) {
       fs.copyFileSync(jcand, path.resolve(__dirname, 'public', 'paladugu_deep_joel.jpg'));
+      break;
+    }
+  }
+
+  // Auto-copy Dr. Anita Patra photo
+  const anitaPhotoCandidates = [
+    path.resolve(__dirname, 'WhatsApp Image 2026-07-27 at 3.38.35 PM.jpeg')
+  ];
+  const destPublicAnita = path.resolve(__dirname, 'public', 'dr_anita_patra.jpg');
+  const destAssetsAnita = path.resolve(__dirname, 'src', 'assets', 'dr_anita_patra.jpg');
+  for (const src of anitaPhotoCandidates) {
+    if (fs.existsSync(src)) {
+      fs.copyFileSync(src, destPublicAnita);
+      fs.copyFileSync(src, destAssetsAnita);
       break;
     }
   }

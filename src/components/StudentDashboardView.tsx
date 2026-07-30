@@ -33,6 +33,47 @@ import { JoinClubModal } from './JoinClubModal';
 import { HistoryModal } from './HistoryModal';
 import { Footer } from './Footer';
 
+const MONTH_SHORT = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+const MONTH_LONG = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const MONTH_MAP: Record<string, number> = {
+  'JAN': 0, 'FEB': 1, 'MAR': 2, 'APR': 3, 'MAY': 4, 'JUN': 5,
+  'JUL': 6, 'AUG': 7, 'SEP': 8, 'OCT': 9, 'NOV': 10, 'DEC': 11
+};
+
+const parseRecordDate = (dateStr: string) => {
+  if (!dateStr) return null;
+  // Try YYYY-MM-DD
+  let match = dateStr.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if (match) {
+    return {
+      year: parseInt(match[1]),
+      month: parseInt(match[2]) - 1, // 0-indexed
+      day: parseInt(match[3])
+    };
+  }
+  // Try M/D/YYYY or D/M/YYYY
+  match = dateStr.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+  if (match) {
+    const val1 = parseInt(match[1]);
+    const val2 = parseInt(match[2]);
+    const year = parseInt(match[3]);
+    if (val1 > 12) {
+      return { year, month: val2 - 1, day: val1 };
+    } else {
+      return { year, month: val1 - 1, day: val2 };
+    }
+  }
+  const d = new Date(dateStr);
+  if (!isNaN(d.getTime())) {
+    return {
+      year: d.getFullYear(),
+      month: d.getMonth(),
+      day: d.getDate()
+    };
+  }
+  return null;
+};
+
 interface StudentDashboardViewProps {
   student: AcademicStudentProfile;
   allStudents?: StudentProfile[];
@@ -61,10 +102,32 @@ export const StudentDashboardView: React.FC<StudentDashboardViewProps> = ({
   const [internalJoiningClub, setInternalJoiningClub] = useState<Club | null>(null);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
 
+  const latestMonth = student.monthlyAttendance && student.monthlyAttendance.length > 0
+    ? student.monthlyAttendance[student.monthlyAttendance.length - 1].month.toUpperCase()
+    : 'OCT';
+  const [selectedMonthStr, setSelectedMonthStr] = useState<string>(latestMonth);
+  const [selectedDay, setSelectedDay] = useState<number | null>(null);
+
   // Match live StudentProfile from Google Sheets sync list for exact history & log sync
   const matchedLiveStudent = allStudents.find(
     (s) => s.registrationNumber.trim().toLowerCase() === student.registrationNumber.trim().toLowerCase()
   );
+
+  const liveAttendancePercent = matchedLiveStudent
+    ? (matchedLiveStudent.currentAttendancePercent ?? student.overallAttendancePercentage)
+    : student.overallAttendancePercentage;
+
+  const daysAttended = matchedLiveStudent
+    ? (matchedLiveStudent.eventsAttendedCount ?? student.classesAttended)
+    : student.classesAttended;
+
+  const totalClasses = student.totalClasses || 250;
+
+  const hoursAttended = matchedLiveStudent
+    ? (matchedLiveStudent.completedHours ?? parseFloat((daysAttended * 1.5).toFixed(1)))
+    : parseFloat((daysAttended * 1.5).toFixed(1));
+
+  const totalHours = parseFloat((totalClasses * 1.5).toFixed(1));
 
   const studentProfileForHistory: StudentProfile = {
     registrationNumber: student.registrationNumber,
@@ -102,6 +165,55 @@ export const StudentDashboardView: React.FC<StudentDashboardViewProps> = ({
       outTime: '11:00 AM'
     }))
   };
+
+  const historyRecords = matchedLiveStudent?.recentHistory || studentProfileForHistory.recentHistory || [];
+
+  const uniqueMonths = Array.from(
+    new Set(
+      historyRecords
+        .map((rec) => {
+          const parsed = parseRecordDate(rec.date);
+          return parsed ? MONTH_SHORT[parsed.month] : null;
+        })
+        .filter((m): m is string => !!m)
+    )
+  );
+
+  const availableMonths = MONTH_SHORT;
+
+  const currentMonthIdx = MONTH_MAP[selectedMonthStr] ?? 9;
+  
+  const monthLogs = historyRecords.filter((rec) => {
+    const parsed = parseRecordDate(rec.date);
+    return parsed && parsed.month === currentMonthIdx;
+  });
+
+  const currentYear = new Date().getFullYear();
+  const daysInMonth = new Date(currentYear, currentMonthIdx + 1, 0).getDate();
+
+  const dailyData = Array.from({ length: daysInMonth }, (_, i) => {
+    const dayNum = i + 1;
+    const dayLogs = monthLogs.filter((rec) => {
+      const parsed = parseRecordDate(rec.date);
+      return parsed && parsed.day === dayNum;
+    });
+
+    const totalHours = dayLogs.reduce((sum, rec) => sum + (rec.durationHours || 0), 0);
+    const isPresent = dayLogs.some((rec) => rec.status === 'PRESENT');
+    const isExcused = dayLogs.some((rec) => rec.status === 'EXCUSED');
+    const isAbsent = dayLogs.some((rec) => rec.status === 'ABSENT');
+
+    return {
+      day: dayNum,
+      logs: dayLogs,
+      hours: Number(totalHours.toFixed(2)),
+      isPresent,
+      isExcused,
+      isAbsent
+    };
+  });
+
+  const maxDayHours = Math.max(4, ...dailyData.map((d) => d.hours));
 
   const handleSelectViewClub = (c: Club) => {
     if (onViewClub) onViewClub(c);
@@ -292,6 +404,8 @@ export const StudentDashboardView: React.FC<StudentDashboardViewProps> = ({
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
+              whileHover={{ scale: 1.01, rotateX: 1, rotateY: -1, translateZ: 5 }}
+              style={{ transformStyle: 'preserve-3d', perspective: 1200 }}
               className="glass-card rounded-3xl p-6 shadow-xl"
             >
               <div className="flex items-center gap-2.5 mb-5 text-blue-700 dark:text-blue-400 font-extrabold text-xs uppercase tracking-wider">
@@ -326,7 +440,9 @@ export const StudentDashboardView: React.FC<StudentDashboardViewProps> = ({
                     </span>
                     Department
                   </span>
-                  <p className="text-sm font-extrabold text-slate-950 dark:text-white truncate">{student.department}</p>
+                  <p className="text-sm font-extrabold text-slate-950 dark:text-white truncate">
+                    {matchedLiveStudent?.degreeProgram || student.department}
+                  </p>
                 </div>
                 <div className="p-4 bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
                   <span className="text-xs text-slate-757 dark:text-slate-300 font-bold flex items-center gap-2 mb-2">
@@ -335,7 +451,9 @@ export const StudentDashboardView: React.FC<StudentDashboardViewProps> = ({
                     </span>
                     Branch
                   </span>
-                  <p className="text-sm font-extrabold text-slate-950 dark:text-white truncate">{student.branch}</p>
+                  <p className="text-sm font-extrabold text-slate-950 dark:text-white truncate">
+                    {matchedLiveStudent?.degreeProgram || student.branch}
+                  </p>
                 </div>
                 <div className="p-4 bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
                   <span className="text-xs text-slate-758 dark:text-slate-300 font-bold flex items-center gap-2 mb-2">
@@ -344,7 +462,9 @@ export const StudentDashboardView: React.FC<StudentDashboardViewProps> = ({
                     </span>
                     Semester
                   </span>
-                  <p className="text-sm font-extrabold text-slate-950 dark:text-white">Semester {student.semester}</p>
+                  <p className="text-sm font-extrabold text-slate-950 dark:text-white">
+                    {matchedLiveStudent?.semesterYear || `Semester ${student.semester}`}
+                  </p>
                 </div>
                 <div className="p-4 bg-slate-100 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
                   <span className="text-xs text-slate-759 dark:text-slate-300 font-bold flex items-center gap-2 mb-2">
@@ -353,7 +473,9 @@ export const StudentDashboardView: React.FC<StudentDashboardViewProps> = ({
                     </span>
                     Section
                   </span>
-                  <p className="text-sm font-extrabold text-slate-950 dark:text-white">{student.section}</p>
+                  <p className="text-sm font-extrabold text-slate-950 dark:text-white font-mono">
+                    {matchedLiveStudent?.sectionCode || student.section}
+                  </p>
                 </div>
               </div>
             </motion.div>
@@ -363,6 +485,8 @@ export const StudentDashboardView: React.FC<StudentDashboardViewProps> = ({
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.05 }}
+              whileHover={{ scale: 1.01, rotateX: 1.5, rotateY: -1.5, translateZ: 8 }}
+              style={{ transformStyle: 'preserve-3d', perspective: 1200 }}
               className="glass-card bg-gradient-to-r from-purple-500/10 via-blue-500/5 to-emerald-500/10 border border-purple-500/30 rounded-3xl p-5 shadow-xl flex flex-col sm:flex-row items-center justify-between gap-4"
             >
               <div className="flex items-center gap-4">
@@ -398,19 +522,21 @@ export const StudentDashboardView: React.FC<StudentDashboardViewProps> = ({
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
+                whileHover={{ scale: 1.03, rotateX: 4, rotateY: -4, translateZ: 10 }}
+                style={{ transformStyle: 'preserve-3d', perspective: 1000 }}
                 className="glass-card rounded-3xl p-6 shadow-xl relative overflow-hidden"
               >
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-xs font-extrabold text-slate-800 dark:text-slate-200 uppercase tracking-wider">
                     Overall Attendance
                   </span>
-                  <span className={`px-2.5 py-1 rounded-full text-xs font-extrabold border ${getAttendanceBadgeColor(student.overallAttendancePercentage)}`}>
-                    {student.overallAttendancePercentage >= 75 ? 'Good Standing' : 'Low Warning'}
+                  <span className={`px-2.5 py-1 rounded-full text-xs font-extrabold border ${getAttendanceBadgeColor(liveAttendancePercent)}`}>
+                    {liveAttendancePercent >= 75 ? 'Good Standing' : 'Low Warning'}
                   </span>
                 </div>
                 <div className="flex items-baseline gap-2 mb-3">
                   <span className="text-4xl font-extrabold text-slate-950 dark:text-white font-mono">
-                    {student.overallAttendancePercentage}%
+                    {liveAttendancePercent}%
                   </span>
                   <span className="text-xs text-slate-700 dark:text-slate-300 font-bold">Total Avg</span>
                 </div>
@@ -418,10 +544,30 @@ export const StudentDashboardView: React.FC<StudentDashboardViewProps> = ({
                 <div className="w-full bg-slate-200 dark:bg-slate-950 h-3 rounded-full overflow-hidden p-0.5 border border-slate-300 dark:border-slate-800">
                   <motion.div
                     initial={{ width: 0 }}
-                    animate={{ width: `${student.overallAttendancePercentage}%` }}
+                    animate={{ width: `${liveAttendancePercent}%` }}
                     transition={{ duration: 1, ease: 'easeOut' }}
-                    className={`h-full rounded-full bg-gradient-to-r ${getAttendanceBarColor(student.overallAttendancePercentage)}`}
+                    className={`h-full rounded-full bg-gradient-to-r ${getAttendanceBarColor(liveAttendancePercent)}`}
                   />
+                </div>
+
+                {/* Attendance Days & Hours details */}
+                <div className="grid grid-cols-2 gap-4 mt-5 pt-4 border-t border-slate-200/45 dark:border-slate-800/40">
+                  <div className="flex flex-col">
+                    <span className="text-[10px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                      Days Attended
+                    </span>
+                    <span className="text-lg font-black text-slate-950 dark:text-white mt-1 font-mono">
+                      {daysAttended}
+                    </span>
+                  </div>
+                  <div className="flex flex-col">
+                    <span className="text-[10px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                      ⏰ Hours Logged
+                    </span>
+                    <span className="text-lg font-black text-slate-950 dark:text-white mt-1 font-mono">
+                      {hoursAttended} <span className="text-xs font-bold text-slate-500 dark:text-slate-400">hrs</span>
+                    </span>
+                  </div>
                 </div>
               </motion.div>
 
@@ -430,6 +576,8 @@ export const StudentDashboardView: React.FC<StudentDashboardViewProps> = ({
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.15 }}
+                whileHover={{ scale: 1.03, rotateX: 4, rotateY: -4, translateZ: 10 }}
+                style={{ transformStyle: 'preserve-3d', perspective: 1000 }}
                 className="glass-card rounded-3xl p-6 shadow-xl relative overflow-hidden"
               >
                 <div className="flex items-center justify-between mb-4">
@@ -459,6 +607,8 @@ export const StudentDashboardView: React.FC<StudentDashboardViewProps> = ({
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
+                whileHover={{ scale: 1.03, rotateX: 4, rotateY: -4, translateZ: 10 }}
+                style={{ transformStyle: 'preserve-3d', perspective: 1000 }}
                 className="glass-card rounded-3xl p-6 shadow-xl relative overflow-hidden"
               >
                 <div className="flex items-center justify-between mb-4">
@@ -485,39 +635,246 @@ export const StudentDashboardView: React.FC<StudentDashboardViewProps> = ({
             </div>
 
 
-            {/* Monthly Attendance Trends */}
+            {/* Monthly Attendance Trends Graph */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.35 }}
-              className="glass-card rounded-3xl p-6 shadow-xl"
+              className="glass-card rounded-3xl p-6 shadow-xl relative overflow-hidden flex flex-col gap-6"
             >
-              <h2 className="text-xl font-extrabold text-slate-950 dark:text-white mb-4 flex items-center gap-3 tracking-tight">
-                <span className="w-9 h-9 rounded-xl glass-neo-icon text-emerald-600 dark:text-emerald-400 shrink-0">
-                  <TrendingUp className="w-5 h-5" />
-                </span>
-                <span className="text-slate-950 dark:text-white">Monthly Attendance Trends</span>
-              </h2>
-              <div className="space-y-4">
-                {student.monthlyAttendance.map((m, idx) => (
-                  <div key={idx} className="bg-slate-100/90 dark:bg-slate-900/90 p-4 rounded-2xl border border-slate-200/90 dark:border-slate-800 flex items-center justify-between gap-4 shadow-sm">
-                    <div className="w-20">
-                      <span className="text-sm font-extrabold text-slate-950 dark:text-white uppercase">{m.month}</span>
-                      <p className="text-[11px] font-bold text-slate-700 dark:text-slate-300">{m.attended}/{m.total} classes</p>
-                    </div>
-                    <div className="flex-1">
-                      <div className="w-full bg-slate-200 dark:bg-slate-950 h-2.5 rounded-full overflow-hidden border border-slate-300 dark:border-slate-800">
-                        <div
-                          className={`h-full rounded-full bg-gradient-to-r ${getAttendanceBarColor(m.percentage)}`}
-                          style={{ width: `${m.percentage}%` }}
-                        />
+              {/* Header */}
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <h2 className="text-xl font-extrabold text-slate-950 dark:text-white flex items-center gap-3 tracking-tight">
+                  <span className="w-9 h-9 rounded-xl glass-neo-icon text-emerald-600 dark:text-emerald-400 shrink-0">
+                    <TrendingUp className="w-5 h-5" />
+                  </span>
+                  <span className="text-slate-950 dark:text-white">Daily Attendance Trends</span>
+                </h2>
+                
+                {/* Month Tabs */}
+                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 max-w-full scrollbar-none">
+                  {availableMonths.map((m) => (
+                    <button
+                      key={m}
+                      onClick={() => {
+                        setSelectedMonthStr(m);
+                        setSelectedDay(null); // Reset day selection on month change
+                      }}
+                      className={`px-3.5 py-1.5 rounded-full text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
+                        selectedMonthStr === m
+                          ? 'bg-gradient-to-r from-emerald-600 to-teal-500 text-white shadow-md'
+                          : 'bg-slate-100 dark:bg-slate-900 text-slate-700 dark:text-slate-400 border border-slate-200 dark:border-slate-800 hover:bg-slate-200 dark:hover:bg-slate-850'
+                      }`}
+                    >
+                      {m}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Monthly Stats Summary */}
+              <div className="grid grid-cols-3 gap-3">
+                <div className="bg-emerald-500/5 dark:bg-emerald-500/10 p-3 rounded-2xl border border-emerald-500/15 flex flex-col justify-center">
+                  <span className="text-[10px] font-extrabold text-slate-750 dark:text-slate-400 uppercase tracking-wide">Classes Logged</span>
+                  <span className="text-xl font-black text-emerald-600 dark:text-emerald-400 font-mono mt-0.5">
+                    {monthLogs.length}
+                  </span>
+                </div>
+                <div className="bg-blue-500/5 dark:bg-blue-500/10 p-3 rounded-2xl border border-blue-500/15 flex flex-col justify-center">
+                  <span className="text-[10px] font-extrabold text-slate-755 dark:text-slate-400 uppercase tracking-wide">Hours Logged</span>
+                  <span className="text-xl font-black text-blue-600 dark:text-blue-400 font-mono mt-0.5">
+                    {monthLogs.reduce((sum, rec) => sum + (rec.durationHours || 0), 0).toFixed(1)}h
+                  </span>
+                </div>
+                <div className="bg-purple-500/5 dark:bg-purple-500/10 p-3 rounded-2xl border border-purple-500/15 flex flex-col justify-center">
+                  <span className="text-[10px] font-extrabold text-slate-755 dark:text-slate-400 uppercase tracking-wide">Avg Session</span>
+                  <span className="text-xl font-black text-purple-600 dark:text-purple-400 font-mono mt-0.5">
+                    {monthLogs.length > 0 
+                      ? `${(monthLogs.reduce((sum, rec) => sum + (rec.durationHours || 0), 0) / monthLogs.length).toFixed(1)}h`
+                      : '0.0h'
+                    }
+                  </span>
+                </div>
+              </div>
+
+              {/* Graph Container */}
+              <div className="relative bg-slate-100/90 dark:bg-slate-900/90 p-4 rounded-3xl border border-slate-200/90 dark:border-slate-800 shadow-inner min-h-[220px]">
+                {/* SVG Graph */}
+                <div className="w-full h-[180px] select-none flex items-end">
+                  {/* Grid Lines & Y-Axis Labels */}
+                  <div className="absolute inset-x-4 top-4 bottom-10 flex flex-col justify-between pointer-events-none text-[9px] font-bold text-slate-400 font-mono">
+                    {[maxDayHours, maxDayHours / 2, 0].map((h, i) => (
+                      <div key={i} className="flex items-center gap-2 w-full">
+                        <span className="w-6 text-right shrink-0">{h.toFixed(1)}h</span>
+                        <div className="w-full border-b border-dashed border-slate-200 dark:border-slate-850/80" />
                       </div>
-                    </div>
-                    <span className="text-sm font-extrabold font-mono text-slate-950 dark:text-white w-12 text-right">
-                      {m.percentage}%
-                    </span>
+                    ))}
                   </div>
-                ))}
+
+                  {/* Bars Container */}
+                  <div className="flex-1 h-[140px] flex items-end justify-between gap-1 md:gap-1.5 px-8 relative z-10">
+                    {dailyData.map((d) => {
+                      const heightPercent = (d.hours / maxDayHours) * 100;
+                      const isSelected = selectedDay === d.day;
+                      const hasActivity = d.hours > 0;
+
+                      return (
+                        <div
+                          key={d.day}
+                          onClick={() => hasActivity && setSelectedDay(isSelected ? null : d.day)}
+                          className={`group flex-1 flex flex-col items-center justify-end h-full cursor-pointer transition-all ${
+                            !hasActivity ? 'pointer-events-none' : ''
+                          }`}
+                        >
+                          {/* Hover Tooltip (Bubble) */}
+                          <div className={`absolute bottom-full mb-2 bg-slate-950 text-white dark:bg-white dark:text-slate-950 text-[10px] font-black px-2 py-1 rounded-lg pointer-events-none shadow-md z-20 whitespace-nowrap transition-all duration-200 scale-0 origin-bottom group-hover:scale-100 ${
+                            isSelected ? 'scale-100 opacity-100' : 'opacity-0'
+                          }`}
+                          style={{
+                            left: `${((d.day - 1) / (daysInMonth - 1)) * 80 + 10}%`,
+                            transform: 'translateX(-50%)'
+                          }}
+                          >
+                            Day {d.day}: {d.hours}h ({d.logs.length} sessions)
+                          </div>
+
+                          {/* Bar */}
+                          <div
+                            className={`w-full rounded-t-lg transition-all duration-300 ${
+                              isSelected 
+                                ? 'bg-gradient-to-t from-emerald-600 to-teal-400 shadow-[0_0_12px_rgba(16,185,129,0.4)] scale-x-110' 
+                                : isSelected === null && hasActivity
+                                  ? 'bg-gradient-to-t from-emerald-500/80 to-teal-400/80 group-hover:from-emerald-500 group-hover:to-teal-400 shadow-[0_0_6px_rgba(16,185,129,0.1)]'
+                                  : hasActivity
+                                    ? 'bg-gradient-to-t from-emerald-500/60 to-teal-400/60 group-hover:from-emerald-500/90 group-hover:to-teal-400/90'
+                                    : 'h-1.5 w-1.5 rounded-full bg-slate-350 dark:bg-slate-800'
+                            }`}
+                            style={hasActivity ? { height: `${Math.max(12, heightPercent)}%` } : {}}
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* X-Axis Month Day Labels */}
+                <div className="flex justify-between text-[9px] font-bold text-slate-500 dark:text-slate-400 font-mono border-t border-slate-200 dark:border-slate-800/80 pt-2 px-8">
+                  <span>1st</span>
+                  <span>10th</span>
+                  <span>20th</span>
+                  <span>{daysInMonth}th</span>
+                </div>
+              </div>
+
+              {/* Day Timings / Attendance Details Panel */}
+              <div className="border-t border-slate-200 dark:border-slate-800/60 pt-4">
+                {selectedDay !== null && dailyData[selectedDay - 1] ? (
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-xs font-black text-slate-805 dark:text-slate-200 uppercase tracking-wider flex items-center gap-2">
+                        <Calendar className="w-3.5 h-3.5 text-emerald-500" />
+                        Timings on {selectedMonthStr} {selectedDay}
+                      </h4>
+                      <button 
+                        onClick={() => setSelectedDay(null)}
+                        className="text-[10px] font-extrabold text-blue-600 dark:text-blue-400 hover:underline"
+                      >
+                        Show Month Logs
+                      </button>
+                    </div>
+
+                    <div className="space-y-2">
+                      {dailyData[selectedDay - 1].logs.map((log, lIdx) => (
+                        <div 
+                          key={lIdx}
+                          className="bg-white/60 dark:bg-slate-950/60 p-3 rounded-xl border border-slate-200 dark:border-slate-850 flex items-center justify-between gap-3"
+                        >
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold text-[10px]">
+                              {log.rawScanType || 'IN'}
+                            </div>
+                            <div>
+                              <p className="text-xs font-black text-slate-955 dark:text-white leading-tight">
+                                {log.eventName || 'Class Session'}
+                              </p>
+                              <div className="flex items-center gap-1 text-[10px] font-bold text-slate-500 dark:text-slate-400 mt-0.5">
+                                <Clock className="w-3 h-3 text-slate-400" />
+                                <span>{log.inTime ? `${log.inTime} - ${log.outTime || 'N/A'}` : log.time}</span>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <div className="flex items-center gap-2 text-right">
+                            <span className="text-[10px] font-extrabold font-mono bg-slate-100 dark:bg-slate-900 px-2 py-0.5 rounded-md border border-slate-200 dark:border-slate-800">
+                              {log.durationHours} hrs
+                            </span>
+                            <span className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider ${
+                              log.status === 'PRESENT'
+                                ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-400 border border-emerald-250 dark:border-emerald-900'
+                                : 'bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-400 border border-blue-250 dark:border-blue-900'
+                            }`}>
+                              {log.status}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <h4 className="text-xs font-black text-slate-805 dark:text-slate-200 uppercase tracking-wider flex items-center gap-2">
+                      <Calendar className="w-3.5 h-3.5 text-slate-400" />
+                      Session History for {selectedMonthStr}
+                    </h4>
+
+                    {monthLogs.length > 0 ? (
+                      <div className="max-h-[160px] overflow-y-auto pr-1 space-y-1.5 scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-800">
+                        {monthLogs.map((log, lIdx) => {
+                          const parsed = parseRecordDate(log.date);
+                          const dayNum = parsed ? parsed.day : '';
+                          return (
+                            <div 
+                              key={lIdx}
+                              onClick={() => dayNum && setSelectedDay(dayNum)}
+                              className="bg-white/40 dark:bg-slate-950/40 p-2.5 rounded-xl border border-slate-200/60 dark:border-slate-800/40 hover:bg-slate-100/60 dark:hover:bg-slate-900/60 transition-colors flex items-center justify-between gap-3 cursor-pointer"
+                            >
+                              <div className="flex items-center gap-2">
+                                <span className="w-6 text-[10px] font-black font-mono text-slate-400 dark:text-slate-500 text-center shrink-0">
+                                  #{dayNum}
+                                </span>
+                                <div>
+                                  <p className="text-[11px] font-extrabold text-slate-955 dark:text-white leading-tight">
+                                    {log.eventName}
+                                  </p>
+                                  <span className="text-[9px] font-bold text-slate-500 dark:text-slate-400">
+                                    {log.inTime ? `${log.inTime} - ${log.outTime || 'N/A'}` : log.time}
+                                  </span>
+                                </div>
+                              </div>
+                              
+                              <div className="flex items-center gap-2 text-right">
+                                <span className="text-[9px] font-extrabold font-mono text-slate-700 dark:text-slate-400">
+                                  {log.durationHours} hrs
+                                </span>
+                                <span className={`px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider ${
+                                  log.status === 'PRESENT'
+                                    ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-400 border border-emerald-250 dark:border-emerald-900'
+                                    : 'bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-400 border border-blue-250 dark:border-blue-900'
+                                }`}>
+                                  {log.status}
+                                </span>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <div className="bg-slate-100/40 dark:bg-slate-900/40 p-4 rounded-xl border border-slate-200/50 dark:border-slate-800/50 text-center text-[11px] font-bold text-slate-500 dark:text-slate-400">
+                        No session records logged in the sheet for {selectedMonthStr}.
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </motion.div>
           </>

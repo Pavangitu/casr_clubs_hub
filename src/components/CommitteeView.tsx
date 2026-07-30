@@ -220,8 +220,15 @@ export const CommitteeView: React.FC<CommitteeViewProps> = ({ compactPadding = f
         <div className="relative space-y-4 pt-2">
           {/* Step 1: Registrar */}
           <div className="glass-card p-6 rounded-3xl border border-purple-500/30 bg-purple-500/5 relative overflow-hidden shadow-xl flex flex-col md:flex-row items-center gap-5 group hover:border-purple-500/60 transition-all">
-            <div className="w-14 h-14 rounded-2xl bg-purple-500/20 text-purple-600 dark:text-purple-300 flex items-center justify-center font-extrabold text-xl shrink-0 shadow-inner">
-              1
+            <div className="relative shrink-0">
+              <img
+                src="/dr_anita_patra.jpg"
+                alt="Dr. Anita Patra"
+                className="w-20 h-20 md:w-24 md:h-24 rounded-2xl object-cover object-center border-2 border-purple-500/60 shadow-lg group-hover:scale-105 transition-all duration-300"
+              />
+              <span className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-purple-600 text-white text-xs font-black flex items-center justify-center shadow-lg border-2 border-white dark:border-slate-900">
+                1
+              </span>
             </div>
             <div className="flex-1 text-center md:text-left space-y-1">
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">

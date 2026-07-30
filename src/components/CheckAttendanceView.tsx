@@ -20,7 +20,8 @@ import {
   Eye,
   AlertTriangle,
   X,
-  Calendar
+  Calendar,
+  Download
 } from 'lucide-react';
 import { fetchLiveAttendanceData, GOOGLE_SHEETS_URLS, getCustomSheetUrl, setCustomSheetUrl, MASTER_GOOGLE_SHEET_URL } from '../services/googleSheetsService';
 
@@ -93,6 +94,7 @@ interface CheckAttendanceViewProps {
   isSyncing?: boolean;
   lastSyncedTime?: string;
   onManualSync?: () => void;
+  onOpenSyncLogs?: () => void;
 }
 
 export const CheckAttendanceView: React.FC<CheckAttendanceViewProps> = ({
@@ -105,7 +107,8 @@ export const CheckAttendanceView: React.FC<CheckAttendanceViewProps> = ({
   isSyncingSheets: propIsSyncingSheets = false,
   isSyncing,
   lastSyncedTime: propLastSyncedTime = 'Live',
-  onManualSync
+  onManualSync,
+  onOpenSyncLogs
 }) => {
   const initialAllStudents = students || propAllStudents || [];
   const activeCurrentStudent = currentStudent || initialAllStudents[0];
@@ -260,6 +263,38 @@ export const CheckAttendanceView: React.FC<CheckAttendanceViewProps> = ({
     setTierFilter('ALL');
   };
 
+  const handleExportCSV = () => {
+    let csvContent = "\uFEFF"; // BOM for Excel UTF-8
+    csvContent += "Registration Number,Student Name,Email,Degree Program,Semester / Year,Section,Primary Club,Completed Hours,Credits Earned,Attendance Rate %,Status Tier\r\n";
+    
+    allStudentsList.forEach((st) => {
+      const row = [
+        st.registrationNumber,
+        st.name,
+        st.email,
+        st.degreeProgram || 'Undergraduate',
+        st.semesterYear || 'N/A',
+        st.sectionCode || 'N/A',
+        st.clubName || 'Campus Club',
+        st.completedHours || 0,
+        st.creditsEarned || 0,
+        st.currentAttendancePercent || 0,
+        st.statusTier || 'Standard'
+      ];
+      const rowEscaped = row.map(val => `"${String(val).replace(/"/g, '""')}"`).join(",");
+      csvContent += rowEscaped + "\r\n";
+    });
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `casr_attendance_report_${Date.now()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const renderAttendanceAvatar = (tier: string) => {
     const cleanTier = (tier || '').toUpperCase();
     if (cleanTier === 'ELITE') return <EliteAvatar />;
@@ -302,6 +337,15 @@ export const CheckAttendanceView: React.FC<CheckAttendanceViewProps> = ({
                 <RefreshCw className={`w-3.5 h-3.5 ${isSyncingSheets ? 'animate-spin' : ''}`} />
                 {isSyncingSheets ? 'Syncing...' : 'Sync Now'}
               </button>
+              {onOpenSyncLogs && (
+                <button
+                  onClick={onOpenSyncLogs}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold transition-all shadow-sm hover:scale-105 active:scale-95"
+                >
+                  <Clock className="w-3.5 h-3.5" />
+                  Sync Settings / Logs
+                </button>
+              )}
               <a
                 href={getCustomSheetUrl()}
                 target="_blank"
@@ -310,6 +354,12 @@ export const CheckAttendanceView: React.FC<CheckAttendanceViewProps> = ({
               >
                 <FileSpreadsheet className="w-3.5 h-3.5" /> Open Google Sheet <ExternalLink className="w-3 h-3" />
               </a>
+              <button
+                onClick={handleExportCSV}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition-all shadow-sm hover:scale-105 active:scale-95"
+              >
+                <Download className="w-3.5 h-3.5" /> Export Excel/CSV
+              </button>
             </div>
           </div>
         </div>

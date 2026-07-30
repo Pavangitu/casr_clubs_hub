@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { SyncLogEntry } from '../types';
-import { MASTER_GOOGLE_SHEET_URL } from '../services/googleSheetsService';
+import { MASTER_GOOGLE_SHEET_URL, getCustomSheetUrl, setCustomSheetUrl } from '../services/googleSheetsService';
 import {
   X,
   RefreshCw,
@@ -39,6 +39,8 @@ export const SyncLogsModal: React.FC<SyncLogsModalProps> = ({
   onSelectInterval,
   onClearLogs
 }) => {
+  const [sheetUrlInput, setSheetUrlInput] = useState(getCustomSheetUrl());
+  const [saveSuccess, setSaveSuccess] = useState(false);
   const [filterStatus, setFilterStatus] = useState<'ALL' | 'SUCCESS' | 'WARNING' | 'ERROR'>('ALL');
 
   if (!isOpen) return null;
@@ -119,6 +121,51 @@ export const SyncLogsModal: React.FC<SyncLogsModalProps> = ({
         <div className="p-6 md:p-8 space-y-6 overflow-y-auto custom-scrollbar flex-1">
           {/* Top Controls Grid */}
           <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+            {/* Custom Google Sheet URL Configuration Card */}
+            <div className="md:col-span-12 bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4 shadow-sm">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <FileSpreadsheet className="w-4 h-4 text-emerald-500" />
+                  <span className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    Linked Google Spreadsheet URL
+                  </span>
+                </div>
+                {saveSuccess && (
+                  <span className="text-xs text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
+                    <CheckCircle2 className="w-3.5 h-3.5" /> Saved & Reconnected
+                  </span>
+                )}
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3">
+                <input
+                  type="text"
+                  value={sheetUrlInput}
+                  onChange={(e) => {
+                    setSheetUrlInput(e.target.value);
+                    setSaveSuccess(false);
+                  }}
+                  placeholder="Paste Google Sheet URL here..."
+                  className="flex-1 px-4 py-2.5 rounded-xl border border-gray-300 dark:border-slate-800 bg-white dark:bg-slate-900 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-900 dark:text-slate-100 placeholder-slate-400"
+                />
+                <button
+                  onClick={() => {
+                    const cleanUrl = sheetUrlInput.trim();
+                    setCustomSheetUrl(cleanUrl || MASTER_GOOGLE_SHEET_URL);
+                    setSaveSuccess(true);
+                    onManualSync();
+                    setTimeout(() => setSaveSuccess(false), 3000);
+                  }}
+                  className="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-md hover:scale-105 active:scale-95 transition-all whitespace-nowrap cursor-pointer"
+                >
+                  Save & Sync Sheet
+                </button>
+              </div>
+              <p className="text-[11px] text-gray-500 dark:text-gray-400">
+                Note: Ensure the spreadsheet is shared with <strong>"Anyone with the link can view"</strong> (viewer permissions) so the system can retrieve scan records.
+              </p>
+            </div>
+
             {/* Status & Sync Trigger (7 Cols) */}
             <div className="md:col-span-7 bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4 shadow-sm">
               <div className="flex items-center justify-between">

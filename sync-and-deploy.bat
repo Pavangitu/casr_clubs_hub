@@ -34,7 +34,7 @@ echo.
 
 git add src/data/realStudentsData.ts
 git commit -m "Auto-sync: Update student data from Google Sheet - %DATE% %TIME%"
-git remote set-url origin https://github.com/Pavangitu/casr_clubs_hub.git
+git remote set-url origin https://github.com/Pavangitu/casr-clubs-hub.git
 git push -u origin main
 
 if %ERRORLEVEL% neq 0 (

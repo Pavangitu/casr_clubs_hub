@@ -613,10 +613,17 @@ export function getCachedLiveAttendanceData(): StudentProfile[] | null {
 
 export async function fetchLiveAttendanceData(): Promise<StudentProfile[]> {
   try {
+    const customUrl = getCustomSheetUrl();
+    const customIdMatch = customUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    const targetSheetId = customIdMatch ? customIdMatch[1] : '19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc';
+
     // Fetch all club tabs in parallel using GID-specific URLs
     const fetchPromises = GOOGLE_SHEETS_URLS.map(async (baseUrl) => {
+      const isPrimary = baseUrl.includes('19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc');
       const sheetIdMatch = baseUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
-      const sheetId = sheetIdMatch ? sheetIdMatch[1] : '';
+      const defaultSheetId = sheetIdMatch ? sheetIdMatch[1] : '';
+      const sheetId = isPrimary ? targetSheetId : defaultSheetId;
+      
       if (!sheetId) return [];
       const gidMatch = baseUrl.match(/[?&]gid=(\d+)/);
       const gid = gidMatch ? gidMatch[1] : null;
