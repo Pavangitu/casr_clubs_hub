@@ -21,6 +21,8 @@ import { LoginPortal } from './components/LoginPortal';
 import { ToastContainer } from './components/Toast';
 import { StudentDashboardView } from './components/StudentDashboardView';
 import { SyncLogsModal } from './components/SyncLogsModal';
+import { ClubAttendanceModule } from './components/ClubAttendanceModule';
+import { matchStudentToClub } from './utils/clubUtils';
 
 export default function App() {
   const [isEntered, setIsEntered] = useState(false);
@@ -43,6 +45,7 @@ export default function App() {
   // Modals
   const [viewingClub, setViewingClub] = useState<Club | null>(null);
   const [joiningClub, setJoiningClub] = useState<Club | null>(null);
+  const [viewingClubAttendance, setViewingClubAttendance] = useState<Club | null>(null);
   const [viewingHistoryStudent, setViewingHistoryStudent] = useState<StudentProfile | null>(null);
   const [showSearchModal, setShowSearchModal] = useState(false);
 
@@ -438,13 +441,8 @@ export default function App() {
     if (!allStudents || allStudents.length === 0) return;
     setClubs((prevClubs) =>
       prevClubs.map((club) => {
-        const rawName = club.name.replace(/^[^\w\s]+\s*/, '').toLowerCase().trim();
-        const memberCount = allStudents.filter((s) => {
-          const pClub = (s.clubName || '').toLowerCase();
-          const allClubs = (s.allClubs || []).map((c) => c.toLowerCase());
-          return pClub.includes(rawName) || allClubs.some((c) => c.includes(rawName));
-        }).length;
-        return { ...club, activeMembers: Math.max(club.activeMembers, memberCount) };
+        const memberCount = allStudents.filter((s) => matchStudentToClub(s, club.id, club.name)).length;
+        return { ...club, activeMembers: memberCount > 0 ? memberCount : club.activeMembers };
       })
     );
   }, [allStudents]);
@@ -495,6 +493,7 @@ export default function App() {
             clubs={clubs}
             onViewClub={setViewingClub}
             onJoinClub={setJoiningClub}
+            onOpenClubAttendance={setViewingClubAttendance}
           />
         );
       case 'events':
@@ -576,6 +575,30 @@ export default function App() {
               onJoinClub={(c) => {
                 setViewingClub(null);
                 setJoiningClub(c);
+              }}
+              onOpenAttendance={(c) => {
+                setViewingClub(null);
+                setViewingClubAttendance(c);
+              }}
+            />
+          )}
+
+          {viewingClubAttendance && (
+            <ClubAttendanceModule
+              club={viewingClubAttendance}
+              allStudents={allStudents}
+              onClose={() => setViewingClubAttendance(null)}
+              onViewStudentHistory={(st) => {
+                setViewingHistoryStudent(st);
+              }}
+              onUpdateAttendance={(clubId, record) => {
+                const targetClub = clubs.find((c) => c.id === clubId);
+                const clubName = targetClub ? targetClub.name : viewingClubAttendance.name;
+                addToast(
+                  'Club Attendance Recorded',
+                  `Successfully logged session "${record.sessionName}" for ${clubName}`,
+                  'success'
+                );
               }}
             />
           )}

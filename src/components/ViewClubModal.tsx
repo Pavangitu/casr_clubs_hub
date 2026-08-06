@@ -1,15 +1,16 @@
 import React from 'react';
 import { Club } from '../types';
-import { X, School, UserCheck, Users, Calendar, MapPin, Sparkles, Tag, ArrowRight } from 'lucide-react';
+import { X, School, UserCheck, Users, Calendar, MapPin, Sparkles, Tag, ArrowRight, BarChart3, ExternalLink } from 'lucide-react';
 
 interface ViewClubModalProps {
   club: Club;
   onClose: () => void;
   onJoin?: () => void;
   onJoinClub?: (club: Club) => void;
+  onOpenAttendance?: (club: Club) => void;
 }
 
-export const ViewClubModal: React.FC<ViewClubModalProps> = ({ club, onClose, onJoin, onJoinClub }) => {
+export const ViewClubModal: React.FC<ViewClubModalProps> = ({ club, onClose, onJoin, onJoinClub, onOpenAttendance }) => {
   const handleJoin = () => {
     if (onJoinClub) {
       onJoinClub(club);
@@ -126,7 +127,17 @@ export const ViewClubModal: React.FC<ViewClubModalProps> = ({ club, onClose, onJ
           </div>
 
           {/* Actions */}
-          <div className="pt-4 flex gap-4">
+          <div className="pt-4 flex flex-col sm:flex-row gap-3">
+            {club.attendanceFormUrl && (
+              <a
+                href={club.attendanceFormUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20"
+              >
+                <ExternalLink className="w-4 h-4" /> Give Attendance (Form)
+              </a>
+            )}
             <button
               onClick={onClose}
               className="flex-1 py-3 rounded-2xl bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-xs font-bold hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors"

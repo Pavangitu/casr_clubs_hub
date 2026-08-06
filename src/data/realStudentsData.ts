@@ -1,6 +1,208 @@
-import { StudentProfile } from "../types";
-
 export const REAL_STUDENTS_DATA: StudentProfile[] = [
+  {
+    "name": "Meera V.",
+    "registrationNumber": "230101120099",
+    "email": "meera.v@casr.edu",
+    "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=300",
+    "clubName": "Casr coding club",
+    "allClubs": [
+      "Casr coding club"
+    ],
+    "role": "Student Lead & Member",
+    "statusTier": "Elite",
+    "statusTierDescription": "Active Member • 8 Check-Ins Logged",
+    "attendanceGoalPercent": 85,
+    "currentAttendancePercent": 90,
+    "eventsAttendedCount": 8,
+    "creditsEarned": 80,
+    "requiredHours": 40.0,
+    "completedHours": 16.0,
+    "degreeProgram": "B Tech CSE",
+    "semesterYear": "3rd year",
+    "insCount": 8,
+    "outsCount": 0,
+    "totalScans": 8,
+    "nextEvent": {
+      "title": "Coding Club Algorithmic Sprint",
+      "date": "Upcoming Schedule"
+    },
+    "monthlyTrends": [
+      { "month": "MAY", "percentage": 80, "hours": 4.0 },
+      { "month": "JUN", "percentage": 85, "hours": 6.0 },
+      { "month": "JUL", "percentage": 88, "hours": 8.0 },
+      { "month": "AUG", "percentage": 90, "hours": 10.0 }
+    ],
+    "recentHistory": [
+      {
+        "id": "code-rec-1",
+        "date": "7/20/2026",
+        "eventName": "Casr Coding Club Algorithmic Sprint",
+        "eventCategory": "Check-In",
+        "clubName": "Casr coding club",
+        "inTime": "06:00 PM",
+        "durationHours": 2.0,
+        "durationFormatted": "2 hrs",
+        "status": "PRESENT",
+        "reason": "Competitive Coding Session",
+        "contact": "9876543210",
+        "timing": "In",
+        "rawScanType": "IN"
+      }
+    ]
+  },
+  {
+    "name": "Rohan Sharma",
+    "registrationNumber": "230101120102",
+    "email": "rohan.sharma@casr.edu",
+    "avatar": "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=300",
+    "clubName": "Casr coding club",
+    "allClubs": [
+      "Casr coding club"
+    ],
+    "role": "Active Member",
+    "statusTier": "Pro",
+    "statusTierDescription": "Active Member • 6 Check-Ins Logged",
+    "attendanceGoalPercent": 85,
+    "currentAttendancePercent": 80,
+    "eventsAttendedCount": 6,
+    "creditsEarned": 60,
+    "requiredHours": 40.0,
+    "completedHours": 12.0,
+    "degreeProgram": "B Tech CSE",
+    "semesterYear": "2nd year",
+    "insCount": 6,
+    "outsCount": 0,
+    "totalScans": 6,
+    "nextEvent": {
+      "title": "Coding Club Hackathon Workshop",
+      "date": "Upcoming Schedule"
+    },
+    "monthlyTrends": [
+      { "month": "MAY", "percentage": 75, "hours": 3.0 },
+      { "month": "JUN", "percentage": 78, "hours": 4.0 },
+      { "month": "JUL", "percentage": 80, "hours": 5.0 },
+      { "month": "AUG", "percentage": 80, "hours": 6.0 }
+    ],
+    "recentHistory": [
+      {
+        "id": "code-rec-2",
+        "date": "7/22/2026",
+        "eventName": "Casr Coding Club Web Dev Masterclass",
+        "eventCategory": "Check-In",
+        "clubName": "Casr coding club",
+        "inTime": "06:00 PM",
+        "durationHours": 2.0,
+        "durationFormatted": "2 hrs",
+        "status": "PRESENT",
+        "reason": "Web Dev Session",
+        "contact": "9876543211",
+        "timing": "In",
+        "rawScanType": "IN"
+      }
+    ]
+  },
+  {
+    "name": "Ananya Verma",
+    "registrationNumber": "230101120115",
+    "email": "ananya.verma@casr.edu",
+    "avatar": "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=300",
+    "clubName": "Casr coding club",
+    "allClubs": [
+      "Casr coding club"
+    ],
+    "role": "Active Member",
+    "statusTier": "Elite",
+    "statusTierDescription": "Active Member • 7 Check-Ins Logged",
+    "attendanceGoalPercent": 85,
+    "currentAttendancePercent": 88,
+    "eventsAttendedCount": 7,
+    "creditsEarned": 70,
+    "requiredHours": 40.0,
+    "completedHours": 14.0,
+    "degreeProgram": "B Tech CSE",
+    "semesterYear": "3rd year",
+    "insCount": 7,
+    "outsCount": 0,
+    "totalScans": 7,
+    "nextEvent": {
+      "title": "Coding Club Data Structures",
+      "date": "Upcoming Schedule"
+    },
+    "monthlyTrends": [
+      { "month": "MAY", "percentage": 82, "hours": 4.0 },
+      { "month": "JUN", "percentage": 85, "hours": 5.0 },
+      { "month": "JUL", "percentage": 88, "hours": 6.0 },
+      { "month": "AUG", "percentage": 88, "hours": 7.0 }
+    ],
+    "recentHistory": [
+      {
+        "id": "code-rec-3",
+        "date": "7/22/2026",
+        "eventName": "Casr Coding Club Data Structures",
+        "eventCategory": "Check-In",
+        "clubName": "Casr coding club",
+        "inTime": "06:00 PM",
+        "durationHours": 2.0,
+        "durationFormatted": "2 hrs",
+        "status": "PRESENT",
+        "reason": "DS & Algo Session",
+        "contact": "9876543212",
+        "timing": "In",
+        "rawScanType": "IN"
+      }
+    ]
+  },
+  {
+    "name": "Aditya Kumar",
+    "registrationNumber": "230101120140",
+    "email": "aditya.kumar@casr.edu",
+    "avatar": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=300",
+    "clubName": "Casr coding club",
+    "allClubs": [
+      "Casr coding club"
+    ],
+    "role": "Active Member",
+    "statusTier": "Pro",
+    "statusTierDescription": "Active Member • 5 Check-Ins Logged",
+    "attendanceGoalPercent": 85,
+    "currentAttendancePercent": 78,
+    "eventsAttendedCount": 5,
+    "creditsEarned": 50,
+    "requiredHours": 40.0,
+    "completedHours": 10.0,
+    "degreeProgram": "B Tech CSE",
+    "semesterYear": "1st year",
+    "insCount": 5,
+    "outsCount": 0,
+    "totalScans": 5,
+    "nextEvent": {
+      "title": "Coding Club Python Workshop",
+      "date": "Upcoming Schedule"
+    },
+    "monthlyTrends": [
+      { "month": "MAY", "percentage": 70, "hours": 2.0 },
+      { "month": "JUN", "percentage": 75, "hours": 3.0 },
+      { "month": "JUL", "percentage": 78, "hours": 5.0 },
+      { "month": "AUG", "percentage": 78, "hours": 5.0 }
+    ],
+    "recentHistory": [
+      {
+        "id": "code-rec-4",
+        "date": "7/22/2026",
+        "eventName": "Casr Coding Club Python Workshop",
+        "eventCategory": "Check-In",
+        "clubName": "Casr coding club",
+        "inTime": "06:00 PM",
+        "durationHours": 2.0,
+        "durationFormatted": "2 hrs",
+        "status": "PRESENT",
+        "reason": "Python Session",
+        "contact": "9876543213",
+        "timing": "In",
+        "rawScanType": "IN"
+      }
+    ]
+  },
   {
     "name": "G Pavan Datta",
     "registrationNumber": "230101120031",

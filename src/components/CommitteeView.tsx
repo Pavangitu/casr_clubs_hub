@@ -99,25 +99,25 @@ export const CommitteeView: React.FC<CommitteeViewProps> = ({ compactPadding = f
 
   // 2. Faculty In-Charges of Different Student Clubs
   const facultyClubInCharges: FacultyClubInCharge[] = [
-    { club: 'Painting Club', name: 'Dr. Ritesh Kumar', dept: 'MSSSoA', email: 'ritesh.kumar@cutm.ac.in', phone: '8905222857', image: '/dr_ritesh_kumar.jpg' },
-    { club: 'Language Club', name: 'Dr. Amir Prasad Behera', dept: 'SoM', email: 'amir.prasad@cutm.ac.in', phone: '9438610887' },
-    { club: 'Music Club', name: 'Mr. Bikram Narayan & Dr. Ashirbachan Mahapatra', dept: 'SoET & MSSSoA', email: 'bikram.narayna@cutm.ac.in, ashirbachan.mahapatra@cutm.ac.in', phone: '9439874577 / 7008461263' },
-    { club: 'Photography Club', name: 'Dr. Manish K. Yadav & Mr. Chinmay Nanda', dept: 'MSSSoA & SoF', email: 'manish.yadav@cutm.ac.in, chinmaya.nanda@cutm.ac.in', phone: '9696352193 / 9137499183' },
-    { club: 'Drama Club', name: 'Mr. Dwity Sundar Rout & Mr. Chandra Sekhar Sahu', dept: 'MSSSoA', email: 'dwity.sundar@cutm.ac.in, chandrasekhar.sahu@cutm.ac.in', phone: '9777726185 / 7978822300' },
-    { club: 'Agrifora Club', name: 'Dr. D. J. Gaikwad', dept: 'MSSSoA', email: 'gaikwad@cutm.ac.in', phone: '8093524042' },
-    { club: 'Gender Equality Club', name: 'Miss Swapnankita', dept: 'SoM', email: 'swapnankita@cutm.ac.in', phone: '8763620399' },
-    { club: 'Science & Technology Club', name: 'Dr. Pratyush Kumar Das & Dr. Bhadram Kalyan', dept: 'SoABE', email: 'pratyush.das@cutm.ac.in, bkalyan.chekraverthy@cutm.ac.in', phone: '9776327537' },
-    { club: 'Animal Welfare Club', name: 'Dr. F. Sebastin Raju', dept: 'SoVAS', email: 'sebastin.raju@cutm.ac.in', phone: '8870185123' },
-    { club: 'Yoga & Fitness Club', name: 'Dr. Balaji Padhy', dept: 'SoAS', email: 'balaji.padhy@cutm.ac.in', phone: '8093875271' },
-    { club: 'Spiritual Club', name: 'Dr. Prafulla Panda', dept: 'SoET', email: 'prafullapanda@cutm.ac.in', phone: '9438269572' },
-    { club: 'Fashion Club', name: 'Mr. Victor Pradhan', dept: 'MSSSoA', email: 'victor.pradhan@cutm.ac.in', phone: '9937365635' },
-    { club: 'Coding Club', name: 'Dr. Dhawaleswar Rao', dept: 'SoET', email: 'dhawaleswar.rao@cutm.ac.in', phone: '7779871797' },
-    { club: 'Robotics Club', name: 'Dr. Prangya Parimita Pradhan & Mrs. N. Jeevaratnam', dept: 'SoET', email: 'prangya.pradhan@cutm.ac.in, jeevaratnam@cutm.ac.in', phone: '7978250836 / 8847882452' },
-    { club: 'Hackathon Club', name: 'Dr. Abinash Gaya', dept: 'SoET', email: 'abinash.gaya@cutm.ac.in', phone: '7735363537' },
-    { club: 'Health Club', name: 'Mrs. Pasupureddi Babyrani', dept: 'SoN', email: 'Pasupureddi.babyrani@cutm.ac.in', phone: '8179613709' },
-    { club: 'EcoSankalp Club', name: 'Dr. Bishnu Prasad Dash', dept: 'MSSSoA', email: 'bishnuprasad.dash@cutm.ac.in', phone: '8338076260' },
-    { club: 'Drone Club', name: 'Mr. Sameer Mahapatro', dept: 'MSSSoA', email: 'sameer.mahapatro@cutm.ac.in', phone: '8984139006' },
-    { club: 'Dance Club', name: 'Mrs. Upasana Sahoo, Dr. Pratyush Kumar Das, Mr. Sameer Mahapatro', dept: 'MSSSoA', email: 'upasana.sahoo@cutm.ac.in, pratyush.das@cutm.ac.in, sameer.mahapatro@cutm.ac.in', phone: '7751875049 / 9776327537 / 8984139006' }
+    { club: 'Csar brushers painting club', name: 'Dr. Ritesh Kumar', dept: 'MSSSoA', email: 'ritesh.kumar@cutm.ac.in', phone: '8905222857', image: '/dr_ritesh_kumar.jpg' },
+    { club: 'Csar language', name: 'Dr. Amir Prasad Behera', dept: 'SoM', email: 'amir.prasad@cutm.ac.in', phone: '9438610887' },
+    { club: 'Csar harmony music club', name: 'Mr. Bikram Narayan & Dr. Ashirbachan Mahapatra', dept: 'SoET & MSSSoA', email: 'bikram.narayna@cutm.ac.in, ashirbachan.mahapatra@cutm.ac.in', phone: '9439874577 / 7008461263' },
+    { club: 'Csar snapshot photography club', name: 'Dr. Manish K. Yadav & Mr. Chinmay Nanda', dept: 'MSSSoA & SoF', email: 'manish.yadav@cutm.ac.in, chinmaya.nanda@cutm.ac.in', phone: '9696352193 / 9137499183' },
+    { club: 'Csar curtain hall drama club', name: 'Mr. Dwity Sundar Rout & Mr. Chandra Sekhar Sahu', dept: 'MSSSoA', email: 'dwity.sundar@cutm.ac.in, chandrasekhar.sahu@cutm.ac.in', phone: '9777726185 / 7978822300' },
+    { club: 'Agrifora students society', name: 'Dr. D. J. Gaikwad', dept: 'MSSSoA', email: 'gaikwad@cutm.ac.in', phone: '8093524042' },
+    { club: 'Csar frontliners', name: 'Dr. Parle Kalyan Chakravarty', dept: 'SoM', email: 'pkchakravarty@cutm.ac.in', phone: '9439331442' },
+    { club: 'Csar science and technology club', name: 'Dr. Pratyush Kumar Das & Dr. Bhadram Kalyan', dept: 'SoABE', email: 'pratyush.das@cutm.ac.in, bkalyan.chekraverthy@cutm.ac.in', phone: '9776327537' },
+    { club: 'Csar animal allies', name: 'Dr. F. Sebastin Raju', dept: 'SoVAS', email: 'sebastin.raju@cutm.ac.in', phone: '8870185123' },
+    { club: 'Csar content creators', name: 'Dr. Manish K. Yadav', dept: 'MSSSoA', email: 'manish.yadav@cutm.ac.in', phone: '9696352193' },
+    { club: 'Csar page turners', name: 'Prof. Anita Desai', dept: 'Humanities', email: 'anita.desai@cutm.ac.in', phone: '9438269572' },
+    { club: 'Csar zyra fashion club', name: 'Mr. Victor Pradhan', dept: 'MSSSoA', email: 'victor.pradhan@cutm.ac.in', phone: '9937365635' },
+    { club: 'Casr coding club', name: 'Dr. Dhawaleswar Rao', dept: 'SoET', email: 'dhawaleswar.rao@cutm.ac.in', phone: '7779871797' },
+    { club: 'Csar robotics club', name: 'Dr. Prangya Parimita Pradhan & Mrs. N. Jeevaratnam', dept: 'SoET', email: 'prangya.pradhan@cutm.ac.in, jeevaratnam@cutm.ac.in', phone: '7978250836 / 8847882452' },
+    { club: 'Csar hackton', name: 'Dr. Abinash Gaya', dept: 'SoET', email: 'abinash.gaya@cutm.ac.in', phone: '7735363537' },
+    { club: 'Csar health club', name: 'Mrs. Pasupureddi Babyrani', dept: 'SoN', email: 'Pasupureddi.babyrani@cutm.ac.in', phone: '8179613709' },
+    { club: 'Eco sankalp', name: 'Dr. Bishnu Prasad Dash', dept: 'MSSSoA', email: 'bishnuprasad.dash@cutm.ac.in', phone: '8338076260' },
+    { club: 'Drone club', name: 'Mr. Sameer Mahapatro', dept: 'MSSSoA', email: 'sameer.mahapatro@cutm.ac.in', phone: '8984139006' },
+    { club: 'Csar groovers dance club', name: 'Mrs. Upasana Sahoo, Dr. Pratyush Kumar Das, Mr. Sameer Mahapatro', dept: 'MSSSoA', email: 'upasana.sahoo@cutm.ac.in, pratyush.das@cutm.ac.in, sameer.mahapatro@cutm.ac.in', phone: '7751875049 / 9776327537 / 8984139006' }
   ];
 
   // 3. Social Units & Officers
@@ -134,35 +134,35 @@ export const CommitteeView: React.FC<CommitteeViewProps> = ({ compactPadding = f
     { unit: 'NSS Programme Officer', name: 'Prof. S. N. Sandhya', dept: 'SoN', phone: '76718 63691', email: 'singampalli.sandhya@cutm.ac.in' },
     { unit: 'Finance Manager', name: 'Mr. Dibakar Alyan', dept: 'SoAS', phone: '9078580209', email: 'dibakar.allyana@cutm.ac.in' },
     { unit: 'NCC Officers', name: 'Dr. Parle Kalyan Chakravarty & Miss Hauzoukim', dept: 'SoM & SoF', phone: '9439331442 / 8131903630', email: 'pkchakravarty@cutm.ac.in, hauzoukim@cutm.ac.in' },
-    { unit: 'YRC Coordinator', name: 'Dr. Susanta Kumar Patnaik', dept: 'SoM', phone: '9437203916', email: 'susanta.patnaik@cutm.ac.in' },
+    { unit: 'YASR Coordinator', name: 'Dr. Susanta Kumar Patnaik', dept: 'SoM', phone: '9437203916', email: 'susanta.patnaik@cutm.ac.in' },
     { unit: 'Convenor: Cultural', name: 'Dr. Ashirbachan Mahapatra & Dr. Susanta Kumar Patnaik', dept: 'MSSSoA & SoM', phone: '7008461263 / 9437203916', email: 'ashirbachan.mahapatra@cutm.ac.in, susanta.patnaik@cutm.ac.in' },
     { unit: 'Convenor: Social Responsibilities', name: 'Dr. Parle Kalyan Chakravarty', dept: 'SoM', phone: '9439331442', email: 'pkchakravarty@cutm.ac.in' },
-    { unit: 'Chandrabhasa Magazine In-Charge', name: 'Dr. Manish K. Yadav', dept: 'MSSSoA', phone: '9696352193', email: 'manish.yadav@cutm.ac.in' }
+    { unit: 'Csar chandrabhanga creators In-Charge', name: 'Dr. Manish K. Yadav', dept: 'MSSSoA', phone: '9696352193', email: 'manish.yadav@cutm.ac.in' }
   ];
 
   // 4. Student Club Coordinators
   const studentCoordinators: StudentCoordinator[] = [
-    { club: 'Dance Club', name: 'Jayshree Pradhan', regNo: '230804130174', phone: '+91 95082 14671', school: 'MSSSoA', branch: 'B.Sc. (Hons.) Agriculture' },
-    { club: 'Dance Club', name: 'R. Yeswanth', regNo: '234723100066', phone: '7842292460', school: 'SoVAS', branch: 'BVSC & AH' },
-    { club: 'Dance Club', name: 'Snehasree Hotta (Co-Coordinator)', regNo: '230804130045', phone: '+91 98611 65776', school: 'MSSSoA', branch: 'B.Sc. (Hons.) Agriculture' },
-    { club: 'Music Club', name: 'Subhranshu Sekhar Dash', regNo: '230804130033', phone: '7894398250', school: 'MSSSoA', branch: 'B.Sc. Agriculture' },
-    { club: 'Music Club', name: 'Omm Sai Janmajaya Mishra', regNo: '234723100008', phone: '94370 15101', school: 'SoVAS', branch: 'BVSC' },
-    { club: 'Movie Club', name: 'G. Pavan Datta', regNo: '230101120031', phone: '+91 82493 97556', school: 'SoET', branch: 'B.Tech CSE' },
-    { club: 'Movie Club', name: 'Krutisundar Behera', regNo: '250804130042', phone: '9861153067', school: 'MSSSoA', branch: 'B.Sc. Agriculture' },
-    { club: 'Photography Club', name: 'Tarun Teja Patra', regNo: '230101120008', phone: '+91 93901 04679', school: 'SoET', branch: 'B.Tech CSE' },
-    { club: 'Photography Club', name: 'Sudip Ghosh', regNo: '240804130123', phone: '+91 83880 49602', school: 'MSSSoA', branch: 'B.Sc. Agriculture' },
-    { club: 'Photography Club', name: 'Buddiga Venkata Nikhil', regNo: '240804130099', phone: '+91 93478 75676', school: 'MSSSoA', branch: 'B.Sc. Agriculture' },
-    { club: 'Painting Club', name: 'Kuriti Tarun', regNo: '230804130155', phone: '9515247618', school: 'MSSSoA', branch: 'B.Sc. Agriculture' },
-    { club: 'Painting Club', name: 'Smita Rani', regNo: '250804130252', phone: '9142122013', school: 'MSSSoA', branch: 'B.Sc. Agriculture' },
-    { club: 'Painting Club', name: 'Jahnavi Dandi (Co-Coordinator)', regNo: '230804130189', phone: '7671830438', school: 'MSSSoA', branch: 'B.Sc. Agriculture' },
-    { club: 'Fashion Club', name: 'Srija Majumder', regNo: '240804130051', phone: '+91 81169 77448', school: 'MSSSoA', branch: 'B.Sc. Agriculture' },
-    { club: 'Drama Club', name: 'Krishnakumari Panigrahi', regNo: '230804130096', phone: '7849017273', school: 'MSSSoA', branch: 'B.Sc. Agriculture' },
-    { club: 'Drama Club', name: 'Jagyanseni Adhikari', regNo: '230804130041', phone: '8917535842', school: 'MSSSoA', branch: 'B.Sc. Agriculture' },
-    { club: 'Agrifora', name: 'U. Venktesh Dora', regNo: '240804130023', phone: '9777554894', school: 'MSSSoA', branch: 'B.Sc. Agriculture (3rd Year)' },
-    { club: 'Agrifora', name: 'Shradhanjali Das', regNo: '240804130017', phone: '9438568932', school: 'MSSSoA', branch: 'B.Sc. Agriculture (3rd Year)' },
-    { club: 'Agrifora', name: 'Sourava Sahu', regNo: '250804130137', phone: '6372516398', school: 'MSSSoA', branch: 'B.Sc. Agriculture (2nd Year)' },
-    { club: 'Agrifora', name: 'Debasmita Parida', regNo: '250804130133', phone: '6370638666', school: 'MSSSoA', branch: 'B.Sc. Agriculture (2nd Year)' },
-    { club: 'Agrifora', name: 'Subham Patel', regNo: '250804130135', phone: '9337149949', school: 'MSSSoA', branch: 'B.Sc. Agriculture (2nd Year)' }
+    { club: 'Csar groovers dance club', name: 'Jayshree Pradhan', regNo: '230804130174', phone: '+91 95082 14671', school: 'MSSSoA', branch: 'B.Sc. (Hons.) Agriculture' },
+    { club: 'Csar groovers dance club', name: 'R. Yeswanth', regNo: '234723100066', phone: '7842292460', school: 'SoVAS', branch: 'BVSC & AH' },
+    { club: 'Csar groovers dance club', name: 'Snehasree Hotta (Co-Coordinator)', regNo: '230804130045', phone: '+91 98611 65776', school: 'MSSSoA', branch: 'B.Sc. (Hons.) Agriculture' },
+    { club: 'Csar harmony music club', name: 'Subhranshu Sekhar Dash', regNo: '230804130033', phone: '7894398250', school: 'MSSSoA', branch: 'B.Sc. Agriculture' },
+    { club: 'Csar harmony music club', name: 'Omm Sai Janmajaya Mishra', regNo: '234723100008', phone: '94370 15101', school: 'SoVAS', branch: 'BVSC' },
+    { club: 'Csar take one movie club', name: 'G. Pavan Datta', regNo: '230101120031', phone: '+91 82493 97556', school: 'SoET', branch: 'B.Tech CSE' },
+    { club: 'Csar take one movie club', name: 'Krutisundar Behera', regNo: '250804130042', phone: '9861153067', school: 'MSSSoA', branch: 'B.Sc. Agriculture' },
+    { club: 'Csar snapshot photography club', name: 'Tarun Teja Patra', regNo: '230101120008', phone: '+91 93901 04679', school: 'SoET', branch: 'B.Tech CSE' },
+    { club: 'Csar snapshot photography club', name: 'Sudip Ghosh', regNo: '240804130123', phone: '+91 83880 49602', school: 'MSSSoA', branch: 'B.Sc. Agriculture' },
+    { club: 'Csar snapshot photography club', name: 'Buddiga Venkata Nikhil', regNo: '240804130099', phone: '+91 93478 75676', school: 'MSSSoA', branch: 'B.Sc. Agriculture' },
+    { club: 'Csar brushers painting club', name: 'Kuriti Tarun', regNo: '230804130155', phone: '9515247618', school: 'MSSSoA', branch: 'B.Sc. Agriculture' },
+    { club: 'Csar brushers painting club', name: 'Smita Rani', regNo: '250804130252', phone: '9142122013', school: 'MSSSoA', branch: 'B.Sc. Agriculture' },
+    { club: 'Csar brushers painting club', name: 'Jahnavi Dandi (Co-Coordinator)', regNo: '230804130189', phone: '7671830438', school: 'MSSSoA', branch: 'B.Sc. Agriculture' },
+    { club: 'Csar zyra fashion club', name: 'Srija Majumder', regNo: '240804130051', phone: '+91 81169 77448', school: 'MSSSoA', branch: 'B.Sc. Agriculture' },
+    { club: 'Csar curtain hall drama club', name: 'Krishnakumari Panigrahi', regNo: '230804130096', phone: '7849017273', school: 'MSSSoA', branch: 'B.Sc. Agriculture' },
+    { club: 'Csar curtain hall drama club', name: 'Jagyanseni Adhikari', regNo: '230804130041', phone: '8917535842', school: 'MSSSoA', branch: 'B.Sc. Agriculture' },
+    { club: 'Agrifora students society', name: 'U. Venktesh Dora', regNo: '240804130023', phone: '9777554894', school: 'MSSSoA', branch: 'B.Sc. Agriculture (3rd Year)' },
+    { club: 'Agrifora students society', name: 'Shradhanjali Das', regNo: '240804130017', phone: '9438568932', school: 'MSSSoA', branch: 'B.Sc. Agriculture (3rd Year)' },
+    { club: 'Agrifora students society', name: 'Sourava Sahu', regNo: '250804130137', phone: '6372516398', school: 'MSSSoA', branch: 'B.Sc. Agriculture (2nd Year)' },
+    { club: 'Agrifora students society', name: 'Debasmita Parida', regNo: '250804130133', phone: '6370638666', school: 'MSSSoA', branch: 'B.Sc. Agriculture (2nd Year)' },
+    { club: 'Agrifora students society', name: 'Subham Patel', regNo: '250804130135', phone: '9337149949', school: 'MSSSoA', branch: 'B.Sc. Agriculture (2nd Year)' }
   ];
 
   const filteredSchoolCoordinators = schoolCoordinators.filter(c =>

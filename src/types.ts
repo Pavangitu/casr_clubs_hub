@@ -19,6 +19,8 @@ export interface Club {
   tags: string[];
   foundedYear: number;
   featured?: boolean;
+  attendanceFormUrl?: string;
+  sheetGid?: string;
 }
 
 export interface AttendanceRecord {

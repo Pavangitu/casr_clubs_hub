@@ -45,6 +45,9 @@ const SHEET_TABS = [
   // Responses tab (login/entry responses — skip for attendance, but fetch anyway)
   { name: 'Responses',          gid: '620675621',  sheetId: '19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc' },
 
+  // New Master sheet (spreadsheet: 11RUWQreYoN48-mmWR_9wsRcO6wkEzrU0JQaFIUuqNlM)
+  { name: 'Master-Sheet-11RU',  gid: null,         sheetId: '11RUWQreYoN48-mmWR_9wsRcO6wkEzrU0JQaFIUuqNlM' },
+
   // Secondary sheet (fetch its default tab too)
   { name: 'Secondary-Default',  gid: null,         sheetId: '1qxQ4m_VXukgkT23SwK3B7uhR2sOp5XH5WqFpcwTu59g' },
 ];

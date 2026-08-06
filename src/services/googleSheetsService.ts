@@ -18,6 +18,8 @@ export const GOOGLE_SHEETS_URLS = [
   'https://docs.google.com/spreadsheets/d/19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc/gviz/tq?tqx=out:csv&gid=700032659',  // Painting Club
   'https://docs.google.com/spreadsheets/d/19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc/gviz/tq?tqx=out:csv&gid=1198898863', // Music Club
   'https://docs.google.com/spreadsheets/d/19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc/gviz/tq?tqx=out:csv&gid=620675621',  // Responses tab
+  // New Master Spreadsheet
+  'https://docs.google.com/spreadsheets/d/11RUWQreYoN48-mmWR_9wsRcO6wkEzrU0JQaFIUuqNlM/gviz/tq?tqx=out:csv',
   // Secondary sheet
   'https://docs.google.com/spreadsheets/d/1qxQ4m_VXukgkT23SwK3B7uhR2sOp5XH5WqFpcwTu59g/gviz/tq?tqx=out:csv'
 ];

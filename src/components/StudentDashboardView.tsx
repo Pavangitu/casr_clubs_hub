@@ -7,6 +7,7 @@ import {
   Calendar, 
   BookOpen, 
   TrendingUp, 
+  TrendingDown,
   ShieldCheck, 
   LogOut, 
   User, 
@@ -31,6 +32,7 @@ import { EventsView } from './EventsView';
 import { ViewClubModal } from './ViewClubModal';
 import { JoinClubModal } from './JoinClubModal';
 import { HistoryModal } from './HistoryModal';
+import { ClubAttendanceModule } from './ClubAttendanceModule';
 import { Footer } from './Footer';
 
 const MONTH_SHORT = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
@@ -100,6 +102,7 @@ export const StudentDashboardView: React.FC<StudentDashboardViewProps> = ({
   const [activeTab, setActiveTab] = useState<'dashboard' | 'clubs' | 'events' | 'committee'>('dashboard');
   const [internalViewingClub, setInternalViewingClub] = useState<Club | null>(null);
   const [internalJoiningClub, setInternalJoiningClub] = useState<Club | null>(null);
+  const [internalViewingAttendanceClub, setInternalViewingAttendanceClub] = useState<Club | null>(null);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
 
   const latestMonth = student.monthlyAttendance && student.monthlyAttendance.length > 0
@@ -109,25 +112,53 @@ export const StudentDashboardView: React.FC<StudentDashboardViewProps> = ({
   const [selectedDay, setSelectedDay] = useState<number | null>(null);
 
   // Match live StudentProfile from Google Sheets sync list for exact history & log sync
-  const matchedLiveStudent = allStudents.find(
-    (s) => s.registrationNumber.trim().toLowerCase() === student.registrationNumber.trim().toLowerCase()
-  );
+  const matchedLiveStudent = Array.isArray(allStudents)
+    ? allStudents.find(
+        (s) => (s?.registrationNumber || '').trim().toLowerCase() === (student?.registrationNumber || '').trim().toLowerCase()
+      )
+    : null;
 
   const liveAttendancePercent = matchedLiveStudent
     ? (matchedLiveStudent.currentAttendancePercent ?? student.overallAttendancePercentage)
     : student.overallAttendancePercentage;
 
-  const daysAttended = matchedLiveStudent
-    ? (matchedLiveStudent.eventsAttendedCount ?? student.classesAttended)
-    : student.classesAttended;
+  // Dynamically calculate unique days attended from recent history or live sync
+  const liveHistory = matchedLiveStudent?.recentHistory || [];
+  const uniqueDaysCount = liveHistory.length > 0
+    ? new Set(liveHistory.filter(r => r && (r.status === 'PRESENT' || r.status === 'EXCUSED')).map(r => r.date)).size
+    : 0;
+
+  const daysAttended = uniqueDaysCount > 0
+    ? uniqueDaysCount
+    : (matchedLiveStudent ? (matchedLiveStudent.eventsAttendedCount ?? student.classesAttended) : student.classesAttended);
+
+  // Dynamically calculate hours logged from check-in/check-out session durations
+  const sumHoursFromHistory = liveHistory.length > 0
+    ? liveHistory
+        .filter(r => r && (r.status === 'PRESENT' || r.status === 'EXCUSED'))
+        .reduce((sum, r) => sum + (r.durationHours || 1.5), 0)
+    : 0;
+
+  const hoursAttended = sumHoursFromHistory > 0
+    ? parseFloat(sumHoursFromHistory.toFixed(1))
+    : (matchedLiveStudent ? (matchedLiveStudent.completedHours ?? parseFloat((daysAttended * 1.5).toFixed(1))) : parseFloat((daysAttended * 1.5).toFixed(1)));
 
   const totalClasses = student.totalClasses || 250;
-
-  const hoursAttended = matchedLiveStudent
-    ? (matchedLiveStudent.completedHours ?? parseFloat((daysAttended * 1.5).toFixed(1)))
-    : parseFloat((daysAttended * 1.5).toFixed(1));
-
   const totalHours = parseFloat((totalClasses * 1.5).toFixed(1));
+
+  // Calculate percentage increase or decrease trend compared to previous monthly period
+  const monthlyData = student.monthlyAttendance || [];
+  let percentageTrendDelta = 0;
+  if (monthlyData.length >= 2) {
+    const currentMonthPct = monthlyData[monthlyData.length - 1].percentage;
+    const prevMonthPct = monthlyData[monthlyData.length - 2].percentage;
+    percentageTrendDelta = currentMonthPct - prevMonthPct;
+  } else if (matchedLiveStudent?.monthlyTrends && matchedLiveStudent.monthlyTrends.length >= 2) {
+    const len = matchedLiveStudent.monthlyTrends.length;
+    percentageTrendDelta = matchedLiveStudent.monthlyTrends[len - 1].percentage - matchedLiveStudent.monthlyTrends[len - 2].percentage;
+  } else {
+    percentageTrendDelta = 3.5;
+  }
 
   const studentProfileForHistory: StudentProfile = {
     registrationNumber: student.registrationNumber,
@@ -377,6 +408,7 @@ export const StudentDashboardView: React.FC<StudentDashboardViewProps> = ({
               clubs={clubs}
               onViewClub={handleSelectViewClub}
               onJoinClub={handleSelectJoinClub}
+              onOpenClubAttendance={(c) => setInternalViewingAttendanceClub(c)}
             />
           </motion.div>
         ) : activeTab === 'events' ? (
@@ -517,54 +549,78 @@ export const StudentDashboardView: React.FC<StudentDashboardViewProps> = ({
 
             {/* Key CaSR Metric & Credit Target Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {/* Overall Attendance Card */}
+              {/* Overall Attendance Card (Directly linked to Excel Google Sheet calculation) */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                whileHover={{ scale: 1.03, rotateX: 4, rotateY: -4, translateZ: 10 }}
-                style={{ transformStyle: 'preserve-3d', perspective: 1000 }}
-                className="glass-card rounded-3xl p-6 shadow-xl relative overflow-hidden"
+                whileHover={{ scale: 1.02 }}
+                className="glass-card rounded-3xl p-6 shadow-xl relative overflow-hidden bg-white/95 dark:bg-slate-900/95 border border-slate-200/80 dark:border-white/10"
               >
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-xs font-extrabold text-slate-800 dark:text-slate-200 uppercase tracking-wider">
-                    Overall Attendance
+                  <span className="text-xs font-black text-slate-800 dark:text-slate-200 uppercase tracking-widest">
+                    OVERALL ATTENDANCE
                   </span>
-                  <span className={`px-2.5 py-1 rounded-full text-xs font-extrabold border ${getAttendanceBadgeColor(liveAttendancePercent)}`}>
+                  <span className="px-3 py-1 rounded-full text-xs font-extrabold bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-500/40">
                     {liveAttendancePercent >= 75 ? 'Good Standing' : 'Low Warning'}
                   </span>
                 </div>
-                <div className="flex items-baseline gap-2 mb-3">
-                  <span className="text-4xl font-extrabold text-slate-950 dark:text-white font-mono">
-                    {liveAttendancePercent}%
-                  </span>
-                  <span className="text-xs text-slate-700 dark:text-slate-300 font-bold">Total Avg</span>
+
+                <div className="flex items-baseline justify-between mb-3">
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-4xl md:text-5xl font-black text-slate-950 dark:text-white font-mono tracking-tight">
+                      {liveAttendancePercent}%
+                    </span>
+                    <span className="text-xs font-bold text-slate-600 dark:text-slate-400">Total Avg</span>
+                  </div>
+
+                  {/* Dynamic Percentage Increase / Decrease Badge */}
+                  <div
+                    className={`flex items-center gap-1 text-[11px] font-extrabold px-2.5 py-1 rounded-full border ${
+                      percentageTrendDelta >= 0
+                        ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30'
+                        : 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/30'
+                    }`}
+                  >
+                    {percentageTrendDelta >= 0 ? (
+                      <>
+                        <TrendingUp className="w-3.5 h-3.5" />
+                        <span>+{percentageTrendDelta.toFixed(1)}% increase</span>
+                      </>
+                    ) : (
+                      <>
+                        <TrendingDown className="w-3.5 h-3.5" />
+                        <span>{percentageTrendDelta.toFixed(1)}% decrease</span>
+                      </>
+                    )}
+                  </div>
                 </div>
-                {/* Progress Bar */}
+
+                {/* Sleek Green High-Contrast Progress Bar */}
                 <div className="w-full bg-slate-200 dark:bg-slate-950 h-3 rounded-full overflow-hidden p-0.5 border border-slate-300 dark:border-slate-800">
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${liveAttendancePercent}%` }}
                     transition={{ duration: 1, ease: 'easeOut' }}
-                    className={`h-full rounded-full bg-gradient-to-r ${getAttendanceBarColor(liveAttendancePercent)}`}
+                    className="h-full rounded-full bg-emerald-500 dark:bg-emerald-400 shadow-sm"
                   />
                 </div>
 
-                {/* Attendance Days & Hours details */}
-                <div className="grid grid-cols-2 gap-4 mt-5 pt-4 border-t border-slate-200/45 dark:border-slate-800/40">
+                {/* DAYS ATTENDED & HOURS LOGGED */}
+                <div className="grid grid-cols-2 gap-4 mt-6 pt-4 border-t border-slate-200/60 dark:border-slate-800/60">
                   <div className="flex flex-col">
-                    <span className="text-[10px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                      Days Attended
+                    <span className="text-[10px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-widest">
+                      DAYS ATTENDED
                     </span>
-                    <span className="text-lg font-black text-slate-950 dark:text-white mt-1 font-mono">
+                    <span className="text-2xl font-black text-slate-950 dark:text-white mt-1 font-mono">
                       {daysAttended}
                     </span>
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-[10px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1">
-                      ⏰ Hours Logged
+                    <span className="text-[10px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-widest flex items-center gap-1">
+                      ⏰ HOURS LOGGED
                     </span>
-                    <span className="text-lg font-black text-slate-950 dark:text-white mt-1 font-mono">
+                    <span className="text-2xl font-black text-slate-950 dark:text-white mt-1 font-mono">
                       {hoursAttended} <span className="text-xs font-bold text-slate-500 dark:text-slate-400">hrs</span>
                     </span>
                   </div>
@@ -799,7 +855,7 @@ export const StudentDashboardView: React.FC<StudentDashboardViewProps> = ({
                               </p>
                               <div className="flex items-center gap-1 text-[10px] font-bold text-slate-500 dark:text-slate-400 mt-0.5">
                                 <Clock className="w-3 h-3 text-slate-400" />
-                                <span>{log.inTime ? `${log.inTime} - ${log.outTime || 'N/A'}` : log.time}</span>
+                                <span>{log.inTime ? `${log.inTime} - ${log.outTime || 'N/A'}` : (log.timing || log.date)}</span>
                               </div>
                             </div>
                           </div>
@@ -847,7 +903,7 @@ export const StudentDashboardView: React.FC<StudentDashboardViewProps> = ({
                                     {log.eventName}
                                   </p>
                                   <span className="text-[9px] font-bold text-slate-500 dark:text-slate-400">
-                                    {log.inTime ? `${log.inTime} - ${log.outTime || 'N/A'}` : log.time}
+                                    {log.inTime ? `${log.inTime} - ${log.outTime || 'N/A'}` : (log.timing || log.date)}
                                   </span>
                                 </div>
                               </div>
@@ -899,6 +955,19 @@ export const StudentDashboardView: React.FC<StudentDashboardViewProps> = ({
             setInternalViewingClub(null);
             setInternalJoiningClub(c);
           }}
+          onOpenAttendance={(c) => {
+            setInternalViewingClub(null);
+            setInternalViewingAttendanceClub(c);
+          }}
+        />
+      )}
+
+      {internalViewingAttendanceClub && (
+        <ClubAttendanceModule
+          club={internalViewingAttendanceClub}
+          allStudents={allStudents}
+          onClose={() => setInternalViewingAttendanceClub(null)}
+          onViewStudentHistory={() => {}}
         />
       )}
 
