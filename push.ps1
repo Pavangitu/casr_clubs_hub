@@ -20,8 +20,8 @@ git add -A
 Write-Host "Committing changes..." -ForegroundColor Gray
 git commit -m "Update project with bug fixes and data synchronization"
 
-Write-Host "Setting remote URL to https://github.com/Pavangitu/casr-clubs-hub.git..." -ForegroundColor Gray
-git remote set-url origin https://github.com/Pavangitu/casr-clubs-hub.git
+Write-Host "Setting remote URL to https://github.com/Pavangitu/casr_clubs_hub.git..." -ForegroundColor Gray
+git remote set-url origin https://github.com/Pavangitu/casr_clubs_hub.git
 
 Write-Host "Pushing local main branch to remote..." -ForegroundColor Gray
 git push -u origin main --force
