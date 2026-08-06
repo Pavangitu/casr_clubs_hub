@@ -12,6 +12,26 @@ interface LoginPortalProps {
 export const LoginPortal: React.FC<LoginPortalProps> = ({ onStudentLogin, onAdminLogin }) => {
   const [activeTab, setActiveTab] = useState<UserRole>('student');
 
+  // Interactive 3D Card Tilt State
+  const [tilt, setTilt] = useState({ rotateX: 0, rotateY: 0, glowX: 50, glowY: 50 });
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateX = ((y - centerY) / centerY) * -10; // Max 10 deg tilt
+    const rotateY = ((x - centerX) / centerX) * 10;
+    const glowX = (x / rect.width) * 100;
+    const glowY = (y / rect.height) * 100;
+    setTilt({ rotateX, rotateY, glowX, glowY });
+  };
+
+  const handleMouseLeave = () => {
+    setTilt({ rotateX: 0, rotateY: 0, glowX: 50, glowY: 50 });
+  };
+
   // Student form state
   const [registrationNumber, setRegistrationNumber] = useState('');
   const [isStudentLoading, setIsStudentLoading] = useState(false);
@@ -68,11 +88,21 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({ onStudentLogin, onAdmi
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-slate-950 text-slate-100 font-sans">
-      {/* Background Subtle Gradient Blobs */}
+    <div 
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-slate-950 text-slate-100 font-sans perspective-1000"
+      style={{ perspective: 1200 }}
+    >
+      {/* Background Subtle Gradient Blobs & 3D Floating Liquid Prisms */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-blue-600/20 rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute bottom-10 right-10 w-[400px] h-[400px] bg-emerald-500/15 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute top-10 left-10 w-[350px] h-[350px] bg-indigo-600/15 rounded-full blur-[100px] pointer-events-none" />
+
+      {/* Floating 3D Liquid Prism Crystals */}
+      <div className="absolute top-16 left-12 w-16 h-16 rounded-2xl bg-gradient-to-tr from-blue-500/20 to-emerald-400/20 backdrop-blur-xl border border-white/20 shadow-xl prism-float-3d pointer-events-none hidden md:block" />
+      <div className="absolute bottom-20 right-16 w-20 h-20 rounded-3xl bg-gradient-to-tr from-indigo-500/20 to-purple-400/20 backdrop-blur-xl border border-white/20 shadow-2xl prism-float-3d pointer-events-none hidden md:block" style={{ animationDelay: '-3s' }} />
+      <div className="absolute top-1/3 right-12 w-12 h-12 rounded-xl bg-gradient-to-tr from-cyan-400/20 to-blue-600/20 backdrop-blur-lg border border-white/20 shadow-lg prism-float-3d pointer-events-none hidden lg:block" style={{ animationDelay: '-6s' }} />
 
       <div className="w-full max-w-md z-10">
         {/* Header Branding */}
@@ -81,28 +111,39 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({ onStudentLogin, onAdmi
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-8 flex flex-col items-center"
         >
-          <div className="inline-flex items-center justify-center p-1 rounded-full bg-white shadow-xl shadow-slate-950/40 mb-4 w-24 h-24 overflow-hidden border-2 border-white/20">
+          <div className="inline-flex items-center justify-center p-1.5 rounded-full bg-white/95 shadow-2xl shadow-blue-500/20 mb-4 w-24 h-24 overflow-hidden border-2 border-white/40 glass-card">
             <img 
               src={logoCenturion} 
               alt="Centurion University Logo" 
               className="w-full h-full object-contain rounded-full" 
             />
           </div>
-          <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-white via-slate-100 to-blue-200 bg-clip-text text-transparent">
+          <h1 className="text-3xl md:text-4xl font-black tracking-tight bg-gradient-to-r from-white via-blue-100 to-emerald-200 bg-clip-text text-transparent">
             University Portal
           </h1>
-          <p className="text-sm text-slate-400 mt-1">Attendance Management System</p>
+          <p className="text-sm font-semibold text-slate-400 mt-1">Attendance Management System</p>
         </motion.div>
 
-        {/* Glassmorphism Card */}
+        {/* 3D Liquid Prism Neumorphic Glassmorphism Card */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          whileHover={{ rotateX: 1.5, rotateY: -1.5, translateZ: 10 }}
-          transition={{ duration: 0.3 }}
-          style={{ transformStyle: 'preserve-3d', perspective: 1200 }}
-          className="backdrop-blur-2xl bg-slate-900/70 border border-slate-800/80 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-slate-950/80"
+          animate={{ 
+            rotateX: tilt.rotateX, 
+            rotateY: tilt.rotateY,
+          }}
+          transition={{ type: "spring", stiffness: 300, damping: 25 }}
+          style={{ 
+            transformStyle: 'preserve-3d', 
+            perspective: 1200,
+          }}
+          className="prism-glass backdrop-blur-3xl bg-slate-900/80 border border-white/20 rounded-3xl p-6 sm:p-8 shadow-2xl shadow-slate-950/90 relative"
         >
+          {/* Dynamic Specular Prism Light Glare Follower */}
+          <div 
+            className="absolute inset-0 rounded-3xl pointer-events-none opacity-40 transition-opacity duration-300"
+            style={{
+              background: `radial-gradient(circle at ${tilt.glowX}% ${tilt.glowY}%, rgba(96, 165, 250, 0.35) 0%, rgba(236, 72, 153, 0.15) 35%, transparent 70%)`
+            }}
+          />
           {/* Tab Selector */}
           <div className="grid grid-cols-2 gap-2 bg-slate-950/60 p-1.5 rounded-2xl mb-8 border border-slate-800/50">
             <button
@@ -199,10 +240,10 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({ onStudentLogin, onAdmi
                 <motion.button
                   type="submit"
                   disabled={isStudentLoading}
-                  whileHover={{ scale: 1.02, rotateX: 6, rotateY: -6, translateZ: 15 }}
-                  whileTap={{ scale: 0.98, rotateX: -4, rotateY: 4, translateZ: -10 }}
+                  whileHover={{ scale: 1.03, rotateX: 8, rotateY: -8, translateZ: 25 }}
+                  whileTap={{ scale: 0.97, rotateX: -6, rotateY: 6, translateZ: -12 }}
                   style={{ transformStyle: 'preserve-3d', perspective: 1000 }}
-                  className="w-full py-3.5 px-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold rounded-2xl shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 transition-all duration-200 disabled:opacity-50 cursor-pointer"
+                  className="w-full py-4 px-5 liquid-prism-button font-bold text-sm tracking-wide rounded-2xl flex items-center justify-center gap-2.5 transition-all duration-300 disabled:opacity-50 cursor-pointer shadow-2xl"
                 >
                   {isStudentLoading ? (
                     <>
@@ -210,14 +251,14 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({ onStudentLogin, onAdmi
                         animate={{ rotate: 360, rotateY: 360 }}
                         transition={{ repeat: Infinity, duration: 1.2, ease: "linear" }}
                       >
-                        <Loader2 className="w-5 h-5 animate-spin" />
+                        <Loader2 className="w-5 h-5 animate-spin text-emerald-300" />
                       </motion.div>
-                      <span>Authenticating...</span>
+                      <span className="bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">Authenticating Student...</span>
                     </>
                   ) : (
                     <>
                       <span>Login to Student Portal</span>
-                      <ArrowRight className="w-4 h-4" />
+                      <ArrowRight className="w-4 h-4 text-emerald-300 group-hover:translate-x-1 transition-transform" />
                     </>
                   )}
                 </motion.button>
@@ -300,10 +341,10 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({ onStudentLogin, onAdmi
                 <motion.button
                   type="submit"
                   disabled={isAdminLoading}
-                  whileHover={{ scale: 1.02, rotateX: 6, rotateY: -6, translateZ: 15 }}
-                  whileTap={{ scale: 0.98, rotateX: -4, rotateY: 4, translateZ: -10 }}
+                  whileHover={{ scale: 1.03, rotateX: 8, rotateY: -8, translateZ: 25 }}
+                  whileTap={{ scale: 0.97, rotateX: -6, rotateY: 6, translateZ: -12 }}
                   style={{ transformStyle: 'preserve-3d', perspective: 1000 }}
-                  className="w-full py-3.5 px-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-700 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold rounded-2xl shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 transition-all duration-200 disabled:opacity-50 cursor-pointer"
+                  className="w-full py-4 px-5 liquid-prism-button font-bold text-sm tracking-wide rounded-2xl flex items-center justify-center gap-2.5 transition-all duration-300 disabled:opacity-50 cursor-pointer shadow-2xl"
                 >
                   {isAdminLoading ? (
                     <>
@@ -311,14 +352,14 @@ export const LoginPortal: React.FC<LoginPortalProps> = ({ onStudentLogin, onAdmi
                         animate={{ rotate: 360, rotateY: 360 }}
                         transition={{ repeat: Infinity, duration: 1.2, ease: "linear" }}
                       >
-                        <Loader2 className="w-5 h-5 animate-spin" />
+                        <Loader2 className="w-5 h-5 animate-spin text-indigo-300" />
                       </motion.div>
-                      <span>Authenticating Admin...</span>
+                      <span className="bg-gradient-to-r from-white to-indigo-100 bg-clip-text text-transparent">Authenticating Admin...</span>
                     </>
                   ) : (
                     <>
                       <span>Login to Faculty Portal</span>
-                      <ArrowRight className="w-4 h-4" />
+                      <ArrowRight className="w-4 h-4 text-indigo-300 group-hover:translate-x-1 transition-transform" />
                     </>
                   )}
                 </motion.button>

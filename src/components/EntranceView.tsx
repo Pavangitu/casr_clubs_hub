@@ -117,13 +117,14 @@ export const EntranceView: React.FC<EntranceViewProps> = ({
         </div>
 
         {/* Standalone Action Button */}
-        <div className="w-full max-w-xs animate-in fade-in slide-in-from-bottom-8 duration-1000 mt-2">
+        <div className="w-full max-w-xs animate-in fade-in slide-in-from-bottom-8 duration-1000 mt-4 perspective-1000">
           <button
             onClick={onOpenLoginPortal}
-            className="w-full py-3.5 rounded-xl liquid-gradient text-white text-xs font-extrabold shadow-lg shadow-blue-500/20 hover:scale-102 hover:shadow-blue-500/30 transition-all flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full py-4 rounded-2xl liquid-prism-button text-white text-xs font-black tracking-wider uppercase shadow-2xl flex items-center justify-center gap-2.5 cursor-pointer hover:scale-105 active:scale-95 transition-all"
           >
-            <LogIn className="w-4 h-4" />
+            <LogIn className="w-4 h-4 text-emerald-300" />
             <span>Login Portal</span>
+            <ArrowRight className="w-4 h-4 text-emerald-300" />
           </button>
         </div>
       </main>
