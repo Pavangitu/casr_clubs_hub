@@ -1,3 +1,5 @@
+import { StudentProfile } from '../types';
+
 export const REAL_STUDENTS_DATA: StudentProfile[] = [
   {
     "name": "Meera V.",

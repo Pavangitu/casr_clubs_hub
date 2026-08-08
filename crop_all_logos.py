@@ -2,11 +2,11 @@ import os
 import sys
 
 try:
-    from PIL import Image
+    from PIL import Image  # type: ignore
 except ImportError:
     import subprocess
     subprocess.check_call([sys.executable, "-m", "pip", "install", "Pillow"])
-    from PIL import Image
+    from PIL import Image  # type: ignore
 
 root = r"c:\Users\pavan\Downloads\casr-clubs-hub"
 
