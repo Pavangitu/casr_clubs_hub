@@ -4,10 +4,10 @@ import { REAL_STUDENTS_DATA } from './realStudentsData';
 export const MOCK_CLUBS: Club[] = [
   {
     id: 'casr-coding-club',
-    name: '💻 Casr coding club',
+    name: '💻 CaSR coding club',
     category: 'Technical',
     description: 'The hub for competitive programming, algorithms, web development, and open-source software development.',
-    fullDescription: 'Casr coding club cultivates elite software engineers and developers through algorithmic challenges, full-stack web dev projects, open-source contributions, and hackathon prep.',
+    fullDescription: 'CaSR coding club cultivates elite software engineers and developers through algorithmic challenges, full-stack web dev projects, open-source contributions, and hackathon prep.',
     image: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&q=80&w=600',
     facultyLead: 'Dr. Dhawaleswar Rao',
     studentLead: 'Meera V.',
@@ -21,11 +21,11 @@ export const MOCK_CLUBS: Club[] = [
     sheetGid: '0'
   },
   {
-    id: 'csar-take-one-movie-club',
-    name: '🎬 Csar take one movie club',
+    id: 'casr-take-one-movie-club',
+    name: '🎬 CaSR take one movie club',
     category: 'Cultural',
     description: 'Celebrating film production, world cinema screenings, video editing, and cinematography.',
-    fullDescription: 'Csar take one movie club brings cinephiles and aspiring filmmakers together for weekly film screenings, short film competitions, screenwriting sessions, and cinematography masterclasses.',
+    fullDescription: 'CaSR take one movie club brings cinephiles and aspiring filmmakers together for weekly film screenings, short film competitions, screenwriting sessions, and cinematography masterclasses.',
     image: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&q=80&w=600',
     facultyLead: 'Dr. Nihal R.',
     studentLead: 'G. Pavan Datta & Krutisundar Behera',
@@ -38,11 +38,11 @@ export const MOCK_CLUBS: Club[] = [
     sheetGid: '1476951718'
   },
   {
-    id: 'csar-frontliners',
-    name: '🛡️ Csar frontliners',
+    id: 'casr-frontliners',
+    name: '🛡️ CaSR frontliners',
     category: 'Social',
     description: 'Dedicated campus emergency response team, volunteer service leaders, and community support.',
-    fullDescription: 'Csar frontliners serve as the primary student emergency and event coordination brigade, ensuring campus safety, disaster preparedness, and event management support.',
+    fullDescription: 'CaSR frontliners serve as the primary student emergency and event coordination brigade, ensuring campus safety, disaster preparedness, and event management support.',
     image: 'https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?auto=format&fit=crop&q=80&w=600',
     facultyLead: 'Dr. Parle Kalyan Chakravarty',
     studentLead: 'Rahul V. & Team',
@@ -53,11 +53,11 @@ export const MOCK_CLUBS: Club[] = [
     foundedYear: 2021
   },
   {
-    id: 'csar-content-creators',
-    name: '📱 Csar content creators',
+    id: 'casr-content-creators',
+    name: '📱 CaSR content creators',
     category: 'Cultural',
     description: 'Empowering student vloggers, podcasters, digital marketers, graphic designers, and storytellers.',
-    fullDescription: 'Csar content creators is the digital media wing driving video creation, podcast production, social media campaigns, graphic design, and brand storytelling across campus.',
+    fullDescription: 'CaSR content creators is the digital media wing driving video creation, podcast production, social media campaigns, graphic design, and brand storytelling across campus.',
     image: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&q=80&w=600',
     facultyLead: 'Dr. Manish K. Yadav',
     studentLead: 'Pranjal Iyer',
@@ -102,11 +102,11 @@ export const MOCK_CLUBS: Club[] = [
     foundedYear: 2018
   },
   {
-    id: 'csar-groovers-dance-club',
-    name: '💃 Csar groovers dance club',
+    id: 'casr-groovers-dance-club',
+    name: '💃 CaSR groovers dance club',
     category: 'Cultural',
     description: 'High-energy choreography, Hip-Hop, Classical Bharatnatyam, Salsa, and stage performances.',
-    fullDescription: 'Csar groovers dance club brings together dancers across styles for inter-college battles, annual cultural showcases, rhythm workshops, and stage performances.',
+    fullDescription: 'CaSR groovers dance club brings together dancers across styles for inter-college battles, annual cultural showcases, rhythm workshops, and stage performances.',
     image: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&q=80&w=600',
     facultyLead: 'Mrs. Upasana Sahoo, Dr. Pratyush Kumar Das & Mr. Sameer Mahapatro',
     studentLead: 'Jayshree Pradhan, R. Yeswanth & Snehasree Hotta',
@@ -120,11 +120,11 @@ export const MOCK_CLUBS: Club[] = [
     sheetGid: '1747670817'
   },
   {
-    id: 'csar-brushers-painting-club',
-    name: '🎨 Csar brushers painting club',
+    id: 'casr-brushers-painting-club',
+    name: '🎨 CaSR brushers painting club',
     category: 'Cultural',
     description: 'Canvas art, watercolors, street wall murals, sketching, and digital art creations.',
-    fullDescription: 'Csar brushers painting club encourages artistic expression through regular painting sessions, outdoor sketching trips, campus murals, and gallery exhibitions.',
+    fullDescription: 'CaSR brushers painting club encourages artistic expression through regular painting sessions, outdoor sketching trips, campus murals, and gallery exhibitions.',
     image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&q=80&w=600',
     facultyLead: 'Dr. Ritesh Kumar',
     studentLead: 'Kuriti Tarun, Smita Rani & Jahnavi Dandi',
@@ -137,11 +137,11 @@ export const MOCK_CLUBS: Club[] = [
     sheetGid: '700032659'
   },
   {
-    id: 'csar-zyra-fashion-club',
-    name: '👗 Csar zyra fashion club',
+    id: 'casr-zyra-fashion-club',
+    name: '👗 CaSR zyra fashion club',
     category: 'Cultural',
     description: 'Sustainable fashion styling, apparel design, runway choreography, and fashion shows.',
-    fullDescription: 'Csar zyra fashion club pushes campus aesthetics through eco-friendly upcycled fashion design, styling workshops, runway training, and annual fashion galas.',
+    fullDescription: 'CaSR zyra fashion club pushes campus aesthetics through eco-friendly upcycled fashion design, styling workshops, runway training, and annual fashion galas.',
     image: 'https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&q=80&w=600',
     facultyLead: 'Mr. Victor Pradhan',
     studentLead: 'Srija Majumder',
@@ -154,11 +154,11 @@ export const MOCK_CLUBS: Club[] = [
     sheetGid: '1336789504'
   },
   {
-    id: 'csar-language',
-    name: '🌍 Csar language',
+    id: 'casr-language',
+    name: '🌍 CaSR language',
     category: 'Cultural',
     description: 'Polyglot community exploring foreign and regional languages, certifications, and cross-cultural exchange.',
-    fullDescription: 'Csar language connects language enthusiasts learning Japanese, French, German, Spanish, and regional Indian languages through conversation circles and cultural fests.',
+    fullDescription: 'CaSR language connects language enthusiasts learning Japanese, French, German, Spanish, and regional Indian languages through conversation circles and cultural fests.',
     image: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&q=80&w=600',
     facultyLead: 'Dr. Amir Prasad Behera',
     studentLead: 'Aisha Khan',
@@ -170,11 +170,11 @@ export const MOCK_CLUBS: Club[] = [
     sheetGid: '2060228171'
   },
   {
-    id: 'csar-harmony-music-club',
-    name: '🎵 Csar harmony music club',
+    id: 'casr-harmony-music-club',
+    name: '🎵 CaSR harmony music club',
     category: 'Cultural',
     description: 'Vocals, acoustic jams, rock bands, instrumental ensembles, and music production.',
-    fullDescription: 'Csar harmony music club brings together singers, guitarists, drummers, and electronic music producers for campus jams, acoustic nights, and music festivals.',
+    fullDescription: 'CaSR harmony music club brings together singers, guitarists, drummers, and electronic music producers for campus jams, acoustic nights, and music festivals.',
     image: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&q=80&w=600',
     facultyLead: 'Mr. Bikram Narayan & Dr. Ashirbachan Mahapatra',
     studentLead: 'Subhranshu Sekhar Dash & Omm Sai Janmajaya Mishra',
@@ -188,11 +188,11 @@ export const MOCK_CLUBS: Club[] = [
     sheetGid: '1198898863'
   },
   {
-    id: 'csar-snapshot-photography-club',
-    name: '📸 Csar snapshot photography club',
+    id: 'casr-snapshot-photography-club',
+    name: '📸 CaSR snapshot photography club',
     category: 'Cultural',
     description: 'Photojournalism, portraiture, photowalks, event photography, and Adobe Lightroom editing.',
-    fullDescription: 'Csar snapshot photography club trains visual artists in DSLR techniques, lighting setups, street photowalks, and coverage of major university events.',
+    fullDescription: 'CaSR snapshot photography club trains visual artists in DSLR techniques, lighting setups, street photowalks, and coverage of major university events.',
     image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=600',
     facultyLead: 'Dr. Manish K. Yadav & Mr. Chinmay Nanda',
     studentLead: 'Tarun Teja Patra, Sudip Ghosh & Buddiga Venkata Nikhil',
@@ -205,11 +205,11 @@ export const MOCK_CLUBS: Club[] = [
     sheetGid: '1771686445'
   },
   {
-    id: 'csar-animal-allies',
-    name: '🐾 Csar animal allies',
+    id: 'casr-animal-allies',
+    name: '🐾 CaSR animal allies',
     category: 'Social',
     description: 'Campus stray animal care, rescue, medical aid, rabies vaccination, and adoption drives.',
-    fullDescription: 'Csar animal allies protects campus animals through daily feeding schedules, veterinary treatments, shelter building, and pet adoption awareness campaigns.',
+    fullDescription: 'CaSR animal allies protects campus animals through daily feeding schedules, veterinary treatments, shelter building, and pet adoption awareness campaigns.',
     image: 'https://images.unsplash.com/photo-1548767797-d8c844163c4c?auto=format&fit=crop&q=80&w=600',
     facultyLead: 'Dr. F. Sebastin Raju',
     studentLead: 'Shruti Iyer',
@@ -220,11 +220,11 @@ export const MOCK_CLUBS: Club[] = [
     foundedYear: 2020
   },
   {
-    id: 'csar-health-club',
-    name: '❤️ Csar health club',
+    id: 'casr-health-club',
+    name: '❤️ CaSR health club',
     category: 'Social',
     description: 'Fitness, mental wellness advocacy, CPR training, blood donation camps, and medical drives.',
-    fullDescription: 'Csar health club promotes student wellness, organizes health checkup camps, blood donation drives, CPR certification, and stress mitigation workshops.',
+    fullDescription: 'CaSR health club promotes student wellness, organizes health checkup camps, blood donation drives, CPR certification, and stress mitigation workshops.',
     image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&q=80&w=600',
     facultyLead: 'Mrs. Pasupureddi Babyrani',
     studentLead: 'Drishya Menon',
@@ -235,11 +235,11 @@ export const MOCK_CLUBS: Club[] = [
     foundedYear: 2019
   },
   {
-    id: 'csar-curtain-hall-drama-club',
-    name: '🎭 Csar curtain hall drama club',
+    id: 'casr-curtain-hall-drama-club',
+    name: '🎭 CaSR curtain hall drama club',
     category: 'Cultural',
     description: 'Stage plays, Nukkad Natak (street theater), mono-acting, improv, and theatrical direction.',
-    fullDescription: 'Csar curtain hall drama club unleashes theatrical talent with scriptwriting, set design, street plays tackling social issues, and annual stage productions.',
+    fullDescription: 'CaSR curtain hall drama club unleashes theatrical talent with scriptwriting, set design, street plays tackling social issues, and annual stage productions.',
     image: 'https://images.unsplash.com/photo-1460723237483-7a6dc9d0b212?auto=format&fit=crop&q=80&w=600',
     facultyLead: 'Mr. Dwity Sundar Rout & Mr. Chandra Sekhar Sahu',
     studentLead: 'Krishnakumari Panigrahi & Jagyanseni Adhikari',
@@ -252,11 +252,11 @@ export const MOCK_CLUBS: Club[] = [
     sheetGid: '1824463464'
   },
   {
-    id: 'csar-science-technology-club',
-    name: '🔬 Csar science and technology club',
+    id: 'casr-science-technology-club',
+    name: '🔬 CaSR science and technology club',
     category: 'Technical',
     description: 'Research projects, quantum physics, astronomy stargazing, biotech, and scientific experiments.',
-    fullDescription: 'Csar science and technology club promotes scientific exploration through experimental labs, telescope stargazing nights, innovation paper publishing, and science fests.',
+    fullDescription: 'CaSR science and technology club promotes scientific exploration through experimental labs, telescope stargazing nights, innovation paper publishing, and science fests.',
     image: 'https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&q=80&w=600',
     facultyLead: 'Dr. Pratyush Kumar Das & Dr. Bhadram Kalyan',
     studentLead: 'Siddharth M.',
@@ -267,11 +267,11 @@ export const MOCK_CLUBS: Club[] = [
     foundedYear: 2018
   },
   {
-    id: 'csar-chandrabhanga-creators',
-    name: '✍️ Csar chandrabhanga creators',
+    id: 'casr-chandrabhanga-creators',
+    name: '✍️ CaSR chandrabhanga creators',
     category: 'Cultural',
     description: 'Official university magazine editorial team, creative writing, poetry, and literary anthologies.',
-    fullDescription: 'Csar chandrabhanga creators curates the official annual campus magazine "Chandrabhanga", hosting poetry slams, creative writing sessions, and literary competitions.',
+    fullDescription: 'CaSR chandrabhanga creators curates the official annual campus magazine "Chandrabhanga", hosting poetry slams, creative writing sessions, and literary competitions.',
     image: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&q=80&w=600',
     facultyLead: 'Dr. Manish K. Yadav',
     studentLead: 'Nikhil Saxena',
@@ -282,11 +282,11 @@ export const MOCK_CLUBS: Club[] = [
     foundedYear: 2017
   },
   {
-    id: 'csar-page-turners',
-    name: '📖 Csar page turners',
+    id: 'casr-page-turners',
+    name: '📖 CaSR page turners',
     category: 'Cultural',
     description: 'Book reading circles, literature discussions, fiction & non-fiction reviews, and author sessions.',
-    fullDescription: 'Csar page turners is the campus book lovers club, organizing bi-weekly coffee & reading meetups, book exchanges, and literary discussions across diverse genres.',
+    fullDescription: 'CaSR page turners is the campus book lovers club, organizing bi-weekly coffee & reading meetups, book exchanges, and literary discussions across diverse genres.',
     image: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&q=80&w=600',
     facultyLead: 'Prof. Anita Desai',
     studentLead: 'Kavya Nair',
@@ -298,11 +298,11 @@ export const MOCK_CLUBS: Club[] = [
     sheetGid: '578752662'
   },
   {
-    id: 'csar-robotics-club',
-    name: '🤖 Csar robotics club',
+    id: 'casr-robotics-club',
+    name: '🤖 CaSR robotics club',
     category: 'Technical',
     description: 'Autonomous robots, ROS systems, microcontrollers, mechatronics, and bot battles.',
-    fullDescription: 'Csar robotics club engineers autonomous rovers, robotic arms, sensor networks, and mechatronic systems for national robotics challenges.',
+    fullDescription: 'CaSR robotics club engineers autonomous rovers, robotic arms, sensor networks, and mechatronic systems for national robotics challenges.',
     image: 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=600',
     facultyLead: 'Dr. Prangya Parimita Pradhan & Mrs. N. Jeevaratnam',
     studentLead: 'Aryan K.',
@@ -315,11 +315,11 @@ export const MOCK_CLUBS: Club[] = [
     attendanceFormUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSebkDNlMy6iK9hAZAsF-w_ABgdB-iiZ2Oe85TJ5up8oNvNpQQ/viewform?usp=sharing&ouid=100005982021679803653'
   },
   {
-    id: 'csar-hackton',
-    name: '🚀 Csar hackton',
+    id: 'casr-hackton',
+    name: '🚀 CaSR hackton',
     category: 'Innovation',
     description: 'Fast-paced hackathons, rapid product prototyping, pitch competitions, and solution sprints.',
-    fullDescription: 'Csar hackton builds cross-functional teams to solve real-world industry problems in 24-48 hour hackathons, pitch decks, and innovation sprints.',
+    fullDescription: 'CaSR hackton builds cross-functional teams to solve real-world industry problems in 24-48 hour hackathons, pitch decks, and innovation sprints.',
     image: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&q=80&w=600',
     facultyLead: 'Dr. Abinash Gaya',
     studentLead: 'Harsh Vardhan',
@@ -401,7 +401,7 @@ export const MOCK_STUDENTS: StudentProfile[] = [
     name: 'Alex J. Thompson',
     email: 'alex.thompson@casr.edu',
     avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBzetnFsi7qsaWams16MCNQhfFf8s9D4nIRXqkO3V40k8qTg8bWv_PyFt2GqbD4vrLcvxtZcpx0oEnF0ZogzFP2a32yiyXzhI5-5znTOAPPnWJVmQhX-bG_HROKJnK5ArVZsocWOX_rrKRC0tRFvz6WeQKgX7MzBUHRTZ67ges7iGixAuja_c1mAOmjxixWxf5PKanSbHN4IBx8Bwn_4QHNS2E5kcPYJPUCfqi9mxWknB-TqqZtBTKN7p6mjMHNzsMFagpmqNq-FB9e',
-    clubName: 'Csar robotics club',
+    clubName: 'CaSR robotics club',
     role: 'Vice President & Lead Researcher',
     statusTier: 'Elite',
     statusTierDescription: 'Top 5% of participants',
@@ -431,7 +431,7 @@ export const MOCK_STUDENTS: StudentProfile[] = [
         date: 'Oct 12, 2024',
         durationHours: 2.5,
         status: 'PRESENT',
-        clubName: 'Csar robotics club'
+        clubName: 'CaSR robotics club'
       },
       {
         id: 'rec-102',
@@ -440,7 +440,7 @@ export const MOCK_STUDENTS: StudentProfile[] = [
         date: 'Oct 08, 2024',
         durationHours: 1.5,
         status: 'PRESENT',
-        clubName: 'Casr coding club'
+        clubName: 'CaSR coding club'
       },
       {
         id: 'rec-103',
@@ -449,7 +449,7 @@ export const MOCK_STUDENTS: StudentProfile[] = [
         date: 'Sep 28, 2024',
         durationHours: 3.0,
         status: 'PRESENT',
-        clubName: 'Csar robotics club'
+        clubName: 'CaSR robotics club'
       },
       {
         id: 'rec-104',
@@ -458,7 +458,7 @@ export const MOCK_STUDENTS: StudentProfile[] = [
         date: 'Sep 15, 2024',
         durationHours: 4.0,
         status: 'PRESENT',
-        clubName: 'Casr coding club'
+        clubName: 'CaSR coding club'
       },
       {
         id: 'rec-105',
@@ -476,7 +476,7 @@ export const MOCK_STUDENTS: StudentProfile[] = [
     name: 'Alex Johnson',
     email: 'alex.johnson@casr.edu',
     avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAZ3MW-zo5c5uAlKTRd48s06Yx3Hg7O1x8skLRnJmMSrn-mbtN6uxvumJ7vt-JBiwHeRf_18yxjCw_1YCjGjBQ4nPW8w30FmRSi46zvNWkOCEietgQcooE35k-vu-HvqzbT4U-0H8u_MjlmNA1kJMMrc0gkxmB_L6ObF-sTSVdBrX0s695Vv9bGqI8A1WnoyLlJOo5VcMgBxb8OWcJlkqMX5RWAPuHckC93RfJBAkevBFnAHcbwBS7ZKZoPX8x4_4_q3xZ876_wHBUV',
-    clubName: 'Casr coding club',
+    clubName: 'CaSR coding club',
     role: 'Core Member',
     statusTier: 'Pro',
     statusTierDescription: 'Top 15% of participants',
@@ -506,7 +506,7 @@ export const MOCK_STUDENTS: StudentProfile[] = [
         date: 'Oct 14, 2024',
         durationHours: 2.0,
         status: 'PRESENT',
-        clubName: 'Casr coding club'
+        clubName: 'CaSR coding club'
       },
       {
         id: 'rec-202',
@@ -515,7 +515,7 @@ export const MOCK_STUDENTS: StudentProfile[] = [
         date: 'Oct 05, 2024',
         durationHours: 4.0,
         status: 'PRESENT',
-        clubName: 'Casr coding club'
+        clubName: 'CaSR coding club'
       }
     ]
   },
@@ -524,7 +524,7 @@ export const MOCK_STUDENTS: StudentProfile[] = [
     name: 'Sarah Lin',
     email: 'sarah.lin@casr.edu',
     avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400',
-    clubName: 'Csar harmony music club',
+    clubName: 'CaSR harmony music club',
     role: 'Lead Vocalist & Acoustic Coordinator',
     statusTier: 'Elite',
     statusTierDescription: 'Top 3% of participants',
@@ -554,7 +554,7 @@ export const MOCK_STUDENTS: StudentProfile[] = [
         date: 'Oct 16, 2024',
         durationHours: 3.5,
         status: 'PRESENT',
-        clubName: 'Csar harmony music club'
+        clubName: 'CaSR harmony music club'
       },
       {
         id: 'rec-302',
@@ -563,7 +563,7 @@ export const MOCK_STUDENTS: StudentProfile[] = [
         date: 'Oct 10, 2024',
         durationHours: 2.0,
         status: 'PRESENT',
-        clubName: 'Csar harmony music club'
+        clubName: 'CaSR harmony music club'
       }
     ]
   }
@@ -571,72 +571,178 @@ export const MOCK_STUDENTS: StudentProfile[] = [
 
 export const MOCK_EVENTS: CampusEvent[] = [
   {
-    id: 'evt-1',
-    title: 'AI Ethics & Autonomous Systems Workshop',
-    clubName: 'Csar robotics club',
-    clubCategory: 'Technical',
-    date: 'Oct 24, 2024',
-    time: '4:00 PM - 6:30 PM',
-    venue: 'Auditorium Hall B & Online Stream',
-    description: 'Delve into current ethical frameworks, neural network bias mitigation, and safety regulations for self-driving drones and AI agents.',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCAbj_zDrFsT8Q7zPbZCQJkCLcbTSl4IpYJyKCedvYZdPdCB4gLeyUkxsh3LKNKdoD1kqrNcabeCtxdJk-AXzmyI4d3tBwdO4uFaB_X6tEJlTd-uyQKDBrzM9ZJGV6pclWWXk2UCyj2otWyPbs_zyoaJrWuwSqFsr9eXj0eJ0Or48gvxzAc810zsxgm7ELrxEQLTrJZHPtg3Q-8O5TH6CQnr252tdi5Zl0N4820KEddPuwA-im4hGkdWb6sjUVm32HtG48_DTJtZWpg',
-    creditsAwarded: 1.5,
-    durationHours: 2.5,
-    registeredCount: 178,
-    maxCapacity: 200,
-    tags: ['AI Ethics', 'Neural Networks', 'Keynote'],
-    speakers: ['Dr. Rahul Bose', 'Dr. Evelyn Carter (MIT Guest)']
-  },
-  {
-    id: 'evt-2',
-    title: 'CodeSprint 2024: 24-Hour Campus Hackathon',
-    clubName: 'Casr coding club',
-    clubCategory: 'Technical',
-    date: 'Nov 02 - Nov 03, 2024',
-    time: '10:00 AM (Overnight)',
-    venue: 'Tech Innovation Block - Central Atrium',
-    description: 'Compete in teams of 4 to solve real-world industry problems in Web3, AI, HealthTech, and Sustainable Energy.',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDIA3cEr03Kq5U1lLQmCZ5a294wwsW1YxwKOwFOZ-TYz4YJV-OcZEbcLeVfAGcXURwdhWqIgUiunGxJ8IYZLBUP8xxVLpxu1W8Ff3ksi2M04UQsk9tInIgnWsYbdE6a-v-ymPHtNnw5nyzL8l_Yse33dmX3rr8M8pXCHMIMZ0DzRZwk4YDFZuwx_gj_FBzzeJYG81pqmgnBIoIc-LYsQWCB2JgMrnnZlk4FXnGJPjClL0QKCToVNURl0mCF4iiaEPKzifQBVWkTmY8v',
-    creditsAwarded: 4.0,
-    durationHours: 24.0,
-    registeredCount: 240,
-    maxCapacity: 250,
-    tags: ['Hackathon', 'Coding', 'Prizes $5000'],
-    speakers: ['Meera V.', 'Industry Mentors']
-  },
-  {
-    id: 'evt-3',
-    title: 'Inter-College Contemporary Dance Battles',
-    clubName: 'Csar groovers dance club',
+    id: 'evt-music-openmic',
+    title: 'Open mic Competition',
+    clubName: '🎵 CaSR harmony music club',
     clubCategory: 'Cultural',
-    date: 'Nov 08, 2024',
-    time: '5:00 PM - 9:00 PM',
-    venue: 'Main Campus Amphitheatre',
-    description: 'High-energy solo, duo, and crew dance showdowns featuring top talent from across regional universities.',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDNGM3oxRP0Q0a9uel0-j0ioMYyWBe20LVxqiaue06Y070O_tQP0rhKJySh1aschYmZkQk1gPbOelVBN7QC0Xi1Wd7GT6ErKIe6ImKhmd8wtOLlxQFnP7b-fGMP4jwv5940JryE6hYSI7K__QXS-Kqq4sgWBJybksXDrX7GKXtR3bTjqHldVcgjS1geLqIZ-obdWNfRMjPPenbyKA8zT0-eNJ1N55uIFKBwxvwc8FDqHG1UAQR1xQ0TaM6cslbOlF0GZpO1ZYSNSauE',
+    date: '8/8/2026',
+    time: '',
+    venue: 'Performing Arts Studio 3 & Open Stage',
+    description: 'The annual Music Club Open Mic Competition! Step up to the stage to perform your vocals, acoustic solos, instrumentals, bands, or stand-up routines in front of an energetic crowd.',
+    image: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&q=80&w=600',
     creditsAwarded: 2.0,
-    durationHours: 4.0,
-    registeredCount: 310,
-    maxCapacity: 500,
-    tags: ['Dance', 'Choreography', 'Showdown'],
-    speakers: ['Rohan Sharma', 'Dr. Anjali Mehta']
+    durationHours: 3.0,
+    registeredCount: 84,
+    maxCapacity: 150,
+    tags: ['Music', 'Open Mic', 'Vocals', 'Acoustic', 'Live Jam'],
+    facultyCoordinators: ['Mr. Bikaram Narayan', 'Dr. Ashirbachan Mahapatra'],
+    studentCoordinators: [
+      { name: 'Subhranshu Sekhar Dash', phone: '7894398250' },
+      { name: 'OmmSai Janmajaya Mishra', phone: '94370 15101' }
+    ]
   },
   {
-    id: 'evt-4',
-    title: 'Acoustic Sunset Music Session',
-    clubName: 'Csar harmony music club',
+    id: 'evt-dance-rhythm-royale',
+    title: 'Rhythm Royale – The Ultimate Dance Challenge',
+    clubName: '💃 CaSR groovers dance club',
     clubCategory: 'Cultural',
-    date: 'Nov 12, 2024',
-    time: '5:30 PM - 7:30 PM',
-    venue: 'Student Quad Lawn',
-    description: 'Relax under the open sky with live unplugged guitar jams, indie vocals, and violin harmonies.',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBKlxmXggDPoFCUIP2baaUDP1b9M_x_ds8nRGA5d5e6KZ7OFb39ck5XEouQYocGIoE7XOFiFIn3HG4hfrB5gO3YzN6q4P9aSwh9xAl54JmS3X8ojM4DE8GLk391w_O9F5u9Q-kV9s2dtLDP2rVoU3FOKc24x-cQlkJvqP75i0AMG8mWDF4fN3HsMCmDdhLbH-ywdRkjniZfjmj0FUdmFIrxdC0ZALowMCgIzUILaFfSwOHsB78fQNYWjyBO6H7gTrqkZiBH4weaN3mn',
-    creditsAwarded: 1.0,
-    durationHours: 2.0,
-    registeredCount: 145,
+    date: '8/12/2026',
+    time: '',
+    venue: 'Main Campus Auditorium Stage',
+    description: 'High-energy dance extravaganza featuring 7 exciting sub-challenges! Winners of each event receive exciting prizes, and special Dance Award titles will be presented to outstanding participants.',
+    image: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&q=80&w=600',
+    creditsAwarded: 3.0,
+    durationHours: 3.5,
+    registeredCount: 165,
+    maxCapacity: 300,
+    tags: ['Dance Battle', 'Choreography', 'Rhythm Royale', 'Dance Titles', 'Stage Performance'],
+    subEvents: [
+      'Dance Battle',
+      'Mirror Dance Challenge (Pair Event)',
+      'Dance Copy Challenge',
+      'Random Song Challenge',
+      'Guess the Song in 5 Seconds and do its hook steps',
+      'Complete the Choreography',
+      'Dance Relay'
+    ],
+    awardTitles: [
+      'Star Performer',
+      'Fastest Learner',
+      'Audience Favourite',
+      'Best Hook Step',
+      'Best expressions',
+      'Rising Star'
+    ],
+    facultyCoordinators: ['Mrs. Upasana Sahoo', 'Dr. Pratyush Kumar Das'],
+    studentCoordinators: [
+      { name: 'Jayshree Pradhan', phone: '95082 14671' },
+      { name: 'R. Yeswanth', phone: '7842292460' },
+      { name: 'Snehasree Hotta', phone: '98611 65776' }
+    ]
+  },
+  {
+    id: 'evt-art-canvas-quest',
+    title: 'Canvas Quest – The Ultimate Art Challenge',
+    clubName: '🎨 CaSR brushers painting club',
+    clubCategory: 'Cultural',
+    date: '8/11/2026',
+    time: '',
+    venue: 'Fine Arts Block - Atelier 1 & Central Quad',
+    description: 'Multi-stage painting and drawing competition testing pair synchronization and individual artistic excellence across 5 distinct creative stages.',
+    image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?auto=format&fit=crop&q=80&w=600',
+    creditsAwarded: 3.0,
+    durationHours: 6.0,
+    registeredCount: 92,
+    maxCapacity: 120,
+    tags: ['Art Quest', 'Blindfold Drawing', 'Madhubani', 'Paper Cuttings', 'On The Spot'],
+    stages: [
+      'Stage 1 (Pair): Art quest',
+      'Stage 2 (Pair): Blindfold drawing and the partner has to guess',
+      'Stage 3 (Individual): Paper Cuttings',
+      'Stage 4 (Individual): Madhubani Painting',
+      'Stage 5 (Individual): On the spot painting (topics given on spot)'
+    ],
+    facultyCoordinators: ['Dr. Ritesh Kumar'],
+    studentCoordinators: [
+      { name: 'Kuriti Tarun', phone: '9515247618' },
+      { name: 'Smita Rani', phone: '9142122013' },
+      { name: 'Jahnavi Dandi', phone: '7671830438' }
+    ]
+  },
+  {
+    id: 'evt-movie-lights-camera-freedom',
+    title: 'Lights. Camera. Freedom! (Reel Making Competition)',
+    clubName: '🎬 CaSR take one movie club',
+    clubCategory: 'Cultural',
+    date: '8/15/2026',
+    time: '',
+    venue: 'Campus Wide / Social Media Platforms',
+    theme: 'Independence Day – "Freedom Through Creativity"',
+    description: 'CaSR Movie Club presents Reel Making Competition for Independence Day! Create a short, impactful reel celebrating the spirit of India, patriotism, unity, culture, and the sacrifices of our freedom fighters. Best reels will be featured on official social media platforms!',
+    image: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&q=80&w=600',
+    creditsAwarded: 2.5,
+    durationHours: 4.0,
+    registeredCount: 110,
     maxCapacity: 200,
-    tags: ['Acoustic', 'Live Jam', 'Sunset'],
-    speakers: ['Samarth S.', 'Sarah Lin']
+    tags: ['Reel Making', 'Filmmaking', 'Independence Day', 'Freedom Through Creativity'],
+    guidelines: [
+      'Reel Duration: 30–60 Seconds',
+      'Original content only',
+      'Shoot within the college campus or relevant locations',
+      'Maintain good video and audio quality',
+      'Follow theme: Freedom Through Creativity',
+      'Team or individual participation is allowed',
+      'Best reels will be recognized and featured on official social media platforms'
+    ],
+    facultyCoordinators: ['Dr. Nihal R.'],
+    studentCoordinators: [
+      { name: 'G. Pavan Datta', phone: '82493 97556' },
+      { name: 'Krutisundar Behera', phone: '9861153067' }
+    ]
+  },
+  {
+    id: 'evt-drama-stage-spotlight',
+    title: 'Stage Spotlight – The Ultimate Drama Challenge',
+    clubName: '🎭 CaSR curtain hall drama club',
+    clubCategory: 'Cultural',
+    date: '8/10/2026',
+    time: '',
+    venue: 'Open Air Theater Stage',
+    description: 'Showcase your dramatic skills across 5 hilarious and challenging acting events! Outstanding actors will win prestigious Drama Star Titles.',
+    image: 'https://images.unsplash.com/photo-1460723237483-7a6dc9d0b212?auto=format&fit=crop&q=80&w=600',
+    creditsAwarded: 2.5,
+    durationHours: 3.5,
+    registeredCount: 128,
+    maxCapacity: 200,
+    tags: ['Theater', 'Mimicry', 'Emoji Acting', 'Secret Character', 'Star Titles'],
+    subEvents: [
+      '1. Mimicry expert',
+      '2. Secret character',
+      '3. Hasao jeet jao',
+      '4. Emoji Acting',
+      '5. Human statue'
+    ],
+    awardTitles: [
+      'Best Actor',
+      'Best Actress',
+      'Star performer'
+    ],
+    facultyCoordinators: ['Dr. Dwity Sundar Rout', 'Mr. Chandra Sekhar Sahu'],
+    studentCoordinators: [
+      { name: 'Krishnakumari Panigrahi', phone: '7849017273' },
+      { name: 'Jagyanseni Adhikari', phone: '8917535842' }
+    ]
+  },
+  {
+    id: 'evt-agrifora-voices-against-leaks',
+    title: 'Future Unlocked: Voices Against Paper Leaks',
+    clubName: '🌱 Agrifora students society',
+    clubCategory: 'Social',
+    date: '5-7 August 2026',
+    time: '',
+    venue: 'Student Affairs Auditorium & Quad',
+    description: 'A 3-day student debate, speech, and awareness symposium addressing examination integrity, anti-paper leak policies, and student solutions for academic fairness.',
+    image: 'https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&q=80&w=600',
+    creditsAwarded: 3.0,
+    durationHours: 7.5,
+    registeredCount: 140,
+    maxCapacity: 250,
+    tags: ['Academic Integrity', 'Youth Forum', 'Voices Against Paper Leaks', 'Agrifora'],
+    facultyCoordinators: ['Dr. D. J. Gaikwad'],
+    studentCoordinators: [
+      { name: 'U. Venktesh Dora', phone: '9777554894' },
+      { name: 'Shradhanjali Das', phone: '9438568932' }
+    ]
   }
 ];
 

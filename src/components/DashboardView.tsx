@@ -128,9 +128,7 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               >
                 <div className="relative h-40 w-full overflow-hidden">
                   <img src={evt.image} alt={evt.title} className="w-full h-full object-cover" />
-                  <span className="absolute top-3 right-3 px-3 py-1 bg-black/70 backdrop-blur-md text-white text-[10px] font-bold rounded-full">
-                    +{evt.creditsAwarded} Credits
-                  </span>
+
                 </div>
 
                 <div className="p-5 space-y-3">
@@ -149,12 +147,14 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
                   <span className="text-xs text-gray-500 font-medium">
                     {evt.registeredCount}/{evt.maxCapacity} Seats
                   </span>
-                  <button
-                    onClick={() => setActiveTab('events')}
-                    className="px-4 py-1.5 rounded-full bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 transition-colors"
+                  <a
+                    href="https://forms.gle/6ezyppJgi7nngwTh6"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-1.5 rounded-full bg-blue-600 text-white text-xs font-semibold hover:bg-blue-700 transition-colors inline-block"
                   >
-                    Register
-                  </button>
+                    Register ↗
+                  </a>
                 </div>
               </div>
             ))}

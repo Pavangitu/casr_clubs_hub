@@ -91,6 +91,13 @@ export interface CampusEvent {
   maxCapacity: number;
   tags: string[];
   speakers?: string[];
+  subEvents?: string[];
+  stages?: string[];
+  awardTitles?: string[];
+  guidelines?: string[];
+  theme?: string;
+  facultyCoordinators?: string[];
+  studentCoordinators?: { name: string; phone?: string }[];
 }
 
 export interface NotificationItem {

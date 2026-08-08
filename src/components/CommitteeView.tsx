@@ -7,6 +7,7 @@ interface SchoolCoordinator {
   phone: string;
   email: string;
   responsibilities: string;
+  image?: string;
 }
 
 interface FacultyClubInCharge {
@@ -26,6 +27,7 @@ interface StudentCoordinator {
   phone: string;
   school: string;
   branch: string;
+  image?: string;
 }
 
 interface SocialOfficer {
@@ -34,6 +36,7 @@ interface SocialOfficer {
   dept: string;
   phone: string;
   email: string;
+  image?: string;
 }
 
 interface CommitteeViewProps {
@@ -51,118 +54,125 @@ export const CommitteeView: React.FC<CommitteeViewProps> = ({ compactPadding = f
       name: 'Mrs. N. Jeevaratnam',
       phone: '8847882452',
       email: 'jeevaratnam@cutm.ac.in',
-      responsibilities: 'Responsible for all student activities related to Cultural and Social Responsibility, Extra-curricular and Co-curricular activities along with different student clubs.'
+      responsibilities: 'Responsible for all student activities related to Cultural and Social Responsibility, Extra-curricular and Co-curricular activities along with different student clubs.',
+      image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200'
     },
     {
       school: 'MSSSoA',
       name: 'Mrs. Upasana Sahoo',
       phone: '7751875049',
       email: 'upasana.sahoo@cutm.ac.in',
-      responsibilities: 'Coordinating and managing all matters related to students\' activities, conduct and discipline. Coordinate with CaSR Coordinator and CaSR Student Coordinators to organize events.'
+      responsibilities: 'Coordinating and managing all matters related to students\' activities, conduct and discipline. Coordinate with CaSR Coordinator and CaSR Student Coordinators to organize events.',
+      image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=200'
     },
     {
       school: 'SoVAS',
       name: 'Dr. Gautam Kumar Ginjupalli',
       phone: '7680962616',
       email: 'gaoutam.ginjupalli@cutm.ac.in',
-      responsibilities: 'Coordinating different extra-curricular and co-curricular events, activities and competitions in SoVAS.'
+      responsibilities: 'Coordinating different extra-curricular and co-curricular events, activities and competitions in SoVAS.',
+      image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200'
     },
     {
       school: 'SoABE',
       name: 'Dr. Pratyush Kumar Das',
       phone: '9776327537',
       email: 'pratyush.das@cutm.ac.in',
-      responsibilities: 'Creating awareness of CaSR policy, updating booklets, hour-to-credit conversions, and student attendance recommendation.'
+      responsibilities: 'Creating awareness of CaSR policy, updating booklets, hour-to-credit conversions, and student attendance recommendation.',
+      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200'
     },
     {
       school: 'SoN',
       name: 'Mrs. Pasupureddi Babyrani',
       phone: '8179613709',
       email: 'Pasupureddi.babyrani@cutm.ac.in',
-      responsibilities: 'CaSR activity hour conversion to CaSR credit, final grade sheet publication, and student application recommendations for SoN.'
+      responsibilities: 'CaSR activity hour conversion to CaSR credit, final grade sheet publication, and student application recommendations for SoN.',
+      image: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&q=80&w=200'
     },
     {
       school: 'SoM',
       name: 'Dr. Susanta Kumar Patnaik',
       phone: '7978380904',
       email: 'susanta.patnaik@cutm.ac.in',
-      responsibilities: 'Forwarding student applications to receive appreciation, awards, and CaSR Cell approvals for SoM.'
+      responsibilities: 'Forwarding student applications to receive appreciation, awards, and CaSR Cell approvals for SoM.',
+      image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200'
     },
     {
       school: 'SoFS',
       name: 'Dr. Iffat Jahan',
       phone: '9820643503',
       email: 'iffat.jahan@cutm.ac.in',
-      responsibilities: 'Creating and maintaining database regarding student achievements and cooperating with Faculty In-Charges for event execution.'
+      responsibilities: 'Creating and maintaining database regarding student achievements and cooperating with Faculty In-Charges for event execution.',
+      image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=200'
     }
   ];
 
   // 2. Faculty In-Charges of Different Student Clubs
   const facultyClubInCharges: FacultyClubInCharge[] = [
-    { club: 'Csar brushers painting club', name: 'Dr. Ritesh Kumar', dept: 'MSSSoA', email: 'ritesh.kumar@cutm.ac.in', phone: '8905222857', image: '/dr_ritesh_kumar.jpg' },
-    { club: 'Csar language', name: 'Dr. Amir Prasad Behera', dept: 'SoM', email: 'amir.prasad@cutm.ac.in', phone: '9438610887' },
-    { club: 'Csar harmony music club', name: 'Mr. Bikram Narayan & Dr. Ashirbachan Mahapatra', dept: 'SoET & MSSSoA', email: 'bikram.narayna@cutm.ac.in, ashirbachan.mahapatra@cutm.ac.in', phone: '9439874577 / 7008461263' },
-    { club: 'Csar snapshot photography club', name: 'Dr. Manish K. Yadav & Mr. Chinmay Nanda', dept: 'MSSSoA & SoF', email: 'manish.yadav@cutm.ac.in, chinmaya.nanda@cutm.ac.in', phone: '9696352193 / 9137499183' },
-    { club: 'Csar curtain hall drama club', name: 'Mr. Dwity Sundar Rout & Mr. Chandra Sekhar Sahu', dept: 'MSSSoA', email: 'dwity.sundar@cutm.ac.in, chandrasekhar.sahu@cutm.ac.in', phone: '9777726185 / 7978822300' },
-    { club: 'Agrifora students society', name: 'Dr. D. J. Gaikwad', dept: 'MSSSoA', email: 'gaikwad@cutm.ac.in', phone: '8093524042' },
-    { club: 'Csar frontliners', name: 'Dr. Parle Kalyan Chakravarty', dept: 'SoM', email: 'pkchakravarty@cutm.ac.in', phone: '9439331442' },
-    { club: 'Csar science and technology club', name: 'Dr. Pratyush Kumar Das & Dr. Bhadram Kalyan', dept: 'SoABE', email: 'pratyush.das@cutm.ac.in, bkalyan.chekraverthy@cutm.ac.in', phone: '9776327537' },
-    { club: 'Csar animal allies', name: 'Dr. F. Sebastin Raju', dept: 'SoVAS', email: 'sebastin.raju@cutm.ac.in', phone: '8870185123' },
-    { club: 'Csar content creators', name: 'Dr. Manish K. Yadav', dept: 'MSSSoA', email: 'manish.yadav@cutm.ac.in', phone: '9696352193' },
-    { club: 'Csar page turners', name: 'Prof. Anita Desai', dept: 'Humanities', email: 'anita.desai@cutm.ac.in', phone: '9438269572' },
-    { club: 'Csar zyra fashion club', name: 'Mr. Victor Pradhan', dept: 'MSSSoA', email: 'victor.pradhan@cutm.ac.in', phone: '9937365635' },
-    { club: 'Casr coding club', name: 'Dr. Dhawaleswar Rao', dept: 'SoET', email: 'dhawaleswar.rao@cutm.ac.in', phone: '7779871797' },
-    { club: 'Csar robotics club', name: 'Dr. Prangya Parimita Pradhan & Mrs. N. Jeevaratnam', dept: 'SoET', email: 'prangya.pradhan@cutm.ac.in, jeevaratnam@cutm.ac.in', phone: '7978250836 / 8847882452' },
-    { club: 'Csar hackton', name: 'Dr. Abinash Gaya', dept: 'SoET', email: 'abinash.gaya@cutm.ac.in', phone: '7735363537' },
-    { club: 'Csar health club', name: 'Mrs. Pasupureddi Babyrani', dept: 'SoN', email: 'Pasupureddi.babyrani@cutm.ac.in', phone: '8179613709' },
-    { club: 'Eco sankalp', name: 'Dr. Bishnu Prasad Dash', dept: 'MSSSoA', email: 'bishnuprasad.dash@cutm.ac.in', phone: '8338076260' },
-    { club: 'Drone club', name: 'Mr. Sameer Mahapatro', dept: 'MSSSoA', email: 'sameer.mahapatro@cutm.ac.in', phone: '8984139006' },
-    { club: 'Csar groovers dance club', name: 'Mrs. Upasana Sahoo, Dr. Pratyush Kumar Das, Mr. Sameer Mahapatro', dept: 'MSSSoA', email: 'upasana.sahoo@cutm.ac.in, pratyush.das@cutm.ac.in, sameer.mahapatro@cutm.ac.in', phone: '7751875049 / 9776327537 / 8984139006' }
+    { club: 'CaSR brushers painting club', name: 'Dr. Ritesh Kumar', dept: 'MSSSoA', email: 'ritesh.kumar@cutm.ac.in', phone: '8905222857', image: '/dr_ritesh_kumar.jpg' },
+    { club: 'CaSR language', name: 'Dr. Amir Prasad Behera', dept: 'SoM', email: 'amir.prasad@cutm.ac.in', phone: '9438610887', image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=200' },
+    { club: 'CaSR harmony music club', name: 'Mr. Bikram Narayan & Dr. Ashirbachan Mahapatra', dept: 'SoET & MSSSoA', email: 'bikram.narayna@cutm.ac.in, ashirbachan.mahapatra@cutm.ac.in', phone: '9439874577 / 7008461263', image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=200' },
+    { club: 'CaSR snapshot photography club', name: 'Dr. Manish K. Yadav & Mr. Chinmay Nanda', dept: 'MSSSoA & SoF', email: 'manish.yadav@cutm.ac.in, chinmaya.nanda@cutm.ac.in', phone: '9696352193 / 9137499183', image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=200' },
+    { club: 'CaSR curtain hall drama club', name: 'Mr. Dwity Sundar Rout & Mr. Chandra Sekhar Sahu', dept: 'MSSSoA', email: 'dwity.sundar@cutm.ac.in, chandrasekhar.sahu@cutm.ac.in', phone: '9777726185 / 7978822300', image: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&q=80&w=200' },
+    { club: 'Agrifora students society', name: 'Dr. D. J. Gaikwad', dept: 'MSSSoA', email: 'gaikwad@cutm.ac.in', phone: '8093524042', image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=200' },
+    { club: 'CaSR frontliners', name: 'Dr. Parle Kalyan Chakravarty', dept: 'SoM', email: 'pkchakravarty@cutm.ac.in', phone: '9439331442', image: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=200' },
+    { club: 'CaSR science and technology club', name: 'Dr. Pratyush Kumar Das & Dr. Bhadram Kalyan', dept: 'SoABE', email: 'pratyush.das@cutm.ac.in, bkalyan.chekraverthy@cutm.ac.in', phone: '9776327537', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200' },
+    { club: 'CaSR animal allies', name: 'Dr. F. Sebastin Raju', dept: 'SoVAS', email: 'sebastin.raju@cutm.ac.in', phone: '8870185123', image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200' },
+    { club: 'CaSR content creators', name: 'Dr. Manish K. Yadav', dept: 'MSSSoA', email: 'manish.yadav@cutm.ac.in', phone: '9696352193', image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=200' },
+    { club: 'CaSR page turners', name: 'Prof. Anita Desai', dept: 'Humanities', email: 'anita.desai@cutm.ac.in', phone: '9438269572', image: '/dr_anita_patra.jpg' },
+    { club: 'CaSR zyra fashion club', name: 'Mr. Victor Pradhan', dept: 'MSSSoA', email: 'victor.pradhan@cutm.ac.in', phone: '9937365635', image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=200' },
+    { club: 'CaSR coding club', name: 'Dr. Dhawaleswar Rao', dept: 'SoET', email: 'dhawaleswar.rao@cutm.ac.in', phone: '7779871797', image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=200' },
+    { club: 'CaSR robotics club', name: 'Dr. Prangya Parimita Pradhan & Mrs. N. Jeevaratnam', dept: 'SoET', email: 'prangya.pradhan@cutm.ac.in, jeevaratnam@cutm.ac.in', phone: '7978250836 / 8847882452', image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200' },
+    { club: 'CaSR hackton', name: 'Dr. Abinash Gaya', dept: 'SoET', email: 'abinash.gaya@cutm.ac.in', phone: '7735363537', image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200' },
+    { club: 'CaSR health club', name: 'Mrs. Pasupureddi Babyrani', dept: 'SoN', email: 'Pasupureddi.babyrani@cutm.ac.in', phone: '8179613709', image: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&q=80&w=200' },
+    { club: 'Eco sankalp', name: 'Dr. Bishnu Prasad Dash', dept: 'MSSSoA', email: 'bishnuprasad.dash@cutm.ac.in', phone: '8338076260', image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200' },
+    { club: 'Drone club', name: 'Mr. Sameer Mahapatro', dept: 'MSSSoA', email: 'sameer.mahapatro@cutm.ac.in', phone: '8984139006', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200' },
+    { club: 'CaSR groovers dance club', name: 'Mrs. Upasana Sahoo, Dr. Pratyush Kumar Das, Mr. Sameer Mahapatro', dept: 'MSSSoA', email: 'upasana.sahoo@cutm.ac.in, pratyush.das@cutm.ac.in, sameer.mahapatro@cutm.ac.in', phone: '7751875049 / 9776327537 / 8984139006', image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=200' }
   ];
 
   // 3. Social Units & Officers
   const socialOfficers: SocialOfficer[] = [
-    { unit: 'NSS Programme Coordinating Officer', name: 'Dr. Nihal R.', dept: 'MSSSoA', phone: '7892922379', email: 'nihal.r@cutm.ac.in' },
-    { unit: 'NSS Programme Officer', name: 'Dr. Bishnu Prasad Dash', dept: 'MSSSoA', phone: '8338076260', email: 'bishnuprasad.dash@cutm.ac.in' },
-    { unit: 'NSS Programme Officer', name: 'Dr. D. J. Gaikwad', dept: 'MSSSoA', phone: '8093524042', email: 'gaikwad@cutm.ac.in' },
-    { unit: 'NSS Programme Officer', name: 'Dr. Prangya Parimita Pradhan', dept: 'SoET', phone: '7978250836', email: 'prangya.pradhan@cutm.ac.in' },
-    { unit: 'NSS Programme Officer', name: 'Dr. Rajshree Jena', dept: 'SoABE', phone: '-', email: 'rajshree.jena@cutm.ac.in' },
-    { unit: 'NSS Programme Officer', name: 'Mrs. N. Jeevaratnam', dept: 'SoET', phone: '8847882452', email: 'jeevaratnam@cutm.ac.in' },
-    { unit: 'NSS Programme Officer', name: 'Miss Swapnankita', dept: 'SoM', phone: '8763620399', email: 'swapnankita@cutm.ac.in' },
-    { unit: 'NSS Programme Officer', name: 'Mr. Chinmay Nanda', dept: 'SoF', phone: '9137499183', email: 'chinmaya.nanda@cutm.ac.in' },
-    { unit: 'NSS Programme Officer', name: 'Dr. K. Anthony Raju', dept: 'SoVAS', phone: '7093259970', email: 'anthony.raju@cutm.ac.in' },
-    { unit: 'NSS Programme Officer', name: 'Prof. S. N. Sandhya', dept: 'SoN', phone: '76718 63691', email: 'singampalli.sandhya@cutm.ac.in' },
-    { unit: 'Finance Manager', name: 'Mr. Dibakar Alyan', dept: 'SoAS', phone: '9078580209', email: 'dibakar.allyana@cutm.ac.in' },
-    { unit: 'NCC Officers', name: 'Dr. Parle Kalyan Chakravarty & Miss Hauzoukim', dept: 'SoM & SoF', phone: '9439331442 / 8131903630', email: 'pkchakravarty@cutm.ac.in, hauzoukim@cutm.ac.in' },
-    { unit: 'YASR Coordinator', name: 'Dr. Susanta Kumar Patnaik', dept: 'SoM', phone: '9437203916', email: 'susanta.patnaik@cutm.ac.in' },
-    { unit: 'Convenor: Cultural', name: 'Dr. Ashirbachan Mahapatra & Dr. Susanta Kumar Patnaik', dept: 'MSSSoA & SoM', phone: '7008461263 / 9437203916', email: 'ashirbachan.mahapatra@cutm.ac.in, susanta.patnaik@cutm.ac.in' },
-    { unit: 'Convenor: Social Responsibilities', name: 'Dr. Parle Kalyan Chakravarty', dept: 'SoM', phone: '9439331442', email: 'pkchakravarty@cutm.ac.in' },
-    { unit: 'Csar chandrabhanga creators In-Charge', name: 'Dr. Manish K. Yadav', dept: 'MSSSoA', phone: '9696352193', email: 'manish.yadav@cutm.ac.in' }
+    { unit: 'NSS Programme Coordinating Officer', name: 'Dr. Nihal R.', dept: 'MSSSoA', phone: '7892922379', email: 'nihal.r@cutm.ac.in', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200' },
+    { unit: 'NSS Programme Officer', name: 'Dr. Bishnu Prasad Dash', dept: 'MSSSoA', phone: '8338076260', email: 'bishnuprasad.dash@cutm.ac.in', image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200' },
+    { unit: 'NSS Programme Officer', name: 'Dr. D. J. Gaikwad', dept: 'MSSSoA', phone: '8093524042', email: 'gaikwad@cutm.ac.in', image: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=200' },
+    { unit: 'NSS Programme Officer', name: 'Dr. Prangya Parimita Pradhan', dept: 'SoET', phone: '7978250836', email: 'prangya.pradhan@cutm.ac.in', image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200' },
+    { unit: 'NSS Programme Officer', name: 'Dr. Rajshree Jena', dept: 'SoABE', phone: '-', email: 'rajshree.jena@cutm.ac.in', image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=200' },
+    { unit: 'NSS Programme Officer', name: 'Mrs. N. Jeevaratnam', dept: 'SoET', phone: '8847882452', email: 'jeevaratnam@cutm.ac.in', image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200' },
+    { unit: 'NSS Programme Officer', name: 'Miss Swapnankita', dept: 'SoM', phone: '8763620399', email: 'swapnankita@cutm.ac.in', image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200' },
+    { unit: 'NSS Programme Officer', name: 'Mr. Chinmay Nanda', dept: 'SoF', phone: '9137499183', email: 'chinmaya.nanda@cutm.ac.in', image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=200' },
+    { unit: 'NSS Programme Officer', name: 'Dr. K. Anthony Raju', dept: 'SoVAS', phone: '7093259970', email: 'anthony.raju@cutm.ac.in', image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=200' },
+    { unit: 'NSS Programme Officer', name: 'Prof. S. N. Sandhya', dept: 'SoN', phone: '76718 63691', email: 'singampalli.sandhya@cutm.ac.in', image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=200' },
+    { unit: 'Finance Manager', name: 'Mr. Dibakar Alyan', dept: 'SoAS', phone: '9078580209', email: 'dibakar.allyana@cutm.ac.in', image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=200' },
+    { unit: 'NCC Officers', name: 'Dr. Parle Kalyan Chakravarty & Miss Hauzoukim', dept: 'SoM & SoF', phone: '9439331442 / 8131903630', email: 'pkchakravarty@cutm.ac.in, hauzoukim@cutm.ac.in', image: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=200' },
+    { unit: 'YASR Coordinator', name: 'Dr. Susanta Kumar Patnaik', dept: 'SoM', phone: '9437203916', email: 'susanta.patnaik@cutm.ac.in', image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200' },
+    { unit: 'Convenor: Cultural', name: 'Dr. Ashirbachan Mahapatra & Dr. Susanta Kumar Patnaik', dept: 'MSSSoA & SoM', phone: '7008461263 / 9437203916', email: 'ashirbachan.mahapatra@cutm.ac.in, susanta.patnaik@cutm.ac.in', image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=200' },
+    { unit: 'Convenor: Social Responsibilities', name: 'Dr. Parle Kalyan Chakravarty', dept: 'SoM', phone: '9439331442', email: 'pkchakravarty@cutm.ac.in', image: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=200' },
+    { unit: 'CaSR chandrabhanga creators In-Charge', name: 'Dr. Manish K. Yadav', dept: 'MSSSoA', phone: '9696352193', email: 'manish.yadav@cutm.ac.in', image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=200' }
   ];
 
   // 4. Student Club Coordinators
   const studentCoordinators: StudentCoordinator[] = [
-    { club: 'Csar groovers dance club', name: 'Jayshree Pradhan', regNo: '230804130174', phone: '+91 95082 14671', school: 'MSSSoA', branch: 'B.Sc. (Hons.) Agriculture' },
-    { club: 'Csar groovers dance club', name: 'R. Yeswanth', regNo: '234723100066', phone: '7842292460', school: 'SoVAS', branch: 'BVSC & AH' },
-    { club: 'Csar groovers dance club', name: 'Snehasree Hotta (Co-Coordinator)', regNo: '230804130045', phone: '+91 98611 65776', school: 'MSSSoA', branch: 'B.Sc. (Hons.) Agriculture' },
-    { club: 'Csar harmony music club', name: 'Subhranshu Sekhar Dash', regNo: '230804130033', phone: '7894398250', school: 'MSSSoA', branch: 'B.Sc. Agriculture' },
-    { club: 'Csar harmony music club', name: 'Omm Sai Janmajaya Mishra', regNo: '234723100008', phone: '94370 15101', school: 'SoVAS', branch: 'BVSC' },
-    { club: 'Csar take one movie club', name: 'G. Pavan Datta', regNo: '230101120031', phone: '+91 82493 97556', school: 'SoET', branch: 'B.Tech CSE' },
-    { club: 'Csar take one movie club', name: 'Krutisundar Behera', regNo: '250804130042', phone: '9861153067', school: 'MSSSoA', branch: 'B.Sc. Agriculture' },
-    { club: 'Csar snapshot photography club', name: 'Tarun Teja Patra', regNo: '230101120008', phone: '+91 93901 04679', school: 'SoET', branch: 'B.Tech CSE' },
-    { club: 'Csar snapshot photography club', name: 'Sudip Ghosh', regNo: '240804130123', phone: '+91 83880 49602', school: 'MSSSoA', branch: 'B.Sc. Agriculture' },
-    { club: 'Csar snapshot photography club', name: 'Buddiga Venkata Nikhil', regNo: '240804130099', phone: '+91 93478 75676', school: 'MSSSoA', branch: 'B.Sc. Agriculture' },
-    { club: 'Csar brushers painting club', name: 'Kuriti Tarun', regNo: '230804130155', phone: '9515247618', school: 'MSSSoA', branch: 'B.Sc. Agriculture' },
-    { club: 'Csar brushers painting club', name: 'Smita Rani', regNo: '250804130252', phone: '9142122013', school: 'MSSSoA', branch: 'B.Sc. Agriculture' },
-    { club: 'Csar brushers painting club', name: 'Jahnavi Dandi (Co-Coordinator)', regNo: '230804130189', phone: '7671830438', school: 'MSSSoA', branch: 'B.Sc. Agriculture' },
-    { club: 'Csar zyra fashion club', name: 'Srija Majumder', regNo: '240804130051', phone: '+91 81169 77448', school: 'MSSSoA', branch: 'B.Sc. Agriculture' },
-    { club: 'Csar curtain hall drama club', name: 'Krishnakumari Panigrahi', regNo: '230804130096', phone: '7849017273', school: 'MSSSoA', branch: 'B.Sc. Agriculture' },
-    { club: 'Csar curtain hall drama club', name: 'Jagyanseni Adhikari', regNo: '230804130041', phone: '8917535842', school: 'MSSSoA', branch: 'B.Sc. Agriculture' },
-    { club: 'Agrifora students society', name: 'U. Venktesh Dora', regNo: '240804130023', phone: '9777554894', school: 'MSSSoA', branch: 'B.Sc. Agriculture (3rd Year)' },
-    { club: 'Agrifora students society', name: 'Shradhanjali Das', regNo: '240804130017', phone: '9438568932', school: 'MSSSoA', branch: 'B.Sc. Agriculture (3rd Year)' },
-    { club: 'Agrifora students society', name: 'Sourava Sahu', regNo: '250804130137', phone: '6372516398', school: 'MSSSoA', branch: 'B.Sc. Agriculture (2nd Year)' },
-    { club: 'Agrifora students society', name: 'Debasmita Parida', regNo: '250804130133', phone: '6370638666', school: 'MSSSoA', branch: 'B.Sc. Agriculture (2nd Year)' },
-    { club: 'Agrifora students society', name: 'Subham Patel', regNo: '250804130135', phone: '9337149949', school: 'MSSSoA', branch: 'B.Sc. Agriculture (2nd Year)' }
+    { club: 'CaSR groovers dance club', name: 'Jayshree Pradhan', regNo: '230804130174', phone: '+91 95082 14671', school: 'MSSSoA', branch: 'B.Sc. (Hons.) Agriculture', image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200' },
+    { club: 'CaSR groovers dance club', name: 'R. Yeswanth', regNo: '234723100066', phone: '7842292460', school: 'SoVAS', branch: 'BVSC & AH', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200' },
+    { club: 'CaSR groovers dance club', name: 'Snehasree Hotta (Co-Coordinator)', regNo: '230804130045', phone: '+91 98611 65776', school: 'MSSSoA', branch: 'B.Sc. (Hons.) Agriculture', image: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=200' },
+    { club: 'CaSR harmony music club', name: 'Subhranshu Sekhar Dash', regNo: '230804130033', phone: '7894398250', school: 'MSSSoA', branch: 'B.Sc. Agriculture', image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200' },
+    { club: 'CaSR harmony music club', name: 'Omm Sai Janmajaya Mishra', regNo: '234723100008', phone: '94370 15101', school: 'SoVAS', branch: 'BVSC', image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=200' },
+    { club: 'CaSR take one movie club', name: 'G. Pavan Datta', regNo: '230101120031', phone: '+91 82493 97556', school: 'SoET', branch: 'B.Tech CSE', image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=200' },
+    { club: 'CaSR take one movie club', name: 'Krutisundar Behera', regNo: '250804130042', phone: '9861153067', school: 'MSSSoA', branch: 'B.Sc. Agriculture', image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=200' },
+    { club: 'CaSR snapshot photography club', name: 'Tarun Teja Patra', regNo: '230101120008', phone: '+91 93901 04679', school: 'SoET', branch: 'B.Tech CSE', image: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=200' },
+    { club: 'CaSR snapshot photography club', name: 'Sudip Ghosh', regNo: '240804130123', phone: '+91 83880 49602', school: 'MSSSoA', branch: 'B.Sc. Agriculture', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200' },
+    { club: 'CaSR snapshot photography club', name: 'Buddiga Venkata Nikhil', regNo: '240804130099', phone: '+91 93478 75676', school: 'MSSSoA', branch: 'B.Sc. Agriculture', image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200' },
+    { club: 'CaSR brushers painting club', name: 'Kuriti Tarun', regNo: '230804130155', phone: '9515247618', school: 'MSSSoA', branch: 'B.Sc. Agriculture', image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=200' },
+    { club: 'CaSR brushers painting club', name: 'Smita Rani', regNo: '250804130252', phone: '9142122013', school: 'MSSSoA', branch: 'B.Sc. Agriculture', image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=200' },
+    { club: 'CaSR brushers painting club', name: 'Jahnavi Dandi (Co-Coordinator)', regNo: '230804130189', phone: '7671830438', school: 'MSSSoA', branch: 'B.Sc. Agriculture', image: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=200' },
+    { club: 'CaSR zyra fashion club', name: 'Srija Majumder', regNo: '240804130051', phone: '+91 81169 77448', school: 'MSSSoA', branch: 'B.Sc. Agriculture', image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200' },
+    { club: 'CaSR curtain hall drama club', name: 'Krishnakumari Panigrahi', regNo: '230804130096', phone: '7849017273', school: 'MSSSoA', branch: 'B.Sc. Agriculture', image: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=200' },
+    { club: 'CaSR curtain hall drama club', name: 'Jagyanseni Adhikari', regNo: '230804130041', phone: '8917535842', school: 'MSSSoA', branch: 'B.Sc. Agriculture', image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=200' },
+    { club: 'Agrifora students society', name: 'U. Venktesh Dora', regNo: '240804130023', phone: '9777554894', school: 'MSSSoA', branch: 'B.Sc. Agriculture (3rd Year)', image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=200' },
+    { club: 'Agrifora students society', name: 'Shradhanjali Das', regNo: '240804130017', phone: '9438568932', school: 'MSSSoA', branch: 'B.Sc. Agriculture (3rd Year)', image: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&q=80&w=200' },
+    { club: 'Agrifora students society', name: 'Sourava Sahu', regNo: '250804130137', phone: '6372516398', school: 'MSSSoA', branch: 'B.Sc. Agriculture (2nd Year)', image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200' },
+    { club: 'Agrifora students society', name: 'Debasmita Parida', regNo: '250804130133', phone: '6370638666', school: 'MSSSoA', branch: 'B.Sc. Agriculture (2nd Year)', image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200' },
+    { club: 'Agrifora students society', name: 'Subham Patel', regNo: '250804130135', phone: '9337149949', school: 'MSSSoA', branch: 'B.Sc. Agriculture (2nd Year)', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200' }
   ];
 
   const filteredSchoolCoordinators = schoolCoordinators.filter(c =>
@@ -318,26 +328,27 @@ export const CommitteeView: React.FC<CommitteeViewProps> = ({ compactPadding = f
         </div>
       </section>
 
-      {/* Directory Search & Filter Tabs */}
-      <div className="space-y-4 max-w-4xl mx-auto">
-        <div className="relative flex items-center bg-white/70 dark:bg-slate-900/60 border border-gray-200 dark:border-white/10 rounded-2xl px-4 py-3 transition-all shadow-md focus-within:shadow-lg focus-within:border-blue-500">
-          <Search className="w-5 h-5 text-blue-500 mr-2 shrink-0" />
+      {/* Controls Bar: Search & Filter Tabs */}
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4 glass-card p-4 rounded-2xl border border-white/20">
+        {/* Search */}
+        <div className="relative w-full md:w-80">
+          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
             type="text"
+            placeholder="Search by name, school, club, email..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search coordinators, faculty club in-charges, schools, units..."
-            className="w-full bg-transparent border-none text-xs md:text-sm text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none font-medium"
+            className="w-full pl-10 pr-4 py-2 text-xs rounded-xl bg-gray-100 dark:bg-slate-800/80 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           {searchQuery && (
-            <button onClick={() => setSearchQuery('')} className="text-gray-400 hover:text-gray-600">
-              <X className="w-4 h-4" />
+            <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+              <X className="w-3.5 h-3.5" />
             </button>
           )}
         </div>
 
-        {/* Section Filter Tabs */}
-        <div className="flex flex-wrap items-center justify-center gap-2 text-xs">
+        {/* Filter Pills */}
+        <div className="flex flex-wrap gap-1.5 justify-center text-xs">
           <button
             onClick={() => setActiveTab('ALL')}
             className={`px-4 py-2 rounded-xl font-bold transition-all ${
@@ -346,7 +357,7 @@ export const CommitteeView: React.FC<CommitteeViewProps> = ({ compactPadding = f
                 : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200'
             }`}
           >
-            All Committee Members
+            All Members
           </button>
           <button
             onClick={() => setActiveTab('SCHOOL')}
@@ -376,7 +387,7 @@ export const CommitteeView: React.FC<CommitteeViewProps> = ({ compactPadding = f
                 : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200'
             }`}
           >
-            Social Units & NCC/YRC ({socialOfficers.length})
+            Social Officers ({socialOfficers.length})
           </button>
           <button
             onClick={() => setActiveTab('STUDENT_COORDINATORS')}
@@ -402,11 +413,20 @@ export const CommitteeView: React.FC<CommitteeViewProps> = ({ compactPadding = f
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredSchoolCoordinators.map((c) => (
                 <div key={c.school} className="glass-card p-5 rounded-2xl border border-white/20 space-y-3 flex flex-col justify-between hover:shadow-xl transition-all">
-                  <div className="space-y-1">
-                    <span className="inline-block text-[10px] px-2.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 font-bold uppercase tracking-wider">
-                      {c.school}
-                    </span>
-                    <h4 className="font-bold text-gray-900 dark:text-white text-base">{c.name}</h4>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={c.image || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200'}
+                        alt={c.name}
+                        className="w-12 h-12 rounded-xl object-cover object-center border-2 border-emerald-500/50 shadow-md shrink-0"
+                      />
+                      <div>
+                        <span className="inline-block text-[10px] px-2.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 font-bold uppercase tracking-wider">
+                          {c.school}
+                        </span>
+                        <h4 className="font-bold text-gray-900 dark:text-white text-base leading-snug">{c.name}</h4>
+                      </div>
+                    </div>
                     <p className="text-[11px] text-gray-500 leading-relaxed pt-1">{c.responsibilities}</p>
                   </div>
                   <div className="space-y-1.5 pt-3 border-t border-gray-200/40 dark:border-white/5 text-[11px] text-gray-600 dark:text-gray-400 font-medium">
@@ -448,13 +468,11 @@ export const CommitteeView: React.FC<CommitteeViewProps> = ({ compactPadding = f
                       <span className="text-[10px] font-bold text-gray-400 font-mono">{fc.dept}</span>
                     </div>
                     <div className="flex items-center gap-3 pt-1">
-                      {fc.image && (
-                        <img 
-                          src={fc.image} 
-                          alt={fc.name} 
-                          className="w-12 h-12 rounded-xl object-cover object-center border-2 border-purple-500/50 shadow-md shrink-0"
-                        />
-                      )}
+                      <img 
+                        src={fc.image || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200'} 
+                        alt={fc.name} 
+                        className="w-12 h-12 rounded-xl object-cover object-center border-2 border-purple-500/50 shadow-md shrink-0"
+                      />
                       <h4 className="font-bold text-gray-900 dark:text-white text-sm md:text-base leading-snug">
                         {fc.name}
                       </h4>
@@ -488,12 +506,21 @@ export const CommitteeView: React.FC<CommitteeViewProps> = ({ compactPadding = f
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredSocial.map((c, idx) => (
                 <div key={idx} className="glass-card p-5 rounded-2xl border border-white/20 space-y-3 flex flex-col justify-between hover:shadow-xl transition-all">
-                  <div className="space-y-1">
+                  <div className="space-y-2">
                     <span className="inline-block text-[10px] px-2 py-0.5 rounded-md bg-indigo-500/10 text-indigo-600 dark:text-indigo-300 font-bold uppercase tracking-wider">
                       {c.unit}
                     </span>
-                    <h4 className="font-bold text-gray-900 dark:text-white text-sm md:text-base">{c.name}</h4>
-                    <p className="text-[10px] text-gray-400 font-semibold uppercase">Department: {c.dept}</p>
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={c.image || 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200'}
+                        alt={c.name}
+                        className="w-12 h-12 rounded-xl object-cover object-center border-2 border-indigo-500/50 shadow-md shrink-0"
+                      />
+                      <div>
+                        <h4 className="font-bold text-gray-900 dark:text-white text-sm md:text-base leading-snug">{c.name}</h4>
+                        <p className="text-[10px] text-gray-400 font-semibold uppercase">Department: {c.dept}</p>
+                      </div>
+                    </div>
                   </div>
                   <div className="space-y-1.5 pt-3 border-t border-gray-200/40 dark:border-white/5 text-[11px] text-gray-600 dark:text-gray-400 font-medium">
                     {c.phone !== '-' && (
@@ -535,7 +562,14 @@ export const CommitteeView: React.FC<CommitteeViewProps> = ({ compactPadding = f
                   {filteredStudents.map((s, idx) => (
                     <tr key={idx} className="hover:bg-blue-50/30 dark:hover:bg-slate-800/30 transition-colors">
                       <td className="p-4 font-semibold text-gray-400">{idx + 1}</td>
-                      <td className="p-4 font-bold text-gray-900 dark:text-white">{s.name}</td>
+                      <td className="p-4 font-bold text-gray-900 dark:text-white flex items-center gap-3">
+                        <img
+                          src={s.image || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200'}
+                          alt={s.name}
+                          className="w-9 h-9 rounded-lg object-cover border border-amber-500/40 shadow-sm shrink-0"
+                        />
+                        <span>{s.name}</span>
+                      </td>
                       <td className="p-4">
                         <span className="px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-600 dark:text-emerald-400 font-bold text-[11px]">
                           {s.club}
