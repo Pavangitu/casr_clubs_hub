@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 
 import { matchStudentToClub } from '../utils/clubUtils';
+import { CreditTrackModal } from './CreditTrackModal';
 
 interface ClubAttendanceModuleProps {
   club: Club;
@@ -30,6 +31,7 @@ interface ClubAttendanceModuleProps {
   onClose: () => void;
   onViewStudentHistory?: (student: StudentProfile) => void;
   onUpdateAttendance?: (clubId: string, sessionRecord: { date: string; sessionName: string; durationHours: number; studentStatuses: Record<string, 'PRESENT' | 'ABSENT' | 'EXCUSED'> }) => void;
+  onAwardCredits?: (regNo: string, amount: number, reason: string, awardedBy?: string, clubName?: string, eventName?: string) => Promise<void> | void;
 }
 
 export const ClubAttendanceModule: React.FC<ClubAttendanceModuleProps> = ({
@@ -37,8 +39,10 @@ export const ClubAttendanceModule: React.FC<ClubAttendanceModuleProps> = ({
   allStudents,
   onClose,
   onViewStudentHistory,
-  onUpdateAttendance
+  onUpdateAttendance,
+  onAwardCredits
 }) => {
+  const [creditModalStudent, setCreditModalStudent] = useState<StudentProfile | null>(null);
   const [activeTab, setActiveTab] = useState<'roster' | 'mark' | 'sessions' | 'analytics'>('roster');
   const [searchQuery, setSearchQuery] = useState('');
   const [tierFilter, setTierFilter] = useState<'ALL' | 'ELITE' | 'PRO' | 'AT_RISK'>('ALL');
@@ -163,29 +167,29 @@ export const ClubAttendanceModule: React.FC<ClubAttendanceModuleProps> = ({
       <div className="glass-card rounded-3xl max-w-5xl w-full max-h-[92vh] flex flex-col relative text-gray-900 dark:text-white border border-white/20 dark:border-white/10 shadow-2xl overflow-hidden">
         
         {/* Module Header */}
-        <div className="relative p-6 md:p-8 bg-gradient-to-r from-blue-900/90 via-indigo-900/90 to-slate-900 text-white shrink-0">
+        <div className="relative p-6 md:p-8 bg-gradient-to-r from-zinc-950 via-zinc-900 to-black text-white shrink-0 border-b border-amber-500/30">
           <div className="flex justify-between items-start">
             <div className="flex items-center gap-4">
               <img
                 src={club.image}
                 alt={club.name}
-                className="w-16 h-16 rounded-2xl object-cover border-2 border-white/20 shadow-lg"
+                className="w-16 h-16 rounded-2xl object-cover border-2 border-amber-500/30 shadow-lg"
                 onError={(e) => { e.currentTarget.style.display = 'none'; }}
               />
               <div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="px-3 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[11px] font-bold uppercase tracking-wider">
+                  <span className="px-3 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[11px] font-bold uppercase tracking-wider">
                     Official Attendance Module ({displayedMembers.length} Members)
                   </span>
                   {club.sheetGid && (
-                    <span className="px-2.5 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30 text-[11px] font-mono font-bold">
+                    <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 text-[11px] font-mono font-bold">
                       Sheet Tab: #{club.sheetGid}
                     </span>
                   )}
-                  <span className="text-xs text-blue-200">{club.category}</span>
+                  <span className="text-xs text-amber-400">{club.category}</span>
                 </div>
-                <h2 className="text-2xl md:text-3xl font-black mt-1">{club.name}</h2>
-                <p className="text-xs text-blue-200/80 mt-0.5">Faculty Lead: {club.facultyLead} | Student Lead: {club.studentLead}</p>
+                <h2 className="text-2xl md:text-3xl font-black mt-1 text-white">{club.name}</h2>
+                <p className="text-xs text-amber-200/80 mt-0.5">Faculty Lead: {club.facultyLead} | Student Lead: {club.studentLead}</p>
               </div>
             </div>
 
@@ -195,14 +199,14 @@ export const ClubAttendanceModule: React.FC<ClubAttendanceModuleProps> = ({
                   href={club.attendanceFormUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-xs font-extrabold flex items-center gap-1.5 shadow-lg shadow-emerald-500/20 transition-all shrink-0"
+                  className="px-4 py-2 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-white rounded-xl text-xs font-extrabold flex items-center gap-1.5 shadow-lg shadow-amber-500/20 transition-all shrink-0"
                 >
                   <ExternalLink className="w-3.5 h-3.5" /> Give Attendance (Form)
                 </a>
               )}
               <button
                 onClick={onClose}
-                className="p-2 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors"
+                className="p-2 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors cursor-pointer"
               >
                 <X className="w-6 h-6" />
               </button>
@@ -323,6 +327,7 @@ export const ClubAttendanceModule: React.FC<ClubAttendanceModuleProps> = ({
                         <th className="py-3.5 px-4">Student</th>
                         <th className="py-3.5 px-4">Reg Number</th>
                         <th className="py-3.5 px-4">Club Attendance %</th>
+                        <th className="py-3.5 px-4">Member Credits</th>
                         <th className="py-3.5 px-4">Hours</th>
                         <th className="py-3.5 px-4">Status Tier</th>
                         <th className="py-3.5 px-4 text-right">Action</th>
@@ -332,11 +337,9 @@ export const ClubAttendanceModule: React.FC<ClubAttendanceModuleProps> = ({
                       {filteredMembers.map((st) => (
                         <tr key={st.registrationNumber} className="hover:bg-blue-50/50 dark:hover:bg-slate-700/40 transition-colors">
                           <td className="py-3.5 px-4 flex items-center gap-3">
-                            <img
-                              src={st.avatar}
-                              alt={st.name}
-                              className="w-8 h-8 rounded-full object-cover border border-gray-200 dark:border-white/20"
-                            />
+                            <div className="w-8 h-8 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
+                              <UserCheck className="w-4 h-4" />
+                            </div>
                             <div>
                               <p className="font-bold text-gray-900 dark:text-white">{st.name}</p>
                               <p className="text-[10px] text-gray-500">{st.degreeProgram || 'CSE'}</p>
@@ -362,6 +365,9 @@ export const ClubAttendanceModule: React.FC<ClubAttendanceModuleProps> = ({
                               <span className="font-bold">{st.currentAttendancePercent}%</span>
                             </div>
                           </td>
+                          <td className="py-3.5 px-4 font-mono font-black text-amber-500 dark:text-amber-400">
+                            {st.creditsEarned !== undefined ? st.creditsEarned : 0} CR
+                          </td>
                           <td className="py-3.5 px-4 font-medium">{st.completedHours || 32} hrs</td>
                           <td className="py-3.5 px-4">
                             <span
@@ -376,7 +382,14 @@ export const ClubAttendanceModule: React.FC<ClubAttendanceModuleProps> = ({
                               {st.statusTier}
                             </span>
                           </td>
-                          <td className="py-3.5 px-4 text-right">
+                          <td className="py-3.5 px-4 text-right flex items-center justify-end gap-2">
+                            <button
+                              onClick={() => setCreditModalStudent(st)}
+                              className="px-2.5 py-1.5 bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 rounded-lg text-[11px] font-bold transition-all border border-amber-500/30 flex items-center gap-1"
+                              title="Award Member Credits"
+                            >
+                              <Award className="w-3.5 h-3.5" /> Award Credit
+                            </button>
                             <button
                               onClick={() => onViewStudentHistory && onViewStudentHistory(st)}
                               className="px-3 py-1.5 bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-500/20 rounded-lg text-[11px] font-bold transition-all"
@@ -441,8 +454,23 @@ export const ClubAttendanceModule: React.FC<ClubAttendanceModuleProps> = ({
               </div>
             </div>
           )}
-
         </div>
+
+        {/* Credit Track Modal for Faculty */}
+        {creditModalStudent && (
+          <CreditTrackModal
+            isOpen={!!creditModalStudent}
+            onClose={() => setCreditModalStudent(null)}
+            studentName={creditModalStudent.name}
+            registrationNumber={creditModalStudent.registrationNumber}
+            avatar={creditModalStudent.avatar}
+            currentCredits={creditModalStudent.creditsEarned !== undefined ? creditModalStudent.creditsEarned : 0}
+            creditLogs={creditModalStudent.creditLogs || []}
+            isFaculty={true}
+            onAwardCredits={onAwardCredits}
+            defaultClubName={club.name}
+          />
+        )}
       </div>
     </div>
   );

@@ -11,7 +11,7 @@ export const INITIAL_ACADEMIC_STUDENTS: AcademicStudentProfile[] = [
     section: "Sec A",
     academicYear: "2024 - 2025",
     email: "pavan.gedila@casr.edu.in",
-    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=300",
+    avatar: "",
     overallAttendancePercentage: 92,
     todayAttendanceStatus: "Present",
     totalClasses: 250,

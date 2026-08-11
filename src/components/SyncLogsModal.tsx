@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { SyncLogEntry } from '../types';
-import { MASTER_GOOGLE_SHEET_URL, getCustomSheetUrl, setCustomSheetUrl } from '../services/googleSheetsService';
+import { MASTER_GOOGLE_SHEET_URL, SECONDARY_GOOGLE_SHEET_URL, THIRD_GOOGLE_SHEET_URL, getCustomSheetUrl, setCustomSheetUrl } from '../services/googleSheetsService';
 import {
   X,
   RefreshCw,
@@ -105,8 +105,27 @@ export const SyncLogsModal: React.FC<SyncLogsModalProps> = ({
               target="_blank"
               rel="noopener noreferrer"
               className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-sm"
+              title="Open Sheet 1"
             >
-              <FileSpreadsheet className="w-3.5 h-3.5" /> Sheet <ExternalLink className="w-3 h-3" />
+              <FileSpreadsheet className="w-3.5 h-3.5" /> Sheet 1 <ExternalLink className="w-3 h-3" />
+            </a>
+            <a
+              href={SECONDARY_GOOGLE_SHEET_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-teal-600 hover:bg-teal-500 text-white text-xs font-bold transition-all shadow-sm"
+              title="Open Sheet 2"
+            >
+              <FileSpreadsheet className="w-3.5 h-3.5" /> Sheet 2 <ExternalLink className="w-3 h-3" />
+            </a>
+            <a
+              href={THIRD_GOOGLE_SHEET_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold transition-all shadow-sm"
+              title="Open Sheet 3"
+            >
+              <FileSpreadsheet className="w-3.5 h-3.5" /> Sheet 3 <ExternalLink className="w-3 h-3" />
             </a>
             <button
               onClick={onClose}

@@ -1,6 +1,6 @@
 export type ThemeMode = 'light' | 'dark';
 
-export type NavTab = 'dashboard' | 'clubs' | 'events' | 'directory' | 'committee';
+export type NavTab = 'dashboard' | 'clubs' | 'events' | 'directory' | 'committee' | 'about' | 'admin';
 
 export type ClubCategory = 'All Clubs' | 'Technical' | 'Cultural' | 'Sports' | 'Social' | 'Innovation';
 
@@ -41,6 +41,16 @@ export interface AttendanceRecord {
   rawScanType?: 'IN' | 'OUT' | 'PAIRED';
 }
 
+export interface CreditLogEntry {
+  id: string;
+  amount: number;
+  reason: string;
+  eventName?: string;
+  date: string;
+  awardedBy: string;
+  clubName?: string;
+}
+
 export interface StudentProfile {
   registrationNumber: string;
   name: string;
@@ -54,6 +64,7 @@ export interface StudentProfile {
   currentAttendancePercent: number;
   eventsAttendedCount: number;
   creditsEarned: number;
+  creditLogs?: CreditLogEntry[];
   requiredHours: number;
   completedHours: number;
   degreeProgram?: string;
@@ -122,6 +133,7 @@ export interface SyncLogEntry {
   executionTimeMs: number;
   totalRecordsProcessed: number;
   errorMessage?: string;
+  details?: string;
 }
 
 export type UserRole = 'student' | 'admin';
@@ -141,12 +153,17 @@ export interface ToastMessage {
 }
 
 export interface SubjectAttendance {
-  subjectCode: string;
-  subjectName: string;
-  attendedClasses: number;
-  totalClasses: number;
-  percentage: number;
+  code?: string;
+  name?: string;
+  subjectCode?: string;
+  subjectName?: string;
   facultyName: string;
+  attended?: number;
+  total?: number;
+  attendedClasses?: number;
+  totalClasses?: number;
+  percentage: number;
+  type?: 'Theory' | 'Lab' | 'Project' | 'Seminar';
 }
 
 export interface MonthlyAttendance {
@@ -180,8 +197,10 @@ export interface AcademicStudentProfile {
   totalClasses: number;
   classesAttended: number;
   classesMissed: number;
+  creditsEarned?: number;
+  creditLogs?: CreditLogEntry[];
   subjectWiseAttendance: SubjectAttendance[];
   monthlyAttendance: MonthlyAttendance[];
   recentLogs: RecentAttendanceLog[];
+  semesterYear?: string;
 }
-

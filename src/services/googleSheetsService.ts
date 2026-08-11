@@ -2,10 +2,18 @@ import { StudentProfile, AttendanceRecord } from '../types';
 import { REAL_STUDENTS_DATA } from '../data/realStudentsData';
 
 export const MASTER_GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc/edit?usp=sharing';
+export const SECONDARY_GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1hoZ-fFzukaS9THOGSbCilfISj1t5taf3/edit?usp=sharing';
+export const THIRD_GOOGLE_SHEET_URL = 'https://docs.google.com/spreadsheets/d/11RUWQreYoN48-mmWR_9wsRcO6wkEzrU0JQaFIUuqNlM/edit?usp=sharing';
+
+export const MASTER_SHEETS_LIST = [
+  { name: 'Google Sheet 1 (Main Attendance)', id: '19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc', url: MASTER_GOOGLE_SHEET_URL },
+  { name: 'Google Sheet 2 (Student Records)', id: '1hoZ-fFzukaS9THOGSbCilfISj1t5taf3', url: SECONDARY_GOOGLE_SHEET_URL },
+  { name: 'Google Sheet 3 (Master Registry)', id: '11RUWQreYoN48-mmWR_9wsRcO6wkEzrU0JQaFIUuqNlM', url: THIRD_GOOGLE_SHEET_URL }
+];
 
 // All club tab URLs, each with a specific GID so we fetch every club's data
 export const GOOGLE_SHEETS_URLS = [
-  // Primary sheet — all club tabs by GID (discovered from the actual sheet)
+  // Primary Sheet 1 (19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc)
   'https://docs.google.com/spreadsheets/d/19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc/gviz/tq?tqx=out:csv&gid=0',          // Default tab
   'https://docs.google.com/spreadsheets/d/19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc/gviz/tq?tqx=out:csv&gid=1997413871', // Agrifora Club
   'https://docs.google.com/spreadsheets/d/19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc/gviz/tq?tqx=out:csv&gid=1747670817', // DANCE CLUB
@@ -18,9 +26,16 @@ export const GOOGLE_SHEETS_URLS = [
   'https://docs.google.com/spreadsheets/d/19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc/gviz/tq?tqx=out:csv&gid=700032659',  // Painting Club
   'https://docs.google.com/spreadsheets/d/19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc/gviz/tq?tqx=out:csv&gid=1198898863', // Music Club
   'https://docs.google.com/spreadsheets/d/19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc/gviz/tq?tqx=out:csv&gid=620675621',  // Responses tab
-  // New Master Spreadsheet
+
+  // Primary Sheet 2 (1hoZ-fFzukaS9THOGSbCilfISj1t5taf3)
+  'https://docs.google.com/spreadsheets/d/1hoZ-fFzukaS9THOGSbCilfISj1t5taf3/gviz/tq?tqx=out:csv&gid=0',
+  'https://docs.google.com/spreadsheets/d/1hoZ-fFzukaS9THOGSbCilfISj1t5taf3/gviz/tq?tqx=out:csv',
+
+  // Primary Sheet 3 (11RUWQreYoN48-mmWR_9wsRcO6wkEzrU0JQaFIUuqNlM)
+  'https://docs.google.com/spreadsheets/d/11RUWQreYoN48-mmWR_9wsRcO6wkEzrU0JQaFIUuqNlM/gviz/tq?tqx=out:csv&gid=0',
   'https://docs.google.com/spreadsheets/d/11RUWQreYoN48-mmWR_9wsRcO6wkEzrU0JQaFIUuqNlM/gviz/tq?tqx=out:csv',
-  // Secondary sheet
+
+  // Secondary spreadsheet
   'https://docs.google.com/spreadsheets/d/1qxQ4m_VXukgkT23SwK3B7uhR2sOp5XH5WqFpcwTu59g/gviz/tq?tqx=out:csv'
 ];
 
@@ -391,11 +406,23 @@ function mapEntriesToProfiles(studentsMap: Record<string, any>): RealStudentData
     else if (attendancePct >= 70) tier = 'Pro';
     else if (attendancePct >= 50) tier = 'Veteran';
 
+    let savedCreditsEarned = 0;
+    let savedCreditLogs: any[] = [];
+    try {
+      const savedCreditsMap = JSON.parse(localStorage.getItem('casr_student_credits') || '{}');
+      const cleanReg = (st.registrationNumber || '').trim().toLowerCase();
+      const saved = savedCreditsMap[cleanReg] || savedCreditsMap[st.registrationNumber];
+      if (saved) {
+        savedCreditsEarned = saved.creditsEarned || 0;
+        savedCreditLogs = saved.creditLogs || [];
+      }
+    } catch (e) {}
+
     result.push({
       registrationNumber: st.registrationNumber,
       name: capitalizeWords(st.name),
       email: st.email,
-      avatar: AVATARS[idx % AVATARS.length],
+      avatar: '',
       clubName: primaryClub,
       role: 'Active Member',
       statusTier: tier,
@@ -403,7 +430,8 @@ function mapEntriesToProfiles(studentsMap: Record<string, any>): RealStudentData
       attendanceGoalPercent: 85,
       currentAttendancePercent: attendancePct,
       eventsAttendedCount: insCount,
-      creditsEarned: insCount * 10,
+      creditsEarned: savedCreditsEarned,
+      creditLogs: savedCreditLogs,
       requiredHours: 120.0,
       completedHours: totalHoursCalculated,
       nextEvent: {

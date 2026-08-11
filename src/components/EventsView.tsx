@@ -34,7 +34,7 @@ export const EventsView: React.FC<EventsViewProps> = ({ events, currentStudent }
     <div className="pt-24 md:pt-28 pb-20 px-4 md:px-16 max-w-7xl mx-auto space-y-12 animate-in fade-in duration-500">
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto space-y-3">
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/10 text-blue-600 dark:text-emerald-400 text-xs font-semibold">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 text-xs font-semibold border border-amber-500/20">
           <Calendar className="w-3.5 h-3.5" /> Campus Schedule & Competitions
         </span>
         <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 dark:text-white">
@@ -51,10 +51,10 @@ export const EventsView: React.FC<EventsViewProps> = ({ events, currentStudent }
           <button
             key={cat}
             onClick={() => setSelectedCategory(cat)}
-            className={`px-5 py-2 rounded-full text-xs font-semibold transition-all ${
+            className={`px-5 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer ${
               selectedCategory === cat
-                ? 'bg-blue-600 text-white dark:bg-emerald-500 dark:text-gray-950 shadow-lg'
-                : 'bg-white/60 dark:bg-white/5 text-gray-600 dark:text-gray-300 hover:bg-white/90 border border-gray-200 dark:border-white/10'
+                ? 'bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 text-white shadow-lg'
+                : 'bg-white/60 dark:bg-zinc-900 text-gray-600 dark:text-gray-300 hover:bg-white/90 border border-gray-200 dark:border-amber-500/20'
             }`}
           >
             {cat}
@@ -71,19 +71,19 @@ export const EventsView: React.FC<EventsViewProps> = ({ events, currentStudent }
           return (
             <div
               key={evt.id}
-              className="glass-card rounded-3xl overflow-hidden flex flex-col justify-between border border-white/30 dark:border-white/10 hover:shadow-2xl transition-all duration-300 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl"
+              className="glass-card rounded-3xl overflow-hidden flex flex-col justify-between border border-amber-500/20 hover:shadow-2xl transition-all duration-300 bg-white/70 dark:bg-zinc-900/80 backdrop-blur-xl"
             >
               <div>
                 {/* Image Header */}
                 <div className="relative h-56 w-full overflow-hidden">
                   <img src={evt.image} alt={evt.title} className="w-full h-full object-cover transition-transform duration-500 hover:scale-105" />
-                  <div className="absolute top-4 left-4 bg-slate-950/80 backdrop-blur-md px-3.5 py-1.5 rounded-full text-[11px] font-bold text-white flex items-center gap-1.5 border border-white/10 shadow-lg">
+                  <div className="absolute top-4 left-4 bg-zinc-950/80 backdrop-blur-md px-3.5 py-1.5 rounded-full text-[11px] font-bold text-white flex items-center gap-1.5 border border-amber-500/30 shadow-lg">
                     <Sparkles className="w-3.5 h-3.5 text-amber-400" /> {evt.clubName}
                   </div>
 
 
                   {evt.theme && (
-                    <div className="absolute bottom-4 left-4 right-4 bg-slate-950/85 backdrop-blur-md px-3.5 py-2 rounded-xl text-xs font-medium text-amber-300 border border-amber-500/30 flex items-center gap-2">
+                    <div className="absolute bottom-4 left-4 right-4 bg-zinc-950/85 backdrop-blur-md px-3.5 py-2 rounded-xl text-xs font-medium text-amber-300 border border-amber-500/30 flex items-center gap-2">
                       <Flag className="w-4 h-4 text-amber-400 flex-shrink-0" />
                       <span>{evt.theme}</span>
                     </div>
@@ -101,17 +101,17 @@ export const EventsView: React.FC<EventsViewProps> = ({ events, currentStudent }
                   </div>
 
                   {/* Basic Schedule & Venue Meta */}
-                  <div className="grid grid-cols-1 gap-2 text-xs text-gray-600 dark:text-gray-300 pt-3 border-t border-gray-200/50 dark:border-white/10">
+                  <div className="grid grid-cols-1 gap-2 text-xs text-gray-600 dark:text-gray-300 pt-3 border-t border-gray-200/50 dark:border-amber-500/20">
                     <div className="flex items-center gap-2">
-                      <Calendar className="w-4 h-4 text-blue-500 flex-shrink-0" />
+                      <Calendar className="w-4 h-4 text-amber-500 flex-shrink-0" />
                       <span className="font-medium">{evt.date}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+                      <MapPin className="w-4 h-4 text-amber-500 flex-shrink-0" />
                       <span>{evt.venue}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Users className="w-4 h-4 text-purple-500 flex-shrink-0" />
+                      <Users className="w-4 h-4 text-amber-500 flex-shrink-0" />
                       <span>Capacity: {evt.registeredCount}/{evt.maxCapacity} registered</span>
                     </div>
                   </div>
@@ -120,7 +120,7 @@ export const EventsView: React.FC<EventsViewProps> = ({ events, currentStudent }
                   {evt.tags && evt.tags.length > 0 && (
                     <div className="flex flex-wrap gap-1.5 pt-1">
                       {evt.tags.map((tag) => (
-                        <span key={tag} className="px-2.5 py-0.5 rounded-md bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-[10px] font-semibold">
+                        <span key={tag} className="px-2.5 py-0.5 rounded-md bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/20 text-[10px] font-semibold">
                           #{tag}
                         </span>
                       ))}

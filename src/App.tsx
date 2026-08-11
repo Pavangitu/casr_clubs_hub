@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { NavTab, ThemeMode, StudentProfile, Club, CampusEvent, ToastMessage, UserRole, AcademicStudentProfile, SyncLogEntry } from './types';
+import { NavTab, ThemeMode, StudentProfile, Club, CampusEvent, ToastMessage, UserRole, AcademicStudentProfile, SyncLogEntry, CreditLogEntry } from './types';
 import { MOCK_CLUBS, MOCK_STUDENTS, MOCK_EVENTS, MOCK_NOTIFICATIONS } from './data/mockData';
 import { INITIAL_ACADEMIC_STUDENTS } from './data/attendanceData';
 import { fetchLiveAttendanceData, getCachedLiveAttendanceData } from './services/googleSheetsService';
@@ -20,6 +20,8 @@ import { EntranceView } from './components/EntranceView';
 import { LoginPortal } from './components/LoginPortal';
 import { ToastContainer } from './components/Toast';
 import { StudentDashboardView } from './components/StudentDashboardView';
+import { AboutView } from './components/AboutView';
+import { AdminDashboardView } from './components/AdminDashboardView';
 import { SyncLogsModal } from './components/SyncLogsModal';
 import { ClubAttendanceModule } from './components/ClubAttendanceModule';
 import { matchStudentToClub } from './utils/clubUtils';
@@ -28,6 +30,7 @@ export default function App() {
   const [isEntered, setIsEntered] = useState(false);
   const [viewMode, setViewMode] = useState<'entrance' | 'login' | 'app'>('entrance');
   const [userRole, setUserRole] = useState<UserRole | null>(null);
+  const [academicStudents, setAcademicStudents] = useState<AcademicStudentProfile[]>(INITIAL_ACADEMIC_STUDENTS);
   const [loggedInAcademicStudent, setLoggedInAcademicStudent] = useState<AcademicStudentProfile | null>(null);
   const [activeTab, setActiveTab] = useState<NavTab>('dashboard');
   const [theme, setTheme] = useState<ThemeMode>('light');
@@ -69,78 +72,199 @@ export default function App() {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   };
 
+  const handleAwardCredits = (
+    regNo: string,
+    amount: number,
+    reason: string,
+    awardedBy: string = 'Faculty Lead',
+    clubName?: string,
+    eventName?: string
+  ) => {
+    const cleanReg = regNo.trim().toLowerCase();
+    const matchReg = (a?: string) => {
+      if (!a) return false;
+      const cleanA = a.trim().toLowerCase();
+      return cleanA === cleanReg || cleanA.replace(/[^a-z0-9]/g, '') === cleanReg.replace(/[^a-z0-9]/g, '');
+    };
+
+    const newLog: CreditLogEntry = {
+      id: `cred-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+      amount,
+      reason,
+      eventName,
+      date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+      awardedBy,
+      clubName
+    };
+
+    // Update allStudents pool
+    setAllStudents((prev) =>
+      prev.map((s) => {
+        if (matchReg(s.registrationNumber)) {
+          const currentEarned = s.creditsEarned !== undefined ? s.creditsEarned : 0;
+          const updatedCredits = Math.max(0, currentEarned + amount);
+          const updatedLogs = [newLog, ...(s.creditLogs || [])];
+          return {
+            ...s,
+            creditsEarned: updatedCredits,
+            creditLogs: updatedLogs
+          };
+        }
+        return s;
+      })
+    );
+
+    // Update currentStudent if matching
+    setCurrentStudent((prev) => {
+      if (prev && matchReg(prev.registrationNumber)) {
+        const currentEarned = prev.creditsEarned !== undefined ? prev.creditsEarned : 0;
+        return {
+          ...prev,
+          creditsEarned: Math.max(0, currentEarned + amount),
+          creditLogs: [newLog, ...(prev.creditLogs || [])]
+        };
+      }
+      return prev;
+    });
+
+    // Update loggedInAcademicStudent if matching
+    setLoggedInAcademicStudent((prev) => {
+      if (prev && matchReg(prev.registrationNumber)) {
+        const currentEarned = prev.creditsEarned !== undefined ? prev.creditsEarned : 0;
+        return {
+          ...prev,
+          creditsEarned: Math.max(0, currentEarned + amount),
+          creditLogs: [newLog, ...(prev.creditLogs || [])]
+        };
+      }
+      return prev;
+    });
+
+    // Update INITIAL_ACADEMIC_STUDENTS in memory
+    const acadMatch = INITIAL_ACADEMIC_STUDENTS.find((s) => matchReg(s.registrationNumber));
+    if (acadMatch) {
+      const currentEarned = acadMatch.creditsEarned !== undefined ? acadMatch.creditsEarned : 0;
+      acadMatch.creditsEarned = Math.max(0, currentEarned + amount);
+      acadMatch.creditLogs = [newLog, ...(acadMatch.creditLogs || [])];
+    }
+
+    // Persist custom credits & logs to localStorage for 100% persistence
+    try {
+      const savedCredits = JSON.parse(localStorage.getItem('casr_student_credits') || '{}');
+      const studentData = savedCredits[cleanReg] || { creditsEarned: 0, creditLogs: [] };
+      const currentCredits = studentData.creditsEarned !== undefined ? studentData.creditsEarned : (acadMatch?.creditsEarned || 0);
+      savedCredits[cleanReg] = {
+        creditsEarned: Math.max(0, currentCredits + amount),
+        creditLogs: [newLog, ...(studentData.creditLogs || [])]
+      };
+      localStorage.setItem('casr_student_credits', JSON.stringify(savedCredits));
+
+      // Also persist to club credit logs for Club Details
+      const targetClub = clubName || 'General Club Activities';
+      const savedClubCredits = JSON.parse(localStorage.getItem('casr_club_credits') || '{}');
+      const targetStudent = allStudents.find((s) => matchReg(s.registrationNumber));
+      const clubLogEntry = {
+        ...newLog,
+        studentName: targetStudent?.name || regNo,
+        registrationNumber: regNo
+      };
+      const clubLogs = savedClubCredits[targetClub] || [];
+      savedClubCredits[targetClub] = [clubLogEntry, ...clubLogs];
+      localStorage.setItem('casr_club_credits', JSON.stringify(savedClubCredits));
+    } catch (e) {
+      console.warn('Failed to save credits to localStorage:', e);
+    }
+
+    addToast(
+      'Member Credit Awarded',
+      `Successfully awarded ${amount > 0 ? `+${amount}` : amount} credit(s) to ${regNo}`,
+      'success'
+    );
+  };
+
   const handleStudentLogin = async (regNo: string) => {
     const cleanReg = regNo.trim().toLowerCase();
+    const strippedReg = cleanReg.replace(/[^a-z0-9]/g, '');
+
+    const matchReg = (a: string) => {
+      const cleanA = a.trim().toLowerCase();
+      if (cleanA === cleanReg) return true;
+      return cleanA.replace(/[^a-z0-9]/g, '') === strippedReg;
+    };
 
     // Check academic profile database first
-    let academicProfile = INITIAL_ACADEMIC_STUDENTS.find(
-      (s) => s.registrationNumber.trim().toLowerCase() === cleanReg
-    );
+    let academicProfile = INITIAL_ACADEMIC_STUDENTS.find((s) => matchReg(s.registrationNumber));
 
     // Use cached/pre-loaded live students to make login instant
     let liveStudentsList = allStudents;
 
-    // Trigger an asynchronous refresh of live data in the background (non-blocking)
-    fetchLiveAttendanceData().then((liveData) => {
-      if (liveData && liveData.length > 0) {
-        setAllStudents(liveData);
-        
-        // Keep logged-in academic student profile in real-time sync with Google Sheet updates
-        setLoggedInAcademicStudent((prev) => {
-          if (!prev) return null;
-          const liveMatch = liveData.find(
-            (s) => s.registrationNumber.trim().toLowerCase() === prev.registrationNumber.trim().toLowerCase()
-          );
-          if (liveMatch) {
-            let semNum = prev.semester;
-            if (liveMatch.semesterYear) {
-              const match = liveMatch.semesterYear.match(/\d+/);
-              if (match) {
-                semNum = parseInt(match[0], 10);
-              }
-            }
-            const classesAttended = liveMatch.eventsAttendedCount || Math.round(250 * ((liveMatch.currentAttendancePercent || 88) / 100));
-            const classesMissed = Math.max(0, 250 - classesAttended);
+    let foundBase = liveStudentsList.find((s) => matchReg(s.registrationNumber));
 
-            const liveMonthly = (liveMatch.monthlyTrends || []).map((trend) => ({
-              month: trend.month,
-              percentage: trend.percentage,
-              attended: Math.round(trend.hours / 1.5),
-              total: Math.round((trend.hours / (trend.percentage / 100)) / 1.5) || 50
-            }));
-
-            const liveLogs = (liveMatch.recentHistory || []).map((hist) => ({
-              id: hist.id,
-              date: hist.date,
-              subject: hist.clubName,
-              status: hist.status,
-              time: hist.inTime || hist.outTime || ''
-            }));
-
-            return {
-              ...prev,
-              name: liveMatch.name || prev.name,
-              overallAttendancePercentage: liveMatch.currentAttendancePercent || prev.overallAttendancePercentage,
-              email: liveMatch.email || prev.email,
-              avatar: liveMatch.avatar || prev.avatar,
-              branch: liveMatch.degreeProgram || prev.branch,
-              department: liveMatch.degreeProgram || prev.department,
-              semester: semNum,
-              section: liveMatch.sectionCode || prev.section,
-              classesAttended: classesAttended,
-              classesMissed: classesMissed,
-              monthlyAttendance: liveMonthly.length > 0 ? liveMonthly : prev.monthlyAttendance,
-              recentLogs: liveLogs.length > 0 ? liveLogs : prev.recentLogs
-            };
-          }
-          return prev;
-        });
+    // If not found in current memory cache, perform a direct live fetch from Google Sheets
+    if (!academicProfile && !foundBase) {
+      try {
+        const freshLiveData = await fetchLiveAttendanceData();
+        if (freshLiveData && freshLiveData.length > 0) {
+          setAllStudents(freshLiveData);
+          liveStudentsList = freshLiveData;
+          foundBase = freshLiveData.find((s) => matchReg(s.registrationNumber));
+        }
+      } catch (e) {
+        console.warn('Live fetch during login failed:', e);
       }
-    }).catch(e => console.warn('Background login sheet fetch failed:', e));
+    } else {
+      // Trigger background refresh
+      fetchLiveAttendanceData().then((liveData) => {
+        if (liveData && liveData.length > 0) {
+          setAllStudents(liveData);
+          setLoggedInAcademicStudent((prev) => {
+            if (!prev) return null;
+            const liveMatch = liveData.find((s) => matchReg(s.registrationNumber));
+            if (liveMatch) {
+              let semNum = prev.semester;
+              if (liveMatch.semesterYear) {
+                const match = liveMatch.semesterYear.match(/\d+/);
+                if (match) semNum = parseInt(match[0], 10);
+              }
+              const classesAttended = liveMatch.eventsAttendedCount || Math.round(250 * ((liveMatch.currentAttendancePercent || 88) / 100));
+              const classesMissed = Math.max(0, 250 - classesAttended);
 
-    const foundBase = liveStudentsList.find(
-      (s) => s.registrationNumber.trim().toLowerCase() === cleanReg
-    );
+              const liveMonthly = (liveMatch.monthlyTrends || []).map((trend) => ({
+                month: trend.month,
+                percentage: trend.percentage,
+                attended: Math.round(trend.hours / 1.5),
+                total: Math.round((trend.hours / (trend.percentage / 100)) / 1.5) || 50
+              }));
+
+              const liveLogs = (liveMatch.recentHistory || []).map((hist) => ({
+                id: hist.id,
+                date: hist.date,
+                subject: hist.clubName,
+                status: hist.status,
+                time: hist.inTime || hist.outTime || ''
+              }));
+
+              return {
+                ...prev,
+                name: liveMatch.name || prev.name,
+                overallAttendancePercentage: liveMatch.currentAttendancePercent || prev.overallAttendancePercentage,
+                email: liveMatch.email || prev.email,
+                avatar: liveMatch.avatar || prev.avatar,
+                branch: liveMatch.degreeProgram || prev.branch,
+                department: liveMatch.degreeProgram || prev.department,
+                semester: semNum,
+                section: liveMatch.sectionCode || prev.section,
+                classesAttended: classesAttended,
+                classesMissed: classesMissed,
+                monthlyAttendance: liveMonthly.length > 0 ? liveMonthly : prev.monthlyAttendance,
+                recentLogs: liveLogs.length > 0 ? liveLogs : prev.recentLogs
+              };
+            }
+            return prev;
+          });
+        }
+      }).catch(e => console.warn('Background login sheet fetch failed:', e));
+    }
 
     let semNum = academicProfile?.semester || 5;
     let branch = academicProfile?.branch || "Computer Science & Engineering";
@@ -165,8 +289,8 @@ export default function App() {
 
     if (!academicProfile) {
       if (!foundBase) {
-        addToast('Authentication Error', 'Invalid Registration Number.', 'error');
-        throw new Error('Invalid Registration Number.');
+        addToast('Authentication Error', `No record found for "${regNo}". Please verify your registration number in the Google Sheet.`, 'error');
+        throw new Error(`No student record found for Registration Number "${regNo}".`);
       }
 
       const classesAttended = foundBase.eventsAttendedCount || Math.round(250 * ((foundBase.currentAttendancePercent || 88) / 100));
@@ -266,6 +390,22 @@ export default function App() {
       attendanceApiService.saveSession(`token_student_${Date.now()}`, 'student', academicProfile.registrationNumber);
     }
 
+    // Attach saved credits and credit logs to academic profile
+    try {
+      const savedCreditsMap = JSON.parse(localStorage.getItem('casr_student_credits') || '{}');
+      const saved = savedCreditsMap[cleanReg] || savedCreditsMap[academicProfile.registrationNumber];
+      if (saved) {
+        academicProfile.creditsEarned = saved.creditsEarned !== undefined ? saved.creditsEarned : 0;
+        academicProfile.creditLogs = saved.creditLogs || [];
+      } else {
+        academicProfile.creditsEarned = academicProfile.creditsEarned !== undefined ? academicProfile.creditsEarned : 0;
+        academicProfile.creditLogs = academicProfile.creditLogs || [];
+      }
+    } catch (e) {
+      academicProfile.creditsEarned = academicProfile.creditsEarned !== undefined ? academicProfile.creditsEarned : 0;
+      academicProfile.creditLogs = academicProfile.creditLogs || [];
+    }
+
     setLoggedInAcademicStudent(academicProfile);
     setUserRole('student');
     setIsEntered(true);
@@ -284,7 +424,7 @@ export default function App() {
       setLoggedInAcademicStudent(null);
       setIsEntered(true);
       setViewMode('app');
-      setActiveTab('directory');
+      setActiveTab('dashboard');
       addToast('Admin Portal Access', 'Faculty / Admin authenticated successfully.', 'success');
       return;
     }
@@ -315,9 +455,14 @@ export default function App() {
         // Keep logged-in academic student profile in real-time sync with Google Sheet updates
         setLoggedInAcademicStudent((prev) => {
           if (!prev) return null;
-          const liveMatch = liveStudents.find(
-            (s) => s.registrationNumber.trim().toLowerCase() === prev.registrationNumber.trim().toLowerCase()
-          );
+          const matchReg = (a?: string, b?: string) => {
+            if (!a || !b) return false;
+            const cleanA = a.trim().toLowerCase();
+            const cleanB = b.trim().toLowerCase();
+            if (cleanA === cleanB) return true;
+            return cleanA.replace(/[^a-z0-9]/g, '') === cleanB.replace(/[^a-z0-9]/g, '');
+          };
+          const liveMatch = liveStudents.find((s) => matchReg(s.registrationNumber, prev.registrationNumber));
           if (liveMatch) {
             let semNum = prev.semester;
             if (liveMatch.semesterYear) {
@@ -326,7 +471,7 @@ export default function App() {
                 semNum = parseInt(match[0], 10);
               }
             }
-            const classesAttended = liveMatch.eventsAttendedCount || Math.round(250 * ((liveMatch.currentAttendancePercent || 88) / 100));
+            const classesAttended = liveMatch.insCount || liveMatch.eventsAttendedCount || Math.round(250 * ((liveMatch.currentAttendancePercent || 88) / 100));
             const classesMissed = Math.max(0, 250 - classesAttended);
 
             const liveMonthly = (liveMatch.monthlyTrends || []).map((trend) => ({
@@ -353,6 +498,7 @@ export default function App() {
               branch: liveMatch.degreeProgram || prev.branch,
               department: liveMatch.degreeProgram || prev.department,
               semester: semNum,
+              semesterYear: liveMatch.semesterYear || prev.semesterYear,
               section: liveMatch.sectionCode || prev.section,
               classesAttended: classesAttended,
               classesMissed: classesMissed,
@@ -479,6 +625,7 @@ export default function App() {
         return (
           <DashboardView
             currentStudent={currentStudent}
+            allStudents={allStudents}
             clubs={clubs}
             events={events}
             onSelectTab={setActiveTab}
@@ -508,12 +655,51 @@ export default function App() {
             lastSyncedTime={lastSyncedTime}
             onManualSync={() => loadLiveAttendance(false)}
             onOpenSyncLogs={() => setShowSyncLogsModal(true)}
+            onAwardCredits={handleAwardCredits}
           />
         );
       case 'committee':
         return <CommitteeView />;
+      case 'about':
+        return <AboutView onNavigateToClubs={() => setActiveTab('clubs')} />;
+      case 'admin':
+        return (
+          <AdminDashboardView
+            students={academicStudents}
+            onLogout={handleLogout}
+            onAddStudent={async (newStudent) => {
+              setAcademicStudents((prev) => [newStudent as AcademicStudentProfile, ...prev]);
+              addToast('Student Record Added', `Added ${newStudent.name} (${newStudent.registrationNumber})`, 'success');
+            }}
+            onEditStudent={async (regNo, updated) => {
+              setAcademicStudents((prev) =>
+                prev.map((s) => (s.registrationNumber === regNo ? { ...s, ...updated } : s))
+              );
+              addToast('Student Record Updated', `Updated record for ${regNo}`, 'success');
+            }}
+            onDeleteStudent={async (regNo) => {
+              setAcademicStudents((prev) => prev.filter((s) => s.registrationNumber !== regNo));
+              addToast('Student Record Deleted', `Removed record for ${regNo}`, 'info');
+            }}
+            onExportData={async () => {
+              addToast('Export Successful', 'Exported student attendance database to CSV.', 'success');
+            }}
+            onAwardCredits={handleAwardCredits}
+          />
+        );
       default:
-        return null;
+        return (
+          <DashboardView
+            currentStudent={currentStudent}
+            allStudents={allStudents}
+            clubs={clubs}
+            events={events}
+            onSelectTab={setActiveTab}
+            onViewClub={setViewingClub}
+            onJoinClub={setJoiningClub}
+            onViewHistory={setViewingHistoryStudent}
+          />
+        );
     }
   };
 
@@ -524,6 +710,7 @@ export default function App() {
 
       {viewMode === 'login' ? (
         <LoginPortal
+          allStudents={allStudents}
           onStudentLogin={handleStudentLogin}
           onAdminLogin={handleAdminLogin}
         />
@@ -571,6 +758,7 @@ export default function App() {
           {viewingClub && (
             <ViewClubModal
               club={viewingClub}
+              allStudents={allStudents}
               onClose={() => setViewingClub(null)}
               onJoinClub={(c) => {
                 setViewingClub(null);
@@ -591,6 +779,7 @@ export default function App() {
               onViewStudentHistory={(st) => {
                 setViewingHistoryStudent(st);
               }}
+              onAwardCredits={handleAwardCredits}
               onUpdateAttendance={(clubId, record) => {
                 const targetClub = clubs.find((c) => c.id === clubId);
                 const clubName = targetClub ? targetClub.name : viewingClubAttendance.name;

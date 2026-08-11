@@ -119,7 +119,7 @@ export const CommitteeView: React.FC<CommitteeViewProps> = ({ compactPadding = f
     { club: 'CaSR science and technology club', name: 'Dr. Pratyush Kumar Das & Dr. Bhadram Kalyan', dept: 'SoABE', email: 'pratyush.das@cutm.ac.in, bkalyan.chekraverthy@cutm.ac.in', phone: '9776327537', image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200' },
     { club: 'CaSR animal allies', name: 'Dr. F. Sebastin Raju', dept: 'SoVAS', email: 'sebastin.raju@cutm.ac.in', phone: '8870185123', image: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200' },
     { club: 'CaSR content creators', name: 'Dr. Manish K. Yadav', dept: 'MSSSoA', email: 'manish.yadav@cutm.ac.in', phone: '9696352193', image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=200' },
-    { club: 'CaSR page turners', name: 'Prof. Anita Desai', dept: 'Humanities', email: 'anita.desai@cutm.ac.in', phone: '9438269572', image: '/dr_anita_patra.jpg' },
+    { club: 'CaSR page turners', name: 'Dr. Anita Patra', dept: 'Humanities', email: 'anita.patra@cutm.ac.in', phone: '9438269572', image: '/dr_anita_patra.jpg' },
     { club: 'CaSR zyra fashion club', name: 'Mr. Victor Pradhan', dept: 'MSSSoA', email: 'victor.pradhan@cutm.ac.in', phone: '9937365635', image: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=200' },
     { club: 'CaSR coding club', name: 'Dr. Dhawaleswar Rao', dept: 'SoET', email: 'dhawaleswar.rao@cutm.ac.in', phone: '7779871797', image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=200' },
     { club: 'CaSR robotics club', name: 'Dr. Prangya Parimita Pradhan & Mrs. N. Jeevaratnam', dept: 'SoET', email: 'prangya.pradhan@cutm.ac.in, jeevaratnam@cutm.ac.in', phone: '7978250836 / 8847882452', image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200' },
@@ -205,7 +205,7 @@ export const CommitteeView: React.FC<CommitteeViewProps> = ({ compactPadding = f
     <div className={`${compactPadding ? 'pt-4 md:pt-6 pb-12' : 'pt-24 md:pt-28 pb-20'} px-4 md:px-16 max-w-7xl mx-auto space-y-12 animate-in fade-in duration-500`}>
       {/* Header */}
       <div className="text-center max-w-3xl mx-auto space-y-3">
-        <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-blue-500/10 text-blue-600 dark:text-emerald-400 text-xs font-bold uppercase tracking-wider">
+        <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 text-xs font-bold uppercase tracking-wider">
           <Shield className="w-3.5 h-3.5" /> Official Directory (Letter No: CUTM/Reg.Off./CASR/154/2026)
         </span>
         <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 dark:text-white">
@@ -219,7 +219,7 @@ export const CommitteeView: React.FC<CommitteeViewProps> = ({ compactPadding = f
       {/* Step-wise Leadership Command Structure */}
       <section className="max-w-3xl mx-auto space-y-4">
         <div className="text-center space-y-1">
-          <span className="text-[11px] font-extrabold uppercase tracking-widest text-purple-600 dark:text-purple-400">
+          <span className="text-[11px] font-extrabold uppercase tracking-widest text-amber-500 dark:text-amber-400">
             Governing Hierarchy & Execution Flow
           </span>
           <h2 className="text-xl md:text-2xl font-black text-gray-900 dark:text-white">
@@ -229,99 +229,135 @@ export const CommitteeView: React.FC<CommitteeViewProps> = ({ compactPadding = f
 
         <div className="relative space-y-4 pt-2">
           {/* Step 1: Registrar */}
-          <div className="glass-card p-6 rounded-3xl border border-purple-500/30 bg-purple-500/5 relative overflow-hidden shadow-xl flex flex-col md:flex-row items-center gap-5 group hover:border-purple-500/60 transition-all">
+          <div className="glass-card p-6 rounded-3xl border border-amber-500/30 bg-amber-500/5 relative overflow-hidden shadow-xl flex flex-col md:flex-row items-center gap-5 group hover:border-amber-500/60 transition-all">
             <div className="relative shrink-0">
               <img
                 src="/dr_anita_patra.jpg"
                 alt="Dr. Anita Patra"
-                className="w-20 h-20 md:w-24 md:h-24 rounded-2xl object-cover object-center border-2 border-purple-500/60 shadow-lg group-hover:scale-105 transition-all duration-300"
+                className="w-16 h-16 md:w-20 md:h-20 rounded-2xl object-cover border-2 border-amber-500 shadow-lg group-hover:scale-105 transition-all duration-300"
               />
-              <span className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-purple-600 text-white text-xs font-black flex items-center justify-center shadow-lg border-2 border-white dark:border-slate-900">
+              <span className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-amber-500 text-white text-xs font-black flex items-center justify-center shadow-lg border-2 border-white dark:border-zinc-900">
                 1
               </span>
             </div>
-            <div className="flex-1 text-center md:text-left space-y-1">
+            <div className="flex-1 text-center md:text-left space-y-1.5">
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
                 <h3 className="font-extrabold text-gray-900 dark:text-white text-xl">Dr. Anita Patra</h3>
-                <span className="px-3 py-0.5 rounded-full bg-purple-500/20 text-purple-700 dark:text-purple-300 text-xs font-bold uppercase tracking-wider border border-purple-500/30">
-                  Registrar • Top Authority
+                <span className="px-3 py-0.5 rounded-full bg-amber-500/20 text-amber-700 dark:text-amber-300 text-xs font-bold uppercase tracking-wider border border-amber-500/30">
+                  Registrar
                 </span>
               </div>
-              <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed font-medium">
-                Governing approval, administrative validation, policy authorization, and official certification lead for all CaSR programs across Centurion University.
+              <p className="text-xs font-semibold text-amber-600 dark:text-amber-400">
+                Registrar, Centurion University of Technology & Management, Odisha
               </p>
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 pt-1 text-xs text-gray-600 dark:text-gray-300 font-medium">
+                <div className="flex items-center gap-1.5">
+                  <Phone className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                  <span>09437424149, 07077580377</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Mail className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                  <a href="mailto:registrar@cutm.ac.in" className="hover:underline font-semibold text-amber-600 dark:text-amber-400">
+                    registrar@cutm.ac.in
+                  </a>
+                </div>
+              </div>
             </div>
-            <div className="hidden md:flex items-center justify-center w-12 h-12 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400 shrink-0">
+            <div className="hidden md:flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/10 text-amber-500 dark:text-amber-400 shrink-0">
               <Shield className="w-6 h-6" />
             </div>
           </div>
 
           {/* Connector 1 -> 2 */}
           <div className="flex justify-center -my-2 z-10 relative">
-            <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-800 text-purple-600 dark:text-purple-400 border border-purple-500/30 flex items-center justify-center shadow">
+            <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-zinc-800 text-amber-500 dark:text-amber-400 border border-amber-500/30 flex items-center justify-center shadow">
               <ChevronDown className="w-5 h-5 animate-bounce" />
             </div>
           </div>
 
           {/* Step 2: Dean, Students' Affairs */}
-          <div className="glass-card p-6 rounded-3xl border border-blue-500/30 bg-blue-500/5 relative overflow-hidden shadow-xl flex flex-col md:flex-row items-center gap-5 group hover:border-blue-500/60 transition-all">
+          <div className="glass-card p-6 rounded-3xl border border-amber-500/30 bg-amber-500/5 relative overflow-hidden shadow-xl flex flex-col md:flex-row items-center gap-5 group hover:border-amber-500/60 transition-all">
             <div className="relative shrink-0">
               <img
                 src="/dr_ritesh_kumar.jpg"
                 alt="Dr. Ritesh Kumar"
-                className="w-20 h-20 md:w-24 md:h-24 rounded-2xl object-cover object-center border-2 border-blue-500/60 shadow-lg group-hover:scale-105 transition-all duration-300"
+                className="w-16 h-16 md:w-20 md:h-20 rounded-2xl object-cover border-2 border-amber-500 shadow-lg group-hover:scale-105 transition-all duration-300"
               />
-              <span className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-blue-600 text-white text-xs font-black flex items-center justify-center shadow-lg border-2 border-white dark:border-slate-900">
+              <span className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-amber-500 text-white text-xs font-black flex items-center justify-center shadow-lg border-2 border-white dark:border-zinc-900">
                 2
               </span>
             </div>
-            <div className="flex-1 text-center md:text-left space-y-1">
+            <div className="flex-1 text-center md:text-left space-y-1.5">
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
                 <h3 className="font-extrabold text-gray-900 dark:text-white text-xl">Dr. Ritesh Kumar</h3>
-                <span className="px-3 py-0.5 rounded-full bg-blue-500/20 text-blue-700 dark:text-blue-300 text-xs font-bold uppercase tracking-wider border border-blue-500/30">
-                  Dean, Students' Affairs • Executive Lead
+                <span className="px-3 py-0.5 rounded-full bg-amber-500/20 text-amber-700 dark:text-amber-300 text-xs font-bold uppercase tracking-wider border border-amber-500/30">
+                  Dean – Students Affairs
                 </span>
               </div>
-              <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed font-medium">
-                Responsible for overall planning, strategic coordination, and effective execution of campus-level CaSR initiatives, events, and student affairs.
+              <p className="text-xs font-semibold text-amber-600 dark:text-amber-400">
+                Dean-Students Affairs
               </p>
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 pt-1 text-xs text-gray-600 dark:text-gray-300 font-medium">
+                <div className="flex items-center gap-1.5">
+                  <Phone className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                  <span>8905222857</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Mail className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                  <a href="mailto:ritesh.kumar@cutm.ac.in" className="hover:underline font-semibold text-amber-600 dark:text-amber-400">
+                    ritesh.kumar@cutm.ac.in
+                  </a>
+                </div>
+              </div>
             </div>
-            <div className="hidden md:flex items-center justify-center w-12 h-12 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 shrink-0">
+            <div className="hidden md:flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/10 text-amber-500 dark:text-amber-400 shrink-0">
               <Award className="w-6 h-6" />
             </div>
           </div>
 
           {/* Connector 2 -> 3 */}
           <div className="flex justify-center -my-2 z-10 relative">
-            <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-800 text-blue-600 dark:text-blue-400 border border-blue-500/30 flex items-center justify-center shadow">
+            <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-zinc-800 text-amber-500 dark:text-amber-400 border border-amber-500/30 flex items-center justify-center shadow">
               <ChevronDown className="w-5 h-5 animate-bounce" />
             </div>
           </div>
 
           {/* Step 3: Nodal Intern */}
-          <div className="glass-card p-6 rounded-3xl border border-emerald-500/30 bg-emerald-500/5 relative overflow-hidden shadow-xl flex flex-col md:flex-row items-center gap-5 group hover:border-emerald-500/60 transition-all">
+          <div className="glass-card p-6 rounded-3xl border border-amber-500/30 bg-amber-500/5 relative overflow-hidden shadow-xl flex flex-col md:flex-row items-center gap-5 group hover:border-amber-500/60 transition-all">
             <div className="relative shrink-0">
               <img
                 src="/paladugu_deep_joel.jpg"
-                alt="Mr. Paladugu Deep Joel"
-                className="w-20 h-20 md:w-24 md:h-24 rounded-2xl object-cover object-center border-2 border-emerald-500/60 shadow-lg group-hover:scale-105 transition-all duration-300"
+                alt="Mr. Deep Joel. P"
+                className="w-16 h-16 md:w-20 md:h-20 rounded-2xl object-cover border-2 border-amber-500 shadow-lg group-hover:scale-105 transition-all duration-300"
               />
-              <span className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-emerald-600 text-white text-xs font-black flex items-center justify-center shadow-lg border-2 border-white dark:border-slate-900">
+              <span className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-amber-500 text-white text-xs font-black flex items-center justify-center shadow-lg border-2 border-white dark:border-zinc-900">
                 3
               </span>
             </div>
-            <div className="flex-1 text-center md:text-left space-y-1">
+            <div className="flex-1 text-center md:text-left space-y-1.5">
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
-                <h3 className="font-extrabold text-gray-900 dark:text-white text-xl">Mr. Paladugu Deep Joel</h3>
-                <span className="px-3 py-0.5 rounded-full bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-xs font-bold uppercase tracking-wider border border-emerald-500/30">
-                  CaSR Intern & Nodal Point • Operational Contact
+                <h3 className="font-extrabold text-gray-900 dark:text-white text-xl">Mr. Deep Joel. P</h3>
+                <span className="px-3 py-0.5 rounded-full bg-amber-500/20 text-amber-700 dark:text-amber-300 text-xs font-bold uppercase tracking-wider border border-amber-500/30">
+                  CaSR Coordinator
                 </span>
               </div>
-              <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed font-medium">
-                Nodal point of contact for execution coordination, daily operational management, and student communication. <span className="font-bold text-emerald-600 dark:text-emerald-400">Mob: 7382719395 • paladugudeep.joel@cutm.ac.in</span>
+              <p className="text-xs font-semibold text-amber-600 dark:text-amber-400">
+                CaSR Coordinator • Office of Dean – Students Affairs
               </p>
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 pt-1 text-xs text-gray-600 dark:text-gray-300 font-medium">
+                <div className="flex items-center gap-1.5">
+                  <Phone className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                  <span>8919108486</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Mail className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                  <a href="mailto:paladugudeep.joel@cutm.ac.in" className="hover:underline font-semibold text-amber-600 dark:text-amber-400">
+                    paladugudeep.joel@cutm.ac.in
+                  </a>
+                </div>
+              </div>
             </div>
-            <div className="hidden md:flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 shrink-0">
+            <div className="hidden md:flex items-center justify-center w-12 h-12 rounded-full bg-amber-500/10 text-amber-500 dark:text-amber-400 shrink-0">
               <UserCheck className="w-6 h-6" />
             </div>
           </div>
@@ -329,7 +365,7 @@ export const CommitteeView: React.FC<CommitteeViewProps> = ({ compactPadding = f
       </section>
 
       {/* Controls Bar: Search & Filter Tabs */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-4 glass-card p-4 rounded-2xl border border-white/20">
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4 glass-card p-4 rounded-2xl border border-amber-500/20">
         {/* Search */}
         <div className="relative w-full md:w-80">
           <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -338,7 +374,7 @@ export const CommitteeView: React.FC<CommitteeViewProps> = ({ compactPadding = f
             placeholder="Search by name, school, club, email..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 text-xs rounded-xl bg-gray-100 dark:bg-slate-800/80 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full pl-10 pr-4 py-2 text-xs rounded-xl bg-gray-100 dark:bg-zinc-900/80 border border-gray-200 dark:border-amber-500/20 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
           />
           {searchQuery && (
             <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
@@ -351,50 +387,50 @@ export const CommitteeView: React.FC<CommitteeViewProps> = ({ compactPadding = f
         <div className="flex flex-wrap gap-1.5 justify-center text-xs">
           <button
             onClick={() => setActiveTab('ALL')}
-            className={`px-4 py-2 rounded-xl font-bold transition-all ${
+            className={`px-4 py-2 rounded-xl font-bold transition-all cursor-pointer ${
               activeTab === 'ALL'
-                ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
-                : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200'
+                ? 'bg-gradient-to-r from-amber-500 to-yellow-500 text-white shadow-md shadow-amber-500/20'
+                : 'bg-gray-100 dark:bg-zinc-900 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-zinc-800 border border-amber-500/20'
             }`}
           >
             All Members
           </button>
           <button
             onClick={() => setActiveTab('SCHOOL')}
-            className={`px-4 py-2 rounded-xl font-bold transition-all ${
+            className={`px-4 py-2 rounded-xl font-bold transition-all cursor-pointer ${
               activeTab === 'SCHOOL'
-                ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/20'
-                : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200'
+                ? 'bg-gradient-to-r from-amber-500 to-yellow-500 text-white shadow-md shadow-amber-500/20'
+                : 'bg-gray-100 dark:bg-zinc-900 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-zinc-800 border border-amber-500/20'
             }`}
           >
             School Coordinators ({schoolCoordinators.length})
           </button>
           <button
             onClick={() => setActiveTab('FACULTY_CLUBS')}
-            className={`px-4 py-2 rounded-xl font-bold transition-all ${
+            className={`px-4 py-2 rounded-xl font-bold transition-all cursor-pointer ${
               activeTab === 'FACULTY_CLUBS'
-                ? 'bg-purple-600 text-white shadow-md shadow-purple-500/20'
-                : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200'
+                ? 'bg-gradient-to-r from-amber-500 to-yellow-500 text-white shadow-md shadow-amber-500/20'
+                : 'bg-gray-100 dark:bg-zinc-900 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-zinc-800 border border-amber-500/20'
             }`}
           >
             Faculty In-Charges ({facultyClubInCharges.length})
           </button>
           <button
             onClick={() => setActiveTab('SOCIAL_UNITS')}
-            className={`px-4 py-2 rounded-xl font-bold transition-all ${
+            className={`px-4 py-2 rounded-xl font-bold transition-all cursor-pointer ${
               activeTab === 'SOCIAL_UNITS'
-                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20'
-                : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200'
+                ? 'bg-gradient-to-r from-amber-500 to-yellow-500 text-white shadow-md shadow-amber-500/20'
+                : 'bg-gray-100 dark:bg-zinc-900 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-zinc-800 border border-amber-500/20'
             }`}
           >
             Social Officers ({socialOfficers.length})
           </button>
           <button
             onClick={() => setActiveTab('STUDENT_COORDINATORS')}
-            className={`px-4 py-2 rounded-xl font-bold transition-all ${
+            className={`px-4 py-2 rounded-xl font-bold transition-all cursor-pointer ${
               activeTab === 'STUDENT_COORDINATORS'
-                ? 'bg-amber-600 text-white shadow-md shadow-amber-500/20'
-                : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200'
+                ? 'bg-gradient-to-r from-amber-500 to-yellow-500 text-white shadow-md shadow-amber-500/20'
+                : 'bg-gray-100 dark:bg-zinc-900 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-zinc-800 border border-amber-500/20'
             }`}
           >
             Student Coordinators ({studentCoordinators.length})
@@ -415,11 +451,9 @@ export const CommitteeView: React.FC<CommitteeViewProps> = ({ compactPadding = f
                 <div key={c.school} className="glass-card p-5 rounded-2xl border border-white/20 space-y-3 flex flex-col justify-between hover:shadow-xl transition-all">
                   <div className="space-y-2">
                     <div className="flex items-center gap-3">
-                      <img
-                        src={c.image || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200'}
-                        alt={c.name}
-                        className="w-12 h-12 rounded-xl object-cover object-center border-2 border-emerald-500/50 shadow-md shrink-0"
-                      />
+                      <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 font-extrabold text-xs shadow-sm">
+                        <Landmark className="w-5 h-5" />
+                      </div>
                       <div>
                         <span className="inline-block text-[10px] px-2.5 py-0.5 rounded-md bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 font-bold uppercase tracking-wider">
                           {c.school}
@@ -468,11 +502,9 @@ export const CommitteeView: React.FC<CommitteeViewProps> = ({ compactPadding = f
                       <span className="text-[10px] font-bold text-gray-400 font-mono">{fc.dept}</span>
                     </div>
                     <div className="flex items-center gap-3 pt-1">
-                      <img 
-                        src={fc.image || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200'} 
-                        alt={fc.name} 
-                        className="w-12 h-12 rounded-xl object-cover object-center border-2 border-purple-500/50 shadow-md shrink-0"
-                      />
+                      <div className="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/30 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0 font-extrabold text-xs shadow-sm">
+                        <Users className="w-5 h-5" />
+                      </div>
                       <h4 className="font-bold text-gray-900 dark:text-white text-sm md:text-base leading-snug">
                         {fc.name}
                       </h4>
@@ -511,11 +543,9 @@ export const CommitteeView: React.FC<CommitteeViewProps> = ({ compactPadding = f
                       {c.unit}
                     </span>
                     <div className="flex items-center gap-3">
-                      <img
-                        src={c.image || 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200'}
-                        alt={c.name}
-                        className="w-12 h-12 rounded-xl object-cover object-center border-2 border-indigo-500/50 shadow-md shrink-0"
-                      />
+                      <div className="w-10 h-10 rounded-xl bg-indigo-500/10 border border-indigo-500/30 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0 font-extrabold text-xs shadow-sm">
+                        <Shield className="w-5 h-5" />
+                      </div>
                       <div>
                         <h4 className="font-bold text-gray-900 dark:text-white text-sm md:text-base leading-snug">{c.name}</h4>
                         <p className="text-[10px] text-gray-400 font-semibold uppercase">Department: {c.dept}</p>
@@ -563,15 +593,13 @@ export const CommitteeView: React.FC<CommitteeViewProps> = ({ compactPadding = f
                     <tr key={idx} className="hover:bg-blue-50/30 dark:hover:bg-slate-800/30 transition-colors">
                       <td className="p-4 font-semibold text-gray-400">{idx + 1}</td>
                       <td className="p-4 font-bold text-gray-900 dark:text-white flex items-center gap-3">
-                        <img
-                          src={s.image || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200'}
-                          alt={s.name}
-                          className="w-9 h-9 rounded-lg object-cover border border-amber-500/40 shadow-sm shrink-0"
-                        />
+                        <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 font-extrabold text-xs shadow-sm">
+                          <UserCheck className="w-4 h-4" />
+                        </div>
                         <span>{s.name}</span>
                       </td>
                       <td className="p-4">
-                        <span className="px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-600 dark:text-emerald-400 font-bold text-[11px]">
+                        <span className="px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/30 font-bold text-[11px]">
                           {s.club}
                         </span>
                       </td>

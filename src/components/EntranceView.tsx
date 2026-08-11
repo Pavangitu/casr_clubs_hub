@@ -59,7 +59,7 @@ export const EntranceView: React.FC<EntranceViewProps> = ({
       {/* Top Controls Header */}
       <header className="w-full flex justify-between items-center max-w-7xl mx-auto py-2">
         <div className="flex items-center gap-2">
-          <Shield className="w-5 h-5 text-blue-600 dark:text-emerald-400" />
+          <Shield className="w-5 h-5 text-amber-500 dark:text-amber-400" />
           <span className="font-extrabold text-xs uppercase tracking-wider text-main-heading">
             CaSR Portal
           </span>
@@ -69,7 +69,7 @@ export const EntranceView: React.FC<EntranceViewProps> = ({
             onClick={toggleTheme}
             className="w-9 h-9 rounded-full glass-neo-icon text-slate-905 dark:text-white hover:scale-105 transition-all cursor-pointer animate-in fade-in"
           >
-            {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-500" /> : <Moon className="w-4 h-4 text-indigo-600" />}
+            {theme === 'dark' ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-slate-800" />}
           </button>
         </div>
       </header>
@@ -79,7 +79,7 @@ export const EntranceView: React.FC<EntranceViewProps> = ({
         {/* Dual Logo Container */}
         <div className="flex items-center justify-center gap-6 md:gap-10 animate-in fade-in duration-700">
           {/* Centurion University Emblem (Left) */}
-          <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-full bg-white dark:bg-slate-900/90 p-2 shadow-2xl border-2 border-slate-200 dark:border-white/20 flex items-center justify-center hover:scale-105 transition-transform duration-300 overflow-hidden" style={{ animation: 'float 4s ease-in-out infinite' }}>
+          <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-full bg-white dark:bg-slate-900/90 p-2 shadow-2xl border-2 border-amber-500/30 dark:border-amber-500/40 flex items-center justify-center hover:scale-105 transition-transform duration-300 overflow-hidden" style={{ animation: 'float 4s ease-in-out infinite' }}>
             <img
               src={logo2Src}
               onError={handleLogo2Error}
@@ -90,13 +90,13 @@ export const EntranceView: React.FC<EntranceViewProps> = ({
 
           {/* Divider */}
           <div className="flex flex-col items-center gap-1.5">
-            <div className="w-px h-10 bg-gradient-to-b from-transparent via-slate-400 dark:via-gray-600 to-transparent" />
-            <div className="w-2 h-2 rounded-full bg-blue-600 dark:bg-emerald-500" />
-            <div className="w-px h-10 bg-gradient-to-b from-transparent via-slate-400 dark:via-gray-600 to-transparent" />
+            <div className="w-px h-10 bg-gradient-to-b from-transparent via-amber-500/40 dark:via-amber-500/60 to-transparent" />
+            <div className="w-2.5 h-2.5 rounded-full bg-amber-500 dark:bg-amber-400 shadow-md shadow-amber-500/50" />
+            <div className="w-px h-10 bg-gradient-to-b from-transparent via-amber-500/40 dark:via-amber-500/60 to-transparent" />
           </div>
 
           {/* CaSR Owl Logo (Right) */}
-          <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-full bg-white dark:bg-slate-900/90 p-2 shadow-2xl border-2 border-slate-200 dark:border-white/20 flex items-center justify-center hover:scale-105 transition-transform duration-300 overflow-hidden" style={{ animation: 'float 4s ease-in-out infinite 0.6s' }}>
+          <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-full bg-white dark:bg-slate-900/90 p-2 shadow-2xl border-2 border-amber-500/30 dark:border-amber-500/40 flex items-center justify-center hover:scale-105 transition-transform duration-300 overflow-hidden" style={{ animation: 'float 4s ease-in-out infinite 0.6s' }}>
             <img
               src={logoSrc}
               onError={handleLogoError}
@@ -111,7 +111,7 @@ export const EntranceView: React.FC<EntranceViewProps> = ({
           <h1 className="text-3xl md:text-5xl font-black tracking-tight text-main-heading">
             Centurion University
           </h1>
-          <p className="text-blue-600 dark:text-emerald-400 text-sm md:text-base font-extrabold tracking-widest uppercase">
+          <p className="text-amber-600 dark:text-amber-400 text-sm md:text-base font-extrabold tracking-widest uppercase">
             Cultural and Social Responsibility (CaSR)
           </p>
         </div>
@@ -122,9 +122,9 @@ export const EntranceView: React.FC<EntranceViewProps> = ({
             onClick={onOpenLoginPortal}
             className="w-full py-4 rounded-2xl liquid-prism-button text-white text-xs font-black tracking-wider uppercase shadow-2xl flex items-center justify-center gap-2.5 cursor-pointer hover:scale-105 active:scale-95 transition-all"
           >
-            <LogIn className="w-4 h-4 text-emerald-300" />
+            <LogIn className="w-4 h-4 text-amber-200" />
             <span>Login Portal</span>
-            <ArrowRight className="w-4 h-4 text-emerald-300" />
+            <ArrowRight className="w-4 h-4 text-amber-200" />
           </button>
         </div>
       </main>

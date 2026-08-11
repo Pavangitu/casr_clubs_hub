@@ -5,7 +5,7 @@ export const REAL_STUDENTS_DATA: StudentProfile[] = [
     "name": "Meera V.",
     "registrationNumber": "230101120099",
     "email": "meera.v@casr.edu",
-    "avatar": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=300",
+    "avatar": "",
     "clubName": "Casr coding club",
     "allClubs": [
       "Casr coding club"

@@ -10,7 +10,7 @@ interface FooterProps {
 export const Footer: React.FC<FooterProps> = ({ onSelectTab, setActiveTab: propSetActiveTab }) => {
   const setActiveTab = onSelectTab || propSetActiveTab || (() => {});
   return (
-    <footer className="bg-gray-100/80 dark:bg-slate-950 border-t border-gray-200/50 dark:border-white/10 w-full transition-colors duration-300">
+    <footer className="bg-gray-100/80 dark:bg-zinc-950 border-t border-gray-200/50 dark:border-amber-500/20 w-full transition-colors duration-300">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-8 px-6 md:px-16 py-12 max-w-7xl mx-auto">
         {/* Brand Info */}
         <div className="space-y-4">
@@ -33,14 +33,14 @@ export const Footer: React.FC<FooterProps> = ({ onSelectTab, setActiveTab: propS
 
         {/* Navigation */}
         <div className="space-y-3">
-          <h4 className="font-bold text-sm text-blue-600 dark:text-emerald-400 uppercase tracking-wider">
+          <h4 className="font-bold text-sm text-amber-600 dark:text-amber-400 uppercase tracking-wider">
             Navigation
           </h4>
           <ul className="space-y-2 text-xs md:text-sm text-gray-600 dark:text-gray-400">
             <li>
               <button
                 onClick={() => setActiveTab('dashboard')}
-                className="hover:text-blue-600 dark:hover:text-emerald-400 transition-colors hover:underline"
+                className="hover:text-amber-600 dark:hover:text-amber-400 transition-colors hover:underline cursor-pointer"
               >
                 Dashboard Overview
               </button>
@@ -48,7 +48,7 @@ export const Footer: React.FC<FooterProps> = ({ onSelectTab, setActiveTab: propS
             <li>
               <button
                 onClick={() => setActiveTab('clubs')}
-                className="hover:text-blue-600 dark:hover:text-emerald-400 transition-colors hover:underline"
+                className="hover:text-amber-600 dark:hover:text-amber-400 transition-colors hover:underline cursor-pointer"
               >
                 Club Directory
               </button>
@@ -56,7 +56,7 @@ export const Footer: React.FC<FooterProps> = ({ onSelectTab, setActiveTab: propS
             <li>
               <button
                 onClick={() => setActiveTab('events')}
-                className="hover:text-blue-600 dark:hover:text-emerald-400 transition-colors hover:underline"
+                className="hover:text-amber-600 dark:hover:text-amber-400 transition-colors hover:underline cursor-pointer"
               >
                 Campus Events
               </button>
@@ -64,7 +64,7 @@ export const Footer: React.FC<FooterProps> = ({ onSelectTab, setActiveTab: propS
             <li>
               <button
                 onClick={() => setActiveTab('directory')}
-                className="hover:text-blue-600 dark:hover:text-emerald-400 transition-colors hover:underline"
+                className="hover:text-amber-600 dark:hover:text-amber-400 transition-colors hover:underline cursor-pointer"
               >
                 Student Attendance Module
               </button>
@@ -72,7 +72,7 @@ export const Footer: React.FC<FooterProps> = ({ onSelectTab, setActiveTab: propS
             <li>
               <button
                 onClick={() => setActiveTab('committee')}
-                className="hover:text-blue-600 dark:hover:text-emerald-400 transition-colors hover:underline"
+                className="hover:text-amber-600 dark:hover:text-amber-400 transition-colors hover:underline cursor-pointer"
               >
                 Execution Committee
               </button>
@@ -82,7 +82,7 @@ export const Footer: React.FC<FooterProps> = ({ onSelectTab, setActiveTab: propS
 
         {/* Social Connect */}
         <div className="space-y-3">
-          <h4 className="font-bold text-sm text-blue-600 dark:text-emerald-400 uppercase tracking-wider">
+          <h4 className="font-bold text-sm text-amber-600 dark:text-amber-400 uppercase tracking-wider">
             Social Connect
           </h4>
           <ul className="space-y-3 text-xs md:text-sm text-gray-600 dark:text-gray-400">
@@ -91,9 +91,9 @@ export const Footer: React.FC<FooterProps> = ({ onSelectTab, setActiveTab: propS
                 href="https://www.instagram.com/cutm_casr_pkd?igsh=MXQ1eWdmbTdzOThmbA=="
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-blue-600 dark:hover:text-emerald-400 transition-colors hover:underline flex items-center gap-2"
+                className="hover:text-amber-600 dark:hover:text-amber-400 transition-colors hover:underline flex items-center gap-2"
               >
-                <Instagram className="w-4 h-4 text-pink-500" />
+                <Instagram className="w-4 h-4 text-amber-500" />
                 <span>Instagram</span>
               </a>
             </li>
@@ -102,9 +102,9 @@ export const Footer: React.FC<FooterProps> = ({ onSelectTab, setActiveTab: propS
                 href="https://www.facebook.com/share/1G6WTEZ8uk/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-blue-600 dark:hover:text-emerald-400 transition-colors hover:underline flex items-center gap-2"
+                className="hover:text-amber-600 dark:hover:text-amber-400 transition-colors hover:underline flex items-center gap-2"
               >
-                <Facebook className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                <Facebook className="w-4 h-4 text-amber-500" />
                 <span>Facebook</span>
               </a>
             </li>
@@ -113,19 +113,19 @@ export const Footer: React.FC<FooterProps> = ({ onSelectTab, setActiveTab: propS
 
         {/* Location Map Preview */}
         <div className="space-y-3">
-          <h4 className="font-bold text-sm text-blue-600 dark:text-emerald-400 uppercase tracking-wider flex items-center gap-1">
+          <h4 className="font-bold text-sm text-amber-600 dark:text-amber-400 uppercase tracking-wider flex items-center gap-1">
             <MapPin className="w-4 h-4" /> Campus Location
           </h4>
-          <div className="w-full h-32 rounded-2xl overflow-hidden relative shadow-md group border border-gray-300/40 dark:border-white/10">
+          <div className="w-full h-32 rounded-2xl overflow-hidden relative shadow-md group border border-gray-300/40 dark:border-amber-500/20">
             <div
               className="bg-cover bg-center w-full h-full grayscale group-hover:grayscale-0 transition-all duration-700 cursor-pointer"
               style={{
                 backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuAIUpFnXewSGpT20MZRX-EngDj_bihd0X75kCeN5L7RYHlUnvs3pofb1Lj4LrCbaP-4W5LQzDTEyd98SwyILqoOxzEDCVX7zk5NRqt7j54YBoDH68oA4p5fNgkr2fEYLKSyc3tvB9MwKK9bIaF477C5QFidqsZ_ykZ1pv0krS8poXEff8ZAsTRcaXlYqGEl5FgqZm7YXuMdTM7mHwV_-jFmo_jm-xYSfGYA8T8D4_SdjgEIAIXf0D2B6WH6ZJvWUHVn3wpGAs38jNRC')`
               }}
             />
-            <div className="absolute inset-0 bg-blue-900/20 group-hover:bg-transparent transition-colors flex items-center justify-center">
-              <span className="bg-black/70 backdrop-blur-md text-white text-[11px] px-3 py-1 rounded-full font-semibold border border-white/20 flex items-center gap-1 shadow-lg">
-                <MapPin className="w-3 h-3 text-emerald-400 animate-bounce" /> CaSR Central Campus
+            <div className="absolute inset-0 bg-amber-950/20 group-hover:bg-transparent transition-colors flex items-center justify-center">
+              <span className="bg-zinc-950/80 backdrop-blur-md text-white text-[11px] px-3 py-1 rounded-full font-semibold border border-amber-500/30 flex items-center gap-1 shadow-lg">
+                <MapPin className="w-3 h-3 text-amber-400 animate-bounce" /> CaSR Central Campus
               </span>
             </div>
           </div>

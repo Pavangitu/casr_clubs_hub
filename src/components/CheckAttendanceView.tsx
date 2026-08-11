@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { StudentProfile } from '../types';
 import { HistoryModal } from './HistoryModal';
+import { CreditTrackModal } from './CreditTrackModal';
 import {
   Search,
   BadgeCheck,
@@ -23,7 +24,7 @@ import {
   Calendar,
   Download
 } from 'lucide-react';
-import { fetchLiveAttendanceData, GOOGLE_SHEETS_URLS, getCustomSheetUrl, setCustomSheetUrl, MASTER_GOOGLE_SHEET_URL } from '../services/googleSheetsService';
+import { fetchLiveAttendanceData, GOOGLE_SHEETS_URLS, getCustomSheetUrl, setCustomSheetUrl, MASTER_GOOGLE_SHEET_URL, SECONDARY_GOOGLE_SHEET_URL, THIRD_GOOGLE_SHEET_URL } from '../services/googleSheetsService';
 
 
 // 1. Elite Attendance Avatar (Graduation Cap + Floating Trophy)
@@ -95,6 +96,7 @@ interface CheckAttendanceViewProps {
   lastSyncedTime?: string;
   onManualSync?: () => void;
   onOpenSyncLogs?: () => void;
+  onAwardCredits?: (regNo: string, amount: number, reason: string, awardedBy?: string, clubName?: string, eventName?: string) => Promise<void> | void;
 }
 
 export const CheckAttendanceView: React.FC<CheckAttendanceViewProps> = ({
@@ -108,8 +110,10 @@ export const CheckAttendanceView: React.FC<CheckAttendanceViewProps> = ({
   isSyncing,
   lastSyncedTime: propLastSyncedTime = 'Live',
   onManualSync,
-  onOpenSyncLogs
+  onOpenSyncLogs,
+  onAwardCredits
 }) => {
+  const [creditModalStudent, setCreditModalStudent] = useState<StudentProfile | null>(null);
   const initialAllStudents = students || propAllStudents || [];
   const activeCurrentStudent = currentStudent || initialAllStudents[0];
   const handleOpenHistoryModal = onViewHistory || onOpenHistoryModal || (() => {});
@@ -305,9 +309,9 @@ export const CheckAttendanceView: React.FC<CheckAttendanceViewProps> = ({
   return (
     <div className="pt-28 md:pt-32 px-4 md:px-12 max-w-7xl mx-auto pb-20 space-y-10 animate-in fade-in duration-500">
       {/* Hero Header & Search Box */}
-      <section className="glass-card rounded-3xl p-6 md:p-8 space-y-6 shadow-2xl border border-white/30 dark:border-white/10 relative">
+      <section className="glass-card rounded-3xl p-6 md:p-8 space-y-6 shadow-2xl border border-amber-500/20 bg-white/80 dark:bg-zinc-900/80 relative">
         <div className="text-center max-w-2xl mx-auto space-y-2">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400 text-xs font-bold uppercase tracking-wider">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 text-xs font-bold uppercase tracking-wider">
             <Users className="w-3.5 h-3.5" /> All Students Attendance Portal
           </div>
           <h1 className="font-extrabold text-2xl md:text-4xl text-gray-900 dark:text-white">
@@ -317,11 +321,11 @@ export const CheckAttendanceView: React.FC<CheckAttendanceViewProps> = ({
             Type any Registration Number or Student Name to view real-time attendance and progress towards 1-Year (30 hrs) and 4-Year (120 hrs) requirements.
           </p>
 
-          <div className="mt-4 flex flex-wrap items-center justify-between gap-3 bg-emerald-500/10 dark:bg-emerald-500/15 border border-emerald-500/30 p-3 px-5 rounded-2xl">
-            <div className="flex items-center gap-2 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-3 bg-amber-500/10 border border-amber-500/30 p-3 px-5 rounded-2xl">
+            <div className="flex items-center gap-2 text-xs font-semibold text-amber-800 dark:text-amber-300">
               <span className="relative flex h-2.5 w-2.5">
-                <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${isSyncingSheets ? 'bg-amber-400' : 'bg-emerald-400'} opacity-75`}></span>
-                <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${isSyncingSheets ? 'bg-amber-500' : 'bg-emerald-500'}`}></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
               </span>
               <span>
                 {isSyncingSheets ? 'Syncing changes from Excel / Google Sheet...' : `Live Synchronized with Excel / Google Sheet (Last sync: ${lastSyncedTime})`}
@@ -332,7 +336,7 @@ export const CheckAttendanceView: React.FC<CheckAttendanceViewProps> = ({
               <button
                 onClick={handleSyncGoogleSheets}
                 disabled={isSyncingSheets}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition-all shadow-sm disabled:opacity-50 hover:scale-105 active:scale-95"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 hover:from-amber-600 hover:to-yellow-600 text-white text-xs font-bold transition-all shadow-sm disabled:opacity-50 hover:scale-105 active:scale-95 cursor-pointer"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${isSyncingSheets ? 'animate-spin' : ''}`} />
                 {isSyncingSheets ? 'Syncing...' : 'Sync Now'}
@@ -340,23 +344,42 @@ export const CheckAttendanceView: React.FC<CheckAttendanceViewProps> = ({
               {onOpenSyncLogs && (
                 <button
                   onClick={onOpenSyncLogs}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold transition-all shadow-sm hover:scale-105 active:scale-95"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-amber-300 border border-amber-500/30 text-xs font-bold transition-all shadow-sm hover:scale-105 active:scale-95 cursor-pointer"
                 >
-                  <Clock className="w-3.5 h-3.5" />
+                  <Clock className="w-3.5 h-3.5 text-amber-400" />
                   Sync Settings / Logs
                 </button>
               )}
               <a
-                href={getCustomSheetUrl()}
+                href={MASTER_GOOGLE_SHEET_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition-all shadow-sm hover:scale-105"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-amber-300 border border-amber-500/30 text-xs font-bold transition-all shadow-sm hover:scale-105"
+                title="Open Main Attendance Sheet 1"
               >
-                <FileSpreadsheet className="w-3.5 h-3.5" /> Open Google Sheet <ExternalLink className="w-3 h-3" />
+                <FileSpreadsheet className="w-3.5 h-3.5 text-amber-400" /> Sheet 1 <ExternalLink className="w-3 h-3 text-amber-400" />
+              </a>
+              <a
+                href={SECONDARY_GOOGLE_SHEET_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-amber-300 border border-amber-500/30 text-xs font-bold transition-all shadow-sm hover:scale-105"
+                title="Open Student Records Sheet 2"
+              >
+                <FileSpreadsheet className="w-3.5 h-3.5 text-amber-400" /> Sheet 2 <ExternalLink className="w-3 h-3 text-amber-400" />
+              </a>
+              <a
+                href={THIRD_GOOGLE_SHEET_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 text-amber-300 border border-amber-500/30 text-xs font-bold transition-all shadow-sm hover:scale-105"
+                title="Open Master Registry Sheet 3"
+              >
+                <FileSpreadsheet className="w-3.5 h-3.5 text-amber-400" /> Sheet 3 <ExternalLink className="w-3 h-3 text-amber-400" />
               </a>
               <button
                 onClick={handleExportCSV}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold transition-all shadow-sm hover:scale-105 active:scale-95"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-white text-xs font-bold transition-all shadow-sm hover:scale-105 active:scale-95 cursor-pointer"
               >
                 <Download className="w-3.5 h-3.5" /> Export Excel/CSV
               </button>
@@ -371,8 +394,8 @@ export const CheckAttendanceView: React.FC<CheckAttendanceViewProps> = ({
             <label className="text-xs font-bold text-gray-700 dark:text-gray-200 ml-1">
               Registration Number
             </label>
-            <div className="w-full bg-slate-100 dark:bg-slate-950/80 border border-slate-300 dark:border-slate-700 focus-within:border-blue-600 dark:focus-within:border-blue-400 rounded-xl flex items-center px-4 py-3 gap-3 transition-all duration-300 shadow-sm focus-within:shadow-md">
-              <BadgeCheck className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0" />
+            <div className="w-full bg-slate-100 dark:bg-zinc-950/80 border border-slate-300 dark:border-amber-500/30 focus-within:border-amber-500 rounded-xl flex items-center px-4 py-3 gap-3 transition-all duration-300 shadow-sm focus-within:shadow-md">
+              <BadgeCheck className="w-5 h-5 text-amber-500 shrink-0" />
               <input
                 type="text"
                 value={regNumberInput}
@@ -396,8 +419,8 @@ export const CheckAttendanceView: React.FC<CheckAttendanceViewProps> = ({
             <label className="text-xs font-bold text-gray-700 dark:text-gray-200 ml-1">
               Student Name
             </label>
-            <div className="w-full bg-slate-100 dark:bg-slate-950/80 border border-slate-300 dark:border-slate-700 focus-within:border-blue-600 dark:focus-within:border-blue-400 rounded-xl flex items-center px-4 py-3 gap-3 transition-all duration-300 shadow-sm focus-within:shadow-md">
-              <User className="w-5 h-5 text-blue-600 dark:text-blue-400 shrink-0" />
+            <div className="w-full bg-slate-100 dark:bg-zinc-950/80 border border-slate-300 dark:border-amber-500/30 focus-within:border-amber-500 rounded-xl flex items-center px-4 py-3 gap-3 transition-all duration-300 shadow-sm focus-within:shadow-md">
+              <User className="w-5 h-5 text-amber-500 shrink-0" />
               <input
                 type="text"
                 value={studentNameInput}
@@ -515,6 +538,13 @@ export const CheckAttendanceView: React.FC<CheckAttendanceViewProps> = ({
             </div>
 
             <div className="flex gap-2">
+              <button
+                onClick={() => setCreditModalStudent(activeStudent)}
+                className="px-4 py-2.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30 text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+                title="Award / Track Member Credits"
+              >
+                <Award className="w-4 h-4" /> Award Credits
+              </button>
               <button
                 onClick={() => handleOpenLogDetails(activeStudent)}
                 className="px-5 py-2.5 rounded-xl liquid-gradient text-white text-xs font-bold shadow-md hover:scale-105 transition-all flex items-center gap-1.5 cursor-pointer"
@@ -741,6 +771,22 @@ export const CheckAttendanceView: React.FC<CheckAttendanceViewProps> = ({
         <HistoryModal
           student={internalHistoryStudent}
           onClose={() => setInternalHistoryStudent(null)}
+        />
+      )}
+
+      {/* Faculty Credit Track Modal */}
+      {creditModalStudent && (
+        <CreditTrackModal
+          isOpen={!!creditModalStudent}
+          onClose={() => setCreditModalStudent(null)}
+          studentName={creditModalStudent.name}
+          registrationNumber={creditModalStudent.registrationNumber}
+          avatar={creditModalStudent.avatar}
+          currentCredits={creditModalStudent.creditsEarned !== undefined ? creditModalStudent.creditsEarned : 0}
+          creditLogs={creditModalStudent.creditLogs || []}
+          isFaculty={true}
+          onAwardCredits={onAwardCredits}
+          defaultClubName={creditModalStudent.clubName || 'CaSR Club'}
         />
       )}
     </div>

@@ -45,6 +45,9 @@ const SHEET_TABS = [
   // Responses tab (login/entry responses — skip for attendance, but fetch anyway)
   { name: 'Responses',          gid: '620675621',  sheetId: '19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc' },
 
+  // Primary Sheet 2 (spreadsheet: 1hoZ-fFzukaS9THOGSbCilfISj1t5taf3)
+  { name: 'Sheet-1hoZ-Default', gid: null,         sheetId: '1hoZ-fFzukaS9THOGSbCilfISj1t5taf3' },
+
   // New Master sheet (spreadsheet: 11RUWQreYoN48-mmWR_9wsRcO6wkEzrU0JQaFIUuqNlM)
   { name: 'Master-Sheet-11RU',  gid: null,         sheetId: '11RUWQreYoN48-mmWR_9wsRcO6wkEzrU0JQaFIUuqNlM' },
 
@@ -409,7 +412,8 @@ function mapEntriesToProfiles(studentsMap) {
       attendanceGoalPercent: 85,
       currentAttendancePercent: pct,
       eventsAttendedCount: insCount,
-      creditsEarned: insCount * 10,
+      creditsEarned: 0,
+      creditLogs: [],
       requiredHours: 120.0,
       completedHours: totalHours,
       degreeProgram: st.degreeProgram,
