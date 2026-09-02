@@ -32,6 +32,8 @@ const OUTPUT_FILE = path.join(__dirname, 'src', 'data', 'realStudentsData.ts');
 // Each entry: { name, gid, sheetId }
 const SHEET_TABS = [
   // Primary sheet tabs (spreadsheet: 19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc)
+  { name: 'Robotics Club',      gid: '257171211',  sheetId: '19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc' },
+  { name: 'Coding club',        gid: '1690195397', sheetId: '19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc' },
   { name: 'Agrifora Club',      gid: '1997413871', sheetId: '19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc' },
   { name: 'DANCE CLUB',         gid: '1747670817', sheetId: '19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc' },
   { name: 'Drama Club',         gid: '1824463464', sheetId: '19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc' },
@@ -63,12 +65,11 @@ const AVATARS = [
   'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=300',
 ];
 
-// ─── HTTP FETCH ───────────────────────────────────────────────────────────────
 function fetchUrl(url, redirectCount = 0) {
   if (redirectCount > 5) return Promise.reject(new Error('Too many redirects'));
   return new Promise((resolve, reject) => {
     const lib = url.startsWith('https') ? https : http;
-    lib.get(url, { headers: { 'User-Agent': 'CaSR-Sync/1.0', 'Accept': 'text/csv,*/*' } }, (res) => {
+    const req = lib.get(url, { headers: { 'User-Agent': 'CaSR-Sync/1.0', 'Accept': 'text/csv,*/*' } }, (res) => {
       if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
         return fetchUrl(res.headers.location, redirectCount + 1).then(resolve).catch(reject);
       }
@@ -76,7 +77,12 @@ function fetchUrl(url, redirectCount = 0) {
       res.on('data', chunk => data += chunk);
       res.on('end', () => resolve({ status: res.statusCode, body: data }));
       res.on('error', reject);
-    }).on('error', reject);
+    });
+    req.on('error', reject);
+    req.setTimeout(8000, () => {
+      req.destroy();
+      reject(new Error('Request timeout'));
+    });
   });
 }
 
@@ -437,6 +443,26 @@ function mapEntriesToProfiles(studentsMap) {
   return result;
 }
 
+async function discoverTabs(sheetId) {
+  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/htmlview`;
+  try {
+    const { status, body } = await fetchUrl(url);
+    if (status === 200 && body) {
+      const regex = /items\.push\(\{\s*name:\s*"([^"]+)",\s*pageUrl:\s*"[^"]+",\s*gid:\s*"([^"]+)"/g;
+      let match;
+      const tabs = [];
+      while ((match = regex.exec(body)) !== null) {
+        const name = match[1].replace(/\\u([0-9a-fA-F]{4})/g, (match, grp) => String.fromCharCode(parseInt(grp, 16)));
+        tabs.push({ name: name.trim(), gid: match[2], sheetId });
+      }
+      return tabs;
+    }
+  } catch (e) {
+    console.error(`  [WARN] Failed to dynamically discover tabs for ${sheetId}:`, e.message);
+  }
+  return [];
+}
+
 // ─── FETCH ONE TAB ────────────────────────────────────────────────────────────
 async function fetchTab(tab) {
   const gidParam = tab.gid ? `&gid=${tab.gid}` : '';
@@ -466,13 +492,24 @@ async function main() {
   console.log(`  Started at: ${new Date().toLocaleString('en-IN')}`);
   console.log('');
 
+  console.log('  Discovering tabs dynamically from Google Sheet...');
+  const discoveredTabs = await discoverTabs('19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc');
+  let activeTabs = [...SHEET_TABS];
+  if (discoveredTabs.length > 0) {
+    console.log(`  [OK] Discovered ${discoveredTabs.length} tabs:`, discoveredTabs.map(t => t.name).join(', '));
+    const otherTabs = SHEET_TABS.filter(t => t.sheetId !== '19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc');
+    activeTabs = [...discoveredTabs, ...otherTabs];
+  } else {
+    console.log('  [WARN] Falling back to hardcoded sheet tabs list.');
+  }
+
   let studentsMap = {};
   let totalRows = 0;
   let tabsSucceeded = 0;
 
   // Fetch all tabs in parallel for speed
   const tabResults = await Promise.allSettled(
-    SHEET_TABS.map(async (tab) => {
+    activeTabs.map(async (tab) => {
       const rows = await fetchTab(tab);
       return { tab, rows };
     })
@@ -493,7 +530,7 @@ async function main() {
   }
 
   console.log('');
-  console.log(`  Tabs with data:    ${tabsSucceeded} / ${SHEET_TABS.length}`);
+  console.log(`  Tabs with data:    ${tabsSucceeded} / ${activeTabs.length}`);
   console.log(`  Total data rows:   ${totalRows}`);
   console.log(`  Unique students:   ${Object.keys(studentsMap).length}`);
   console.log('');

@@ -11,10 +11,47 @@ export const MASTER_SHEETS_LIST = [
   { name: 'Google Sheet 3 (Master Registry)', id: '11RUWQreYoN48-mmWR_9wsRcO6wkEzrU0JQaFIUuqNlM', url: THIRD_GOOGLE_SHEET_URL }
 ];
 
+// Known club tabs from the master Google Sheet (19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc)
+export const KNOWN_CLUB_TABS = [
+  { name: 'Robotics Club',     gid: '257171211' },
+  { name: 'Coding club',       gid: '1690195397' },
+  { name: 'DANCE CLUB',        gid: '1747670817' },
+  { name: 'Agrifora Club',     gid: '1997413871' },
+  { name: 'Drama Club',        gid: '1824463464' },
+  { name: 'Fashion Club',      gid: '1336789504' },
+  { name: 'Language Club',     gid: '2060228171' },
+  { name: 'Literature Club',   gid: '578752662' },
+  { name: 'MOVIE CLUB',        gid: '1476951718' },
+  { name: 'Photography Club',  gid: '1771686445' },
+  { name: 'Painting Club',     gid: '700032659' },
+  { name: 'Music Club',        gid: '1198898863' },
+  { name: 'Responses',         gid: '620675621' },
+  { name: 'Default Tab',       gid: '0' },
+];
+
+export const GID_TO_CLUB: Record<string, string> = {
+  '257171211':  'Robotics Club',
+  '1690195397': 'Coding Club',
+  '1747670817': 'DANCE CLUB',
+  '1997413871': 'Agrifora Club',
+  '1824463464': 'Drama Club',
+  '1336789504': 'Fashion Club',
+  '2060228171': 'Language Club',
+  '578752662':  'Literature Club',
+  '1476951718': 'MOVIE CLUB',
+  '1771686445': 'Photography Club',
+  '700032659':  'Painting Club',
+  '1198898863': 'Music Club',
+  '620675621':  'Responses',
+  '0':          'Campus Club',
+};
+
 // All club tab URLs, each with a specific GID so we fetch every club's data
 export const GOOGLE_SHEETS_URLS = [
   // Primary Sheet 1 (19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc)
   'https://docs.google.com/spreadsheets/d/19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc/gviz/tq?tqx=out:csv&gid=0',          // Default tab
+  'https://docs.google.com/spreadsheets/d/19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc/gviz/tq?tqx=out:csv&gid=257171211',  // Robotics Club
+  'https://docs.google.com/spreadsheets/d/19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc/gviz/tq?tqx=out:csv&gid=1690195397', // Coding club
   'https://docs.google.com/spreadsheets/d/19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc/gviz/tq?tqx=out:csv&gid=1997413871', // Agrifora Club
   'https://docs.google.com/spreadsheets/d/19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc/gviz/tq?tqx=out:csv&gid=1747670817', // DANCE CLUB
   'https://docs.google.com/spreadsheets/d/19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc/gviz/tq?tqx=out:csv&gid=1824463464', // Drama Club
@@ -156,7 +193,7 @@ function capitalizeWords(str: string): string {
   return str.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
 }
 
-function parseRowsToMap(rows: string[][], studentsMap: Record<string, any> = {}): Record<string, any> {
+function parseRowsToMap(rows: string[][], studentsMap: Record<string, any> = {}, clubHint = ''): Record<string, any> {
   if (rows.length === 0) return studentsMap;
 
   // Find header row within first 5 rows
@@ -230,7 +267,9 @@ function parseRowsToMap(rows: string[][], studentsMap: Record<string, any> = {})
     const degree = indexMap.degree !== -1 && row[indexMap.degree] ? row[indexMap.degree].trim() : '';
     const sem = indexMap.semester !== -1 && row[indexMap.semester] ? row[indexMap.semester].trim() : '';
     const section = indexMap.section !== -1 && row[indexMap.section] ? row[indexMap.section].trim() : '';
-    const club = indexMap.club !== -1 && row[indexMap.club] ? row[indexMap.club].trim() : '';
+    let club = indexMap.club !== -1 && row[indexMap.club] ? row[indexMap.club].trim() : '';
+    // Fall back to the tab's club name hint when the row has no club column
+    if (!club) club = clubHint;
     const reason = indexMap.reason !== -1 && row[indexMap.reason] ? row[indexMap.reason].trim() : '';
     const timing = indexMap.timing !== -1 && row[indexMap.timing] ? row[indexMap.timing].trim() : '';
 
@@ -267,9 +306,9 @@ function parseRowsToMap(rows: string[][], studentsMap: Record<string, any> = {})
   return studentsMap;
 }
 
-function parseSheetToMap(csvText: string, studentsMap: Record<string, any> = {}): Record<string, any> {
+function parseSheetToMap(csvText: string, studentsMap: Record<string, any> = {}, clubHint = ''): Record<string, any> {
   const rows = parseCsvRows(csvText);
-  return parseRowsToMap(rows, studentsMap);
+  return parseRowsToMap(rows, studentsMap, clubHint);
 }
 
 function mapEntriesToProfiles(studentsMap: Record<string, any>): RealStudentDataRecord[] {
@@ -515,6 +554,8 @@ function parseGvizJsonResponse(responseText: string): string[][] {
 }
 
 // JSONP-based GViz fetch (works in browser without CORS)
+// Each call uses a UNIQUE global callback name to avoid race conditions
+// when multiple tabs are fetched in parallel.
 function fetchGvizJsonp(sheetId: string, tabParam = ''): Promise<string[][]> {
   return new Promise((resolve) => {
     if (typeof window === 'undefined' || typeof document === 'undefined') {
@@ -522,25 +563,20 @@ function fetchGvizJsonp(sheetId: string, tabParam = ''): Promise<string[][]> {
       return;
     }
 
-    const script = document.createElement('script');
     const timestamp = Date.now();
+    const rand = Math.random().toString(36).substring(2, 8);
+    // Unique callback name prevents race conditions with parallel calls
+    const callbackName = `_casrCb_${timestamp}_${rand}`;
+    const script = document.createElement('script');
     let timer: ReturnType<typeof setTimeout>;
-
-    if (!(window as any).google) (window as any).google = {};
-    if (!(window as any).google.visualization) (window as any).google.visualization = {};
-    if (!(window as any).google.visualization.Query) (window as any).google.visualization.Query = {};
-
-    const prevHandler = (window as any).google.visualization.Query.setResponse;
 
     const cleanup = () => {
       clearTimeout(timer);
-      try {
-        if (prevHandler) (window as any).google.visualization.Query.setResponse = prevHandler;
-      } catch (e) {}
+      try { delete (window as any)[callbackName]; } catch (e) {}
       if (script.parentNode) script.parentNode.removeChild(script);
     };
 
-    (window as any).google.visualization.Query.setResponse = (response: any) => {
+    (window as any)[callbackName] = (response: any) => {
       cleanup();
       try {
         if (!response || !response.table) { resolve([]); return; }
@@ -549,7 +585,9 @@ function fetchGvizJsonp(sheetId: string, tabParam = ''): Promise<string[][]> {
         if (response.table.cols && Array.isArray(response.table.cols)) {
           headerFromCols = response.table.cols.map((col: any) => (col && col.label ? String(col.label).trim() : ''));
         }
-        if (headerFromCols.some(h => h.toLowerCase().includes('reg') || h.toLowerCase().includes('time') || h.toLowerCase().includes('name') || h.toLowerCase().includes('club'))) {
+        // Always push the header row (even if headers don't match keywords)
+        // so parseRowsToMap can detect the correct column positions
+        if (headerFromCols.length > 0) {
           extractedRows.push(headerFromCols);
         }
         if (response.table.rows && Array.isArray(response.table.rows)) {
@@ -570,9 +608,10 @@ function fetchGvizJsonp(sheetId: string, tabParam = ''): Promise<string[][]> {
       }
     };
 
-    script.src = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&${tabParam}&_t=${timestamp}&r=${Math.random()}`;
+    // Use the unique callback name in the tqx parameter
+    script.src = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=responseHandler:${callbackName}${tabParam ? '&' + tabParam : ''}&_t=${timestamp}&r=${rand}`;
     script.onerror = () => { cleanup(); resolve([]); };
-    timer = setTimeout(() => { cleanup(); resolve([]); }, 5000);
+    timer = setTimeout(() => { cleanup(); resolve([]); }, 8000);
     document.head.appendChild(script);
   });
 }
@@ -641,23 +680,139 @@ export function getCachedLiveAttendanceData(): StudentProfile[] | null {
   return null;
 }
 
-export async function fetchLiveAttendanceData(): Promise<StudentProfile[]> {
+export async function discoverLiveTabs(sheetId: string): Promise<{ name: string; gid: string }[]> {
+  const allDiscovered: { name: string; gid: string }[] = [];
+  const seenGids = new Set<string>();
+
+  const addTab = (name: string, gid: string) => {
+    if (!gid || seenGids.has(gid)) return;
+    seenGids.add(gid);
+    allDiscovered.push({ name: name.trim(), gid: gid.trim() });
+  };
+
+  // 1. Check local Vite dev middleware endpoint (100% reliable, zero CORS)
+  try {
+    const devRes = await fetch(`/api/live-tabs?sheetId=${encodeURIComponent(sheetId)}&_t=${Date.now()}`);
+    if (devRes.ok) {
+      const devData = await devRes.json();
+      if (devData.success && Array.isArray(devData.tabs)) {
+        for (const t of devData.tabs) {
+          addTab(t.name, t.gid);
+        }
+      }
+    }
+  } catch (e) {}
+
+  // 2. Try CORS proxies if not running in dev or dev returned empty
+  if (allDiscovered.length === 0) {
+    const htmlviewUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/htmlview?_cb=${Date.now()}`;
+    const corsProxies = [
+      (url: string) => url,
+      (url: string) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+      (url: string) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+      (url: string) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`
+    ];
+
+    for (const proxyFn of corsProxies) {
+      try {
+        const targetUrl = proxyFn(htmlviewUrl);
+        const res = await fetch(targetUrl, { cache: 'no-store' });
+        if (res.ok) {
+          const html = await res.text();
+          if (html && html.includes('items.push')) {
+            const regex = /items\.push\(\{\s*name:\s*"([^"]+)",\s*pageUrl:\s*"[^"]+",\s*gid:\s*"([^"]+)"/g;
+            let match;
+            while ((match = regex.exec(html)) !== null) {
+              const name = match[1].replace(/\\u([0-9a-fA-F]{4})/g, (_, grp) => String.fromCharCode(parseInt(grp, 16)));
+              addTab(name, match[2]);
+            }
+            if (allDiscovered.length > 0) break;
+          }
+        }
+      } catch (e) {}
+    }
+  }
+
+  // 3. Load previously remembered discovered tabs from localStorage
+  if (typeof localStorage !== 'undefined') {
+    try {
+      const stored = localStorage.getItem('CASR_DISCOVERED_TABS');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed)) {
+          for (const t of parsed) {
+            addTab(t.name, t.gid);
+          }
+        }
+      }
+    } catch (e) {}
+  }
+
+  // 4. Always include all KNOWN_CLUB_TABS as guaranteed foundation
+  for (const t of KNOWN_CLUB_TABS) {
+    addTab(t.name, t.gid);
+  }
+
+  // 5. Save back to localStorage so any new tab discovered is permanently remembered
+  if (typeof localStorage !== 'undefined' && allDiscovered.length > 0) {
+    try {
+      localStorage.setItem('CASR_DISCOVERED_TABS', JSON.stringify(allDiscovered));
+    } catch (e) {}
+  }
+
+  return allDiscovered;
+}
+
+export async function fetchLiveAttendanceData(forceRefresh = false): Promise<StudentProfile[]> {
   try {
     const customUrl = getCustomSheetUrl();
     const customIdMatch = customUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
     const targetSheetId = customIdMatch ? customIdMatch[1] : '19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc';
 
-    // Fetch all club tabs in parallel using GID-specific URLs
-    const fetchPromises = GOOGLE_SHEETS_URLS.map(async (baseUrl) => {
-      const isPrimary = baseUrl.includes('19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc');
-      const sheetIdMatch = baseUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
-      const defaultSheetId = sheetIdMatch ? sheetIdMatch[1] : '';
-      const sheetId = isPrimary ? targetSheetId : defaultSheetId;
-      
-      if (!sheetId) return [];
-      const gidMatch = baseUrl.match(/[?&]gid=(\d+)/);
+    // Discover all tabs for the primary sheet
+    const discovered = await discoverLiveTabs(targetSheetId);
+    let activeTabs: { name: string; gid: string | null; sheetId: string }[] = [];
+
+    // Map discovered tabs
+    if (discovered.length > 0) {
+      activeTabs = discovered.map(t => ({
+        name: t.name || (t.gid ? (GID_TO_CLUB[t.gid] || 'Campus Club') : 'Campus Club'),
+        gid: t.gid,
+        sheetId: targetSheetId
+      }));
+    } else {
+      activeTabs = KNOWN_CLUB_TABS.map(t => ({
+        name: t.name,
+        gid: t.gid,
+        sheetId: targetSheetId
+      }));
+    }
+
+    // Append secondary sheets from static list (like primary sheet 2, 3, etc.)
+    const otherTabs = GOOGLE_SHEETS_URLS.filter(url => !url.includes('19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc')).map(url => {
+      const sheetIdMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+      const sheetId = sheetIdMatch ? sheetIdMatch[1] : '';
+      const gidMatch = url.match(/[?&]gid=(\d+)/);
       const gid = gidMatch ? gidMatch[1] : null;
-      return await fetchRowsForGid(sheetId, gid);
+      return { name: gid ? (GID_TO_CLUB[gid] || 'Campus Club') : 'Campus Club', gid, sheetId };
+    });
+
+    // Deduplicate active tabs by sheetId + gid
+    const uniqueTabsMap = new Map<string, { name: string; gid: string | null; sheetId: string }>();
+    for (const tab of [...activeTabs, ...otherTabs]) {
+      if (!tab.sheetId) continue;
+      const key = `${tab.sheetId}_${tab.gid || 'default'}`;
+      if (!uniqueTabsMap.has(key)) {
+        uniqueTabsMap.set(key, tab);
+      }
+    }
+    const finalTabsList = Array.from(uniqueTabsMap.values());
+
+    // Fetch all club tabs in parallel using GID-specific URLs
+    const fetchPromises = finalTabsList.map(async (tab) => {
+      if (!tab.sheetId) return { rows: [], clubHint: '' };
+      const rows = await fetchRowsForGid(tab.sheetId, tab.gid);
+      return { rows, clubHint: tab.name };
     });
 
     const sheetRowsArray = await Promise.allSettled(fetchPromises);
@@ -666,9 +821,9 @@ export async function fetchLiveAttendanceData(): Promise<StudentProfile[]> {
 
     for (const result of sheetRowsArray) {
       if (result.status !== 'fulfilled') continue;
-      const rows = result.value;
-      if (!rows || rows.length === 0) continue;
-      studentsMap = parseRowsToMap(rows, studentsMap);
+      const { rows, clubHint } = result.value;
+      if (!rows || rows.length <= 1) continue;
+      studentsMap = parseRowsToMap(rows, studentsMap, clubHint);
       hasAnyData = true;
     }
 
@@ -678,6 +833,7 @@ export async function fetchLiveAttendanceData(): Promise<StudentProfile[]> {
         if (typeof localStorage !== 'undefined') {
           try {
             localStorage.setItem('CASR_LIVE_STUDENTS_CACHE', JSON.stringify(parsed));
+            localStorage.setItem('CASR_LIVE_STUDENTS_CACHE_TIME', String(Date.now()));
           } catch (e) {}
         }
         return parsed;
@@ -687,8 +843,16 @@ export async function fetchLiveAttendanceData(): Promise<StudentProfile[]> {
     console.warn('Could not fetch live Google Sheet attendance, using fallback dataset:', err);
   }
 
-  const cached = getCachedLiveAttendanceData();
-  if (cached) return cached;
+  // Check if we have a fresh cache (within last 5 minutes)
+  if (!forceRefresh) {
+    const cached = getCachedLiveAttendanceData();
+    if (cached) {
+      const cacheTime = Number(localStorage.getItem('CASR_LIVE_STUDENTS_CACHE_TIME') || 0);
+      if (Date.now() - cacheTime < 5 * 60 * 1000) {
+        return cached;
+      }
+    }
+  }
 
   return REAL_STUDENTS_DATA as unknown as StudentProfile[];
 }

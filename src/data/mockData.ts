@@ -18,7 +18,7 @@ export const MOCK_CLUBS: Club[] = [
     foundedYear: 2016,
     featured: true,
     attendanceFormUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSeOvErIjaWFd9K1iiOUmYvwgS8qLyfWGKi7yJVck4LnoethfA/viewform?usp=sharing&ouid=100005982021679803653',
-    sheetGid: '0'
+    sheetGid: '1690195397'
   },
   {
     id: 'casr-take-one-movie-club',
@@ -312,7 +312,8 @@ export const MOCK_CLUBS: Club[] = [
     tags: ['Robotics', 'ROS', 'Microcontrollers', 'Mechatronics'],
     foundedYear: 2019,
     featured: true,
-    attendanceFormUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSebkDNlMy6iK9hAZAsF-w_ABgdB-iiZ2Oe85TJ5up8oNvNpQQ/viewform?usp=sharing&ouid=100005982021679803653'
+    attendanceFormUrl: 'https://docs.google.com/forms/d/e/1FAIpQLSebkDNlMy6iK9hAZAsF-w_ABgdB-iiZ2Oe85TJ5up8oNvNpQQ/viewform?usp=sharing&ouid=100005982021679803653',
+    sheetGid: '257171211'
   },
   {
     id: 'casr-hackton',

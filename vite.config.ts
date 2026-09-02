@@ -2,7 +2,8 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 import fs from 'fs';
-import {defineConfig} from 'vite';
+import https from 'https';
+import { defineConfig, Plugin } from 'vite';
 
 // Auto-copy new logo and generate embedded logoData.ts
 try {
@@ -31,8 +32,6 @@ export const CENTURION_EMBLEM_LOGO = "data:image/jpeg;base64,${centurionB64}";
 } catch (e) {
   console.error('Logo copy/generation notice:', e);
 }
-
-
 
 // Auto-copy Dr. Ritesh Kumar photo
 try {
@@ -81,9 +80,61 @@ try {
   console.error('Photo copy notice:', e);
 }
 
+// Dev server plugin for direct, live Google Sheets tab discovery with zero CORS issues
+function googleSheetsDevPlugin(): Plugin {
+  return {
+    name: 'google-sheets-dev-plugin',
+    configureServer(server) {
+      server.middlewares.use(async (req, res, next) => {
+        if (req.url && req.url.startsWith('/api/live-tabs')) {
+          try {
+            const urlObj = new URL(req.url, 'http://localhost:3000');
+            const sheetId = urlObj.searchParams.get('sheetId') || '19lL4u-lbfm9CYuOqLozTVQMSE7KtLhiKMLD-nfbcQjc';
+            const htmlViewUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/htmlview?_t=${Date.now()}`;
+
+            const fetchHtml = (targetUrl: string, redirects = 0): Promise<string> => {
+              if (redirects > 5) return Promise.resolve('');
+              return new Promise((resolve) => {
+                https.get(targetUrl, { headers: { 'User-Agent': 'Mozilla/5.0' } }, (resp) => {
+                  if (resp.statusCode && resp.statusCode >= 300 && resp.statusCode < 400 && resp.headers.location) {
+                    return fetchHtml(resp.headers.location, redirects + 1).then(resolve);
+                  }
+                  let data = '';
+                  resp.on('data', chunk => data += chunk);
+                  resp.on('end', () => resolve(data));
+                  resp.on('error', () => resolve(''));
+                }).on('error', () => resolve(''));
+              });
+            };
+
+            const html = await fetchHtml(htmlViewUrl);
+            const regex = /items\.push\(\{\s*name:\s*"([^"]+)",\s*pageUrl:\s*"[^"]+",\s*gid:\s*"([^"]+)"/g;
+            let match;
+            const tabs: { name: string; gid: string }[] = [];
+            while ((match = regex.exec(html)) !== null) {
+              const name = match[1].replace(/\\u([0-9a-fA-F]{4})/g, (_, grp) => String.fromCharCode(parseInt(grp, 16)));
+              tabs.push({ name: name.trim(), gid: match[2] });
+            }
+
+            res.setHeader('Content-Type', 'application/json');
+            res.setHeader('Access-Control-Allow-Origin', '*');
+            res.end(JSON.stringify({ success: true, sheetId, tabs }));
+            return;
+          } catch (e: any) {
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify({ success: false, error: e?.message || 'Error', tabs: [] }));
+            return;
+          }
+        }
+        next();
+      });
+    }
+  };
+}
+
 export default defineConfig(() => {
   return {
-    plugins: [react(), tailwindcss()],
+    plugins: [react(), tailwindcss(), googleSheetsDevPlugin()],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),
@@ -98,3 +149,4 @@ export default defineConfig(() => {
     },
   };
 });
+

@@ -56,7 +56,7 @@ export default function App() {
   const [isSyncingSheets, setIsSyncingSheets] = useState(false);
   const [lastSyncedTime, setLastSyncedTime] = useState<string>('Just now');
   const isFetchingRef = React.useRef(false);
-  const [autoSyncInterval, setAutoSyncInterval] = useState<number>(5); // Default to 5 seconds
+  const [autoSyncInterval, setAutoSyncInterval] = useState<number>(30); // Default to 30 seconds
   const [syncLogs, setSyncLogs] = useState<SyncLogEntry[]>([]);
   const [showSyncLogsModal, setShowSyncLogsModal] = useState(false);
 
